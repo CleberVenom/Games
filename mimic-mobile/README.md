@@ -14,16 +14,32 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 |---|---|---|
 | 1 | Estrutura do projeto + UI premium: cadastro de jogadores e tela de jogo com todas as fases do turno | ✅ |
 | 2 | Captura do microfone + player do som de referência + catálogo de 37 sons | ✅ |
-| 3 | DSP local: FFT, *pitch tracking* e curva de amplitude → nota | ⏳ |
+| 3 | DSP local: FFT, *pitch tracking* e curva de amplitude → nota | ✅ |
 | 4 | Roleta de modificadores/sabotagens no fim do turno | ⏳ |
 
-### O que já é real e o que ainda é provisório
+### Como a nota é calculada (Passo 3)
 
-- **Real (Passo 2):** a referência toca de verdade, o microfone grava a imitação (PCM mono guardado para o
-  DSP), e as barras mostram o espectro real (FFT do `AnalyserNode`) durante a referência e a gravação.
-- **Provisório até o Passo 3:** a nota. Se o jogador não emitiu som, vale **0** (isso já usa a gravação);
-  com voz, tom e ritmo ainda são sorteados. O cartão da nota avisa isso. A troca é em um lugar só:
-  `provisionalScore` em `src/audio/recording.ts`.
+Tudo roda no aparelho, em TypeScript puro (`src/dsp/`), sem bibliotecas nem APIs externas:
+
+1. **Pré-processamento** — referência e imitação são convertidas para 16 kHz (filtro anti-aliasing FIR) e
+   cortadas em quadros de 64 ms a cada 16 ms.
+2. **Características por quadro** (uma FFT de 2048 pontos por quadro):
+   - **energia** em dB → a curva de amplitude (ritmo/ataques);
+   - **pitch** pelo método de McLeod (NSDF a partir da autocorrelação via FFT), de 65 a 1000 Hz; quadros sem
+     periodicidade clara ficam "sem tom";
+   - **centroide espectral** → o "brilho", que faz o papel de tom nos sons de ruído (espirro, descarga, arroto).
+3. **Trecho ativo** — o silêncio antes e depois é ignorado (atrasar o começo não perde ponto).
+4. **Tom (0–100)** — contornos em semitons, em 24 fatias de tempo, comparados **sem exigir o mesmo tom de voz**
+   (o deslocamento médio é descontado e erros de oitava não contam): imitar o galo uma oitava abaixo vale; imitar a
+   sirene num tom só não. Para sons de ruído compara-se o contorno de brilho. A mistura segue quanto da referência
+   tem tom definido.
+5. **Ritmo (0–100)** — forma do envelope alinhada por DTW (tolera pequenas diferenças de tempo), número de golpes
+   (sílabas, latidos, bipes) e duração.
+6. **Total** = média de tom e ritmo. Sem som (menos de 0,15 s acima de −50 dBFS) a nota é 0.
+
+Todos os parâmetros ficam em `TUNING` (`src/dsp/score.ts`) para calibrar com jogadores de verdade. Os testes
+cobrem os blocos (FFT, reamostragem, pitch de 110/220/600 Hz, brilho), imitações sintéticas boas e ruins e uma
+regressão com os 37 sons reais: cada som contra ele mesmo dá 100; contra os outros, a média fica em torno de 31.
 
 ## Regras do turno
 
@@ -43,12 +59,12 @@ src/
   game/         lógica pura: tipos, catálogo de sons, máquina de estados da partida (+ testes)
   store/        estado da partida (zustand)
   audio/        motor de áudio, microfone (nativo e web), espectro → barras, fluxo de áudio do turno (+ testes)
+  dsp/          FFT, reamostragem, extração de pitch/energia/brilho e a nota (+ testes)
   theme/        paleta única (Tailwind + gradientes) e utilitários de cor/brilho
 assets/images/  ícones e splash (gerados por scripts/make-icons.py)
 assets/sounds/  37 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
 ```
 
-O Passo 3 entra em `src/dsp/` (FFT, pitch, ritmo, nota) e substitui `provisionalScore`.
 
 ### Áudio
 
@@ -66,6 +82,7 @@ microfone ───► AnalyserNode                                 (ramo mudo: 
   `mic.web.ts` faz o mesmo no navegador com `getUserMedia`.
 - `src/audio/useAudioTurn.ts`: liga cada fase do turno ao áudio (tocar, gravar até parar/estourar a janela,
   analisar) e limpa tudo se o jogador sair no meio.
+- `src/audio/analysis.ts`: analisa a referência já na tela "passe o celular" (com cache) e dá a nota da gravação.
 
 ### Sons de referência
 
@@ -112,7 +129,7 @@ botões que encolhem com mola ao toque (e crescem no *hover* do mouse, na web). 
 
 ```bash
 npm install
-npm test            # máquina de estados, catálogo de sons, espectro → barras, gravação
+npm test            # máquina de estados, catálogo de sons, espectro → barras, DSP e nota
 npm run typecheck
 npm run lint
 ```

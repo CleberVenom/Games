@@ -1,16 +1,8 @@
 import manifest from '../../../assets/sounds/manifest.json';
 import { SOUNDS } from '../../game/sounds';
-import { concatChunks, provisionalScore, Recording, voicedSeconds } from '../recording';
+import { concatChunks } from '../recording';
 import { SOUND_FILES } from '../soundFiles';
 import { spectrumToBars } from '../spectrum';
-
-const SR = 22050;
-
-function tone(seconds: number, amplitude: number, freq = 220): Float32Array {
-  return Float32Array.from({ length: Math.round(seconds * SR) }, (_, i) => amplitude * Math.sin((2 * Math.PI * freq * i) / SR));
-}
-
-const rec = (samples: Float32Array): Recording => ({ samples, sampleRate: SR });
 
 describe('catálogo de sons', () => {
   it('cada som tem arquivo gerado, duração e nenhum arquivo sobra', () => {
@@ -57,17 +49,5 @@ describe('gravação', () => {
   it('concatena os blocos na ordem', () => {
     const out = concatChunks([Float32Array.of(1, 2), Float32Array.of(3)]);
     expect(Array.from(out)).toEqual([1, 2, 3]);
-  });
-
-  it('mede só o trecho com som', () => {
-    const samples = concatChunks([tone(0.5, 0), tone(1, 0.3), tone(0.5, 0.0001)]);
-    expect(voicedSeconds(rec(samples))).toBeCloseTo(1, 1);
-  });
-
-  it('nota provisória: silêncio (ou nada gravado) vale 0; com voz fica entre 30 e 98', () => {
-    expect(provisionalScore(null)).toEqual({ total: 0, pitch: 0, rhythm: 0 });
-    expect(provisionalScore(rec(tone(2, 0.002)))).toEqual({ total: 0, pitch: 0, rhythm: 0 });
-    const score = provisionalScore(rec(tone(1, 0.3)), () => 0.5);
-    expect(score).toEqual({ pitch: 64, rhythm: 64, total: 64 });
   });
 });

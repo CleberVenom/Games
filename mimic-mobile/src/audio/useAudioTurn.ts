@@ -3,11 +3,12 @@ import { Alert, Platform } from 'react-native';
 
 import type { MatchEvent } from '../game/match';
 import type { Phase } from '../game/types';
+import { prepareReference, scoreTurn } from './analysis';
 import { engine } from './engine';
 import { startRecording, stopRecording } from './mic';
-import { provisionalScore, Recording } from './recording';
+import type { Recording } from './recording';
 
-/** Tempo mínimo da tela "Analisando…" (o DSP do Passo 3 é rápido; a pausa dá suspense). */
+/** Tempo mínimo da tela "Analisando…" (o DSP leva poucas dezenas de ms; a pausa dá suspense). */
 const ANALYSIS_MS = 1400;
 
 function warn(message: string) {
@@ -17,10 +18,10 @@ function warn(message: string) {
 
 /**
  * Liga as fases do turno ao áudio real:
- * - handoff: pré-carrega a referência (toca sem atraso quando o jogador confirmar);
+ * - handoff: pré-carrega e analisa a referência (toca sem atraso e a nota sai mais rápido);
  * - listening: toca a referência e avança quando ela termina;
  * - recording: grava o microfone até o jogador tocar em parar ou a janela acabar;
- * - analyzing: calcula a nota da gravação.
+ * - analyzing: compara a gravação com a referência (src/dsp) e dá a nota.
  */
 export function useAudioTurn(
   phase: Phase,
@@ -39,7 +40,7 @@ export function useAudioTurn(
     };
 
     if (phase === 'handoff') {
-      engine.load(soundId).catch(() => {});
+      prepareReference(soundId).catch(() => {});
     } else if (phase === 'listening') {
       // Rede de segurança: se o fim da reprodução não for notificado, avança mesmo assim.
       after(referenceMs + 1500, { type: 'referenceEnded' });
@@ -56,10 +57,14 @@ export function useAudioTurn(
         },
       );
     } else if (phase === 'analyzing') {
-      const pending = recording.current ?? Promise.resolve(null);
-      Promise.all([pending, new Promise((r) => setTimeout(r, ANALYSIS_MS))]).then(([rec]) => {
-        if (active) dispatch({ type: 'scored', score: provisionalScore(rec) });
-      });
+      const score = (recording.current ?? Promise.resolve(null)).then((rec) => scoreTurn(soundId, rec));
+      Promise.all([score, new Promise((r) => setTimeout(r, ANALYSIS_MS))]).then(
+        ([result]) => active && dispatch({ type: 'scored', score: result }),
+        () => {
+          warn('Não foi possível analisar a imitação.');
+          if (active) dispatch({ type: 'scored', score: { total: 0, pitch: 0, rhythm: 0 } });
+        },
+      );
     }
 
     // Também roda ao sair da partida: não deixa som tocando nem microfone aberto.

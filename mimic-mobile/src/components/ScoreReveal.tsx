@@ -56,12 +56,6 @@ export function ScoreReveal({ score, playerName }: { score: TurnScore; playerNam
       </View>
       <ScoreBar icon="musical-notes" label="Tom" value={score.pitch} colors={gradients.listen} delay={150} />
       <ScoreBar icon="pulse" label="Ritmo" value={score.rhythm} colors={gradients.primary} delay={300} />
-      <View className="flex-row items-center gap-1.5">
-        <Icon name="flask-outline" size={12} color={palette.amber[400]} />
-        <Text className="flex-1 font-body text-[11px] text-amber-400">
-          Nota provisória: silêncio vale 0; o cálculo por tom e ritmo ainda está em desenvolvimento.
-        </Text>
-      </View>
     </View>
   );
 }
