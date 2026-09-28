@@ -171,6 +171,8 @@ botões que encolhem com mola ao toque (e crescem no *hover* do mouse, na web). 
 
 ## Rodando
 
+> Nunca programou? Siga o guia passo a passo **[COMO-TESTAR.md](COMO-TESTAR.md)** (navegador e APK no celular).
+
 ```bash
 npm install
 npm test            # partida, rodadas e pódio, packs, catálogo, espectro → barras, DSP, nota e recorte de sons
