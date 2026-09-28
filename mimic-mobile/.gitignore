@@ -40,3 +40,7 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# cache de downloads do scripts/build-sounds.py
+scripts/.cache/
+__pycache__/

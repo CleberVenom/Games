@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import type { VisualizerMode } from '../audio/useSyntheticLevels';
+import type { VisualizerMode } from '../audio/useVisualizerLevels';
 import type { Phase } from '../game/types';
 import { glow, gradients, palette, sampleGradient } from '../theme/tokens';
 import { Gradient } from './Gradient';

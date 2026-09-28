@@ -4,8 +4,8 @@ import { Alert, BackHandler, Platform, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useSimulatedTurn } from '../audio/useSimulatedTurn';
-import { useSyntheticLevels } from '../audio/useSyntheticLevels';
+import { useAudioTurn } from '../audio/useAudioTurn';
+import { useVisualizerLevels } from '../audio/useVisualizerLevels';
 import { BAR_COUNT, VisualizerCard, visualizerMode } from '../components/AudioVisualizer';
 import { Avatar } from '../components/Avatar';
 import { Backdrop } from '../components/Backdrop';
@@ -51,8 +51,8 @@ function Game({ match }: { match: Match }) {
   const sound = getSound(match.soundId);
   const recordingMs = recordingWindowMs(sound.durationMs);
 
-  const levels = useSyntheticLevels(visualizerMode(phase), BAR_COUNT);
-  useSimulatedTurn(phase, sound.durationMs, recordingMs, dispatch);
+  const levels = useVisualizerLevels(visualizerMode(phase), BAR_COUNT);
+  useAudioTurn(phase, sound.id, sound.durationMs, recordingMs, dispatch);
 
   const recordStartedAt = useRef(0);
   const onRecordPress = () => {
@@ -110,12 +110,7 @@ function Game({ match }: { match: Match }) {
               Turno {current + 1} de {players.length}
             </Text>
           </View>
-          <View className="w-24 items-end">
-            <View className="flex-row items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1.5">
-              <Icon name="flask-outline" size={12} color={palette.amber[400]} />
-              <Text className="font-label text-[11px] text-amber-400">Simulado</Text>
-            </View>
-          </View>
+          <View className="w-24" />
         </View>
 
         <Scoreboard players={players} current={current} />

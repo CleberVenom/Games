@@ -12,20 +12,18 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 
 | Passo | O quê | Status |
 |---|---|---|
-| 1 | Estrutura do projeto + UI premium: cadastro de jogadores e tela de jogo com todas as fases do turno | ✅ **com áudio simulado** |
-| 2 | Captura do microfone + player do som de referência | ⏳ |
+| 1 | Estrutura do projeto + UI premium: cadastro de jogadores e tela de jogo com todas as fases do turno | ✅ |
+| 2 | Captura do microfone + player do som de referência + catálogo de 37 sons | ✅ |
 | 3 | DSP local: FFT, *pitch tracking* e curva de amplitude → nota | ⏳ |
 | 4 | Roleta de modificadores/sabotagens no fim do turno | ⏳ |
 
-### O que "áudio simulado" quer dizer no Passo 1
+### O que já é real e o que ainda é provisório
 
-A UI é jogável de ponta a ponta, mas ainda sem som: a referência "toca" pela duração do som, as barras
-reagem a um sinal sintético, a gravação termina sozinha no fim da janela e a nota é **aleatória**. A tela de
-jogo mostra o selo **Simulado** enquanto isso. Tudo o que é simulação está isolado em dois arquivos,
-que os Passos 2 e 3 substituem sem mexer nas telas:
-
-- `src/audio/useSyntheticLevels.ts` → vira a leitura do `AnalyserNode` (FFT) do áudio real;
-- `src/audio/useSimulatedTurn.ts` → vira reprodução/gravação reais + a nota do DSP.
+- **Real (Passo 2):** a referência toca de verdade, o microfone grava a imitação (PCM mono guardado para o
+  DSP), e as barras mostram o espectro real (FFT do `AnalyserNode`) durante a referência e a gravação.
+- **Provisório até o Passo 3:** a nota. Se o jogador não emitiu som, vale **0** (isso já usa a gravação);
+  com voz, tom e ritmo ainda são sorteados. O cartão da nota avisa isso. A troca é em um lugar só:
+  `provisionalScore` em `src/audio/recording.ts`.
 
 ## Regras do turno
 
@@ -44,12 +42,47 @@ src/
   components/   UI: botões com gradiente, visualizador de áudio, botão de gravação, placar, nota…
   game/         lógica pura: tipos, catálogo de sons, máquina de estados da partida (+ testes)
   store/        estado da partida (zustand)
-  audio/        Passo 1: sinal sintético e simulação do turno (substituídos nos Passos 2–3)
+  audio/        motor de áudio, microfone (nativo e web), espectro → barras, fluxo de áudio do turno (+ testes)
   theme/        paleta única (Tailwind + gradientes) e utilitários de cor/brilho
 assets/images/  ícones e splash (gerados por scripts/make-icons.py)
+assets/sounds/  37 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
 ```
 
-Passos seguintes entram em `src/audio/` (motor de áudio) e `src/dsp/` (FFT, pitch, ritmo, nota).
+O Passo 3 entra em `src/dsp/` (FFT, pitch, ritmo, nota) e substitui `provisionalScore`.
+
+### Áudio
+
+```
+referência ──► alto-falante
+     └──────► AnalyserNode (FFT) ──► ganho 0 ──► saída      barras do visualizador
+microfone ───► AnalyserNode                                 (ramo mudo: sem microfonia)
+     └──────► blocos PCM ──► Recording { samples, sampleRate }   entrada do DSP
+```
+
+- `src/audio/engine.ts`: contexto de áudio único, decodificação com cache (a referência é pré-carregada
+  na tela "passe o celular") e reprodução com aviso de fim.
+- `src/audio/mic.ts`: `AudioRecorder` + `RecorderAdapterNode` do `react-native-audio-api`, 22,05 kHz mono;
+  pede a permissão do microfone ao começar a partida (com atalho para as configurações se negada).
+  `mic.web.ts` faz o mesmo no navegador com `getUserMedia`.
+- `src/audio/useAudioTurn.ts`: liga cada fase do turno ao áudio (tocar, gravar até parar/estourar a janela,
+  analisar) e limpa tudo se o jogador sair no meio.
+
+### Sons de referência
+
+37 sons em 4 categorias — **Animais** (cachorro, gato, galo, vaca, porco, ovelha, galinha, corvo, leão,
+cavalo), **Pessoas** (risada maligna, espirro, ronco, bebê, arroto), **Memes** (trombone triste, ba dum tss,
+scratch de DJ, buzina de torcida, caminhão do gás, toque de celular antigo, dun dun duuun, "flawless victory",
+"fire in the hole", "game over", grilos, boom) e **Efeitos** (buzina, sirene, apito de juiz, apito de trem,
+boing, despertador, descarga, robô, laser, vuvuzela).
+
+Todos são **CC0 ou domínio público** (origem de cada arquivo em `assets/sounds/CREDITS.md`): gravações dos
+repositórios ESC-50 (só clipes CC0), Sonic Pi, VCSL, Animal-Sounds, learntoread e CC0-Public-Domain-Sounds,
+mais efeitos sintetizados pelo próprio script. Memes que são trechos de TV, filmes, músicas ou vozes de
+pessoas (ex.: Faustão, Galvão, Chaves) **não** estão incluídos: são protegidos por direito autoral e de imagem.
+Os memes musicais usam obras em domínio público (Für Elise no caminhão do gás; Gran Vals no celular antigo).
+
+Para adicionar um som: inclua a fonte em `SOUNDS` no `scripts/build-sounds.py`, rode o script e adicione
+título/categoria em `src/game/sounds.ts` (um teste garante que os dois batem).
 
 ### Stack
 
@@ -70,7 +103,7 @@ botões que encolhem com mola ao toque (e crescem no *hover* do mouse, na web). 
 
 | Pacote | Para quê |
 |---|---|
-| `react-native-audio-api` (Software Mansion) | Web Audio nativo (Oboe no Android): `AudioRecorder` com buffers PCM do microfone, `AnalyserNode` (FFT em tempo real para as barras), `decodeAudioData` para os sons de referência, `DelayNode`/`WaveShaperNode` para as sabotagens (eco, distorção) e pedido de permissão do microfone. O *config plugin* adiciona `android.permission.RECORD_AUDIO`. |
+| `react-native-audio-api` (Software Mansion) | Web Audio nativo (Oboe no Android): `AudioRecorder` com buffers PCM do microfone, `AnalyserNode` (FFT em tempo real para as barras), `decodeAudioData` para os sons de referência, `DelayNode`/`WaveShaperNode` para as sabotagens (eco, distorção) e pedido de permissão do microfone. O *config plugin* (em `app.json`) adiciona só `android.permission.RECORD_AUDIO` — sem serviço em segundo plano. |
 | `expo-asset` | Resolve os arquivos de referência empacotados no app para decodificação. |
 | `expo-dev-client` | *Development build*: bibliotecas com código nativo não rodam no Expo Go. |
 | — (TypeScript próprio) | FFT radix-2, *pitch tracking* (YIN/autocorrelação), envelope RMS/ataques e alinhamento por DTW para a nota. Sem dependências externas nem APIs pagas. |
@@ -79,20 +112,32 @@ botões que encolhem com mola ao toque (e crescem no *hover* do mouse, na web). 
 
 ```bash
 npm install
-npm test            # máquina de estados da partida
+npm test            # máquina de estados, catálogo de sons, espectro → barras, gravação
 npm run typecheck
 npm run lint
-npx expo start      # Passo 1 roda no Expo Go: escaneie o QR code com o app Expo Go no Android
 ```
 
-`npm run web` abre no navegador (útil para testar a UI rapidamente).
+### Android
 
-A partir do Passo 2 (microfone), o app precisa de um *development build* ou APK:
+Com o microfone (Passo 2), o app usa módulo nativo de áudio e **não roda mais no Expo Go** — é preciso um
+*development build* ou APK (EAS, na nuvem da Expo; tem plano gratuito):
 
 ```bash
-npx eas-cli@latest build -p android --profile preview      # APK para instalar direto
-npx eas-cli@latest build -p android --profile development  # APK de desenvolvimento
+npx eas-cli@latest login
+npx eas-cli@latest build -p android --profile preview      # APK para instalar direto no celular
+npx eas-cli@latest build -p android --profile development  # APK de desenvolvimento (hot reload)
+npx expo start                                             # depois, com o APK de desenvolvimento instalado
 ```
 
-Os ícones são gerados a partir da marca (as mesmas barras do `LogoMark`):
-`pip install pillow && python3 scripts/make-icons.py`.
+Com Android Studio/SDK instalado localmente: `npm run android` (`expo run:android`).
+
+### Navegador
+
+`npm run web` roda o jogo completo, com microfone (o navegador pede permissão ao começar a partida).
+
+### Gerar os assets
+
+```bash
+pip install numpy imageio-ffmpeg && python3 scripts/build-sounds.py   # sons (baixa as fontes do GitHub)
+pip install pillow && python3 scripts/make-icons.py                   # ícones e splash
+```

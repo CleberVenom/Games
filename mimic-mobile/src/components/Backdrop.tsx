@@ -6,7 +6,7 @@ import { Gradient } from './Gradient';
 /** Fundo azul-noturno com brilhos neon difusos, atrás do conteúdo da tela. */
 export function Backdrop() {
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+    <View pointerEvents="none" style={[StyleSheet.absoluteFill, { overflow: 'hidden' }]}>
       <Gradient
         colors={[palette.night[900], palette.night[950], palette.night[950]]}
         className="flex-1"

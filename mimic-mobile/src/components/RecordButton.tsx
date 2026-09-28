@@ -51,7 +51,7 @@ export function RecordButton({ state, onPress, levels }: Props) {
       const lv = levels.value;
       let sum = 0;
       for (let i = 0; i < lv.length; i++) sum += lv[i];
-      return { opacity: 0.5, transform: [{ scale: 1.08 + (sum / lv.length) * 0.9 }] };
+      return { opacity: 0.5, transform: [{ scale: 1.08 + Math.min(sum / lv.length, 1) * 0.45 }] };
     }
     if (state === 'ready') {
       return { opacity: 0.4 - pulse.value * 0.25, transform: [{ scale: 1.08 + pulse.value * 0.22 }] };

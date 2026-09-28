@@ -1,0 +1,113 @@
+{
+  "dog-bark": {
+    "durationMs": 1018
+  },
+  "cat-meow": {
+    "durationMs": 1347
+  },
+  "rooster": {
+    "durationMs": 1746
+  },
+  "cow-moo": {
+    "durationMs": 1756
+  },
+  "pig-oink": {
+    "durationMs": 1227
+  },
+  "sheep-baa": {
+    "durationMs": 479
+  },
+  "hen-cluck": {
+    "durationMs": 948
+  },
+  "crow": {
+    "durationMs": 479
+  },
+  "lion-roar": {
+    "durationMs": 1676
+  },
+  "horse-neigh": {
+    "durationMs": 2155
+  },
+  "evil-laugh": {
+    "durationMs": 2315
+  },
+  "sneeze": {
+    "durationMs": 698
+  },
+  "snore": {
+    "durationMs": 2105
+  },
+  "baby-cry": {
+    "durationMs": 2504
+  },
+  "burp": {
+    "durationMs": 539
+  },
+  "sad-trombone": {
+    "durationMs": 2375
+  },
+  "rimshot": {
+    "durationMs": 1666
+  },
+  "record-scratch": {
+    "durationMs": 1058
+  },
+  "air-horn": {
+    "durationMs": 1527
+  },
+  "gas-truck": {
+    "durationMs": 2484
+  },
+  "old-phone": {
+    "durationMs": 2883
+  },
+  "dun-dun-dun": {
+    "durationMs": 2175
+  },
+  "flawless-victory": {
+    "durationMs": 1756
+  },
+  "fire-in-the-hole": {
+    "durationMs": 1317
+  },
+  "game-over": {
+    "durationMs": 1666
+  },
+  "crickets": {
+    "durationMs": 2604
+  },
+  "dramatic-boom": {
+    "durationMs": 1297
+  },
+  "car-horn": {
+    "durationMs": 2654
+  },
+  "siren": {
+    "durationMs": 2863
+  },
+  "referee-whistle": {
+    "durationMs": 1686
+  },
+  "train-whistle": {
+    "durationMs": 2444
+  },
+  "boing": {
+    "durationMs": 2105
+  },
+  "alarm-clock": {
+    "durationMs": 3093
+  },
+  "toilet-flush": {
+    "durationMs": 2604
+  },
+  "robot": {
+    "durationMs": 1217
+  },
+  "laser": {
+    "durationMs": 738
+  },
+  "vuvuzela": {
+    "durationMs": 1796
+  }
+}

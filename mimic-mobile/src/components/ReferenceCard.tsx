@@ -9,10 +9,9 @@ import { PressableScale } from './PressableScale';
 
 const CATEGORY_ICON: Record<SoundCategory, IconName> = {
   Animais: 'paw',
-  Veículos: 'car-sport',
-  Casa: 'home',
+  Pessoas: 'happy',
+  Memes: 'flame',
   Efeitos: 'flash',
-  Memes: 'happy',
 };
 
 const STATUS: Record<Phase, string> = {

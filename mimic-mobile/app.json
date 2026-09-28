@@ -36,7 +36,19 @@
           "imageWidth": 96
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "react-native-audio-api",
+        {
+          "iosBackgroundMode": false,
+          "androidForegroundService": false,
+          "androidPermissions": [
+            "android.permission.RECORD_AUDIO"
+          ],
+          "iosMicrophonePermission": "O Mimic Mobile usa o microfone para gravar a sua imitação e calcular a nota. O áudio não sai do aparelho."
+        }
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

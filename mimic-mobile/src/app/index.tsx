@@ -1,9 +1,10 @@
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
-import { KeyboardAvoidingView, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Linking, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown, FadeOut, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { prepareMic } from '../audio/mic';
 import { Avatar } from '../components/Avatar';
 import { Backdrop } from '../components/Backdrop';
 import { GradientButton } from '../components/Buttons';
@@ -55,7 +56,21 @@ export default function LobbyScreen() {
       return ps.map((p) => (p.key === key ? { ...p, color: nextFreeColor(p.color, taken) } : p));
     });
 
-  const begin = () => {
+  const [checkingMic, setCheckingMic] = useState(false);
+  const begin = async () => {
+    setCheckingMic(true);
+    const granted = await prepareMic();
+    setCheckingMic(false);
+    if (!granted) {
+      const message = 'O jogo precisa do microfone para gravar as imitações. Libere o acesso e tente de novo.';
+      if (Platform.OS === 'web') window.alert(message);
+      else
+        Alert.alert('Microfone bloqueado', message, [
+          { text: 'Agora não', style: 'cancel' },
+          { text: 'Abrir configurações', onPress: () => Linking.openSettings() },
+        ]);
+      return;
+    }
     start(players.map(({ name, color }) => ({ name, color })));
     router.push('/game');
   };
@@ -151,7 +166,12 @@ export default function LobbyScreen() {
         </ScrollView>
 
         <View className="px-5 pt-3" style={{ paddingBottom: insets.bottom + 16 }}>
-          <GradientButton label="Começar partida" icon="arrow-forward" onPress={begin} />
+          <GradientButton
+            label={checkingMic ? 'Verificando o microfone…' : 'Começar partida'}
+            icon="arrow-forward"
+            onPress={begin}
+            disabled={checkingMic}
+          />
         </View>
       </KeyboardAvoidingView>
     </View>
