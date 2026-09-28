@@ -1,4 +1,5 @@
 import { createMatch, Match, MatchEvent, recordingWindowMs, reduce, REPLAYS_PER_TURN } from '../match';
+import { MODIFIERS, ModifierId, pointsFor } from '../modifiers';
 import { SOUNDS } from '../sounds';
 
 const setup = [
@@ -14,21 +15,34 @@ function seeded(seed = 1) {
   };
 }
 
+/** rng que faz a roleta cair na casa `id`. */
+const landOn = (id: ModifierId) => () => (MODIFIERS.findIndex((m) => m.id === id) + 0.5) / MODIFIERS.length;
+
+/** Aplica os eventos em ordem; nos turnos auxiliares a roleta cai em "Nada acontece". */
 function run(match: Match, ...events: MatchEvent[]): Match {
-  return events.reduce((m, e) => reduce(m, e, seeded()), match);
+  return events.reduce((m, e) => reduce(m, e, e.type === 'spin' ? landOn('nothing') : seeded()), match);
 }
 
 const score = (total: number) => ({ type: 'scored', score: { total, pitch: total, rhythm: total } }) as const;
 
-/** Joga um turno completo sem usar a repetição. */
+/** Joga um turno completo sem usar a repetição (inclui girar a roleta). */
 const fullTurn = (total: number): MatchEvent[] => [
   { type: 'start' },
   { type: 'referenceEnded' },
   { type: 'record' },
   { type: 'recordingEnded' },
   score(total),
+  { type: 'spin' },
   { type: 'next' },
 ];
+
+
+/** Joga um turno com nota `total` e gira a roleta até cair em `id` (vale para o próximo jogador). */
+function turnLanding(match: Match, total: number, id: ModifierId): Match {
+  let m = run(match, ...fullTurn(total).slice(0, 5));
+  m = reduce(m, { type: 'spin' }, landOn(id));
+  return reduce(m, { type: 'next' });
+}
 
 describe('createMatch', () => {
   it('cria os jogadores zerados e dá nome padrão para nomes vazios', () => {
@@ -75,7 +89,17 @@ describe('turno', () => {
     const m = createMatch(setup, seeded());
     expect(reduce(m, { type: 'record' })).toBe(m);
     expect(reduce(m, score(50))).toBe(m);
+    expect(reduce(m, { type: 'spin' })).toBe(m);
     expect(reduce(m, { type: 'next' })).toBe(m);
+  });
+
+  it('depois da nota é preciso girar a roleta para passar a vez', () => {
+    const result = run(createMatch(setup, seeded()), ...fullTurn(60).slice(0, 5));
+    expect(result.phase).toBe('result');
+    expect(reduce(result, { type: 'next' })).toBe(result);
+    const wheel = reduce(result, { type: 'spin' }, landOn('echo'));
+    expect(wheel).toMatchObject({ phase: 'wheel', nextModifier: 'echo', modifier: null });
+    expect(reduce(wheel, { type: 'spin' })).toBe(wheel);
   });
 });
 
@@ -106,5 +130,50 @@ describe('recordingWindowMs', () => {
     expect(recordingWindowMs(900)).toBe(2500);
     expect(recordingWindowMs(2000)).toBe(3500);
     expect(recordingWindowMs(5000)).toBe(6000);
+  });
+
+  it('com "Tempo curto" a folga cai para 0,3 s (mínimo 1,5 s)', () => {
+    expect(recordingWindowMs(900, 'shortTime')).toBe(1500);
+    expect(recordingWindowMs(2000, 'shortTime')).toBe(2300);
+  });
+});
+
+describe('roleta', () => {
+  it('o efeito sorteado vale para o próximo jogador, só no turno dele', () => {
+    let m = turnLanding(createMatch(setup, seeded()), 50, 'double');
+    expect(m).toMatchObject({ current: 1, modifier: 'double', nextModifier: null });
+    m = turnLanding(m, 40, 'nothing');
+    expect(m.players.map((p) => p.score)).toEqual([50, 80, 0]);
+    expect(m).toMatchObject({ current: 2, modifier: 'nothing' });
+  });
+
+  it('"+15 pontos" só vale se o jogador fez algum som', () => {
+    expect(pointsFor(62, 'plus15')).toBe(77);
+    expect(pointsFor(0, 'plus15')).toBe(0);
+    let m = turnLanding(createMatch(setup, seeded()), 50, 'plus15');
+    m = run(m, ...fullTurn(70).slice(0, 5));
+    expect(m).toMatchObject({ lastPoints: 85, lastScore: { total: 70 } });
+    expect(m.players[1].score).toBe(85);
+  });
+
+  it('"Sem repetição" tira a repetição da referência', () => {
+    const m = turnLanding(createMatch(setup, seeded()), 50, 'noReplay');
+    expect(m.replaysLeft).toBe(0);
+    const ready = run(m, { type: 'start' }, { type: 'referenceEnded' });
+    expect(reduce(ready, { type: 'replay' })).toBe(ready);
+  });
+
+  it('sabotagens de som não mexem na pontuação', () => {
+    for (const id of ['echo', 'distortion', 'fast', 'telephone'] as const) expect(pointsFor(64, id)).toBe(64);
+  });
+
+  it('todas as casas podem sair', () => {
+    const seen = new Set<ModifierId>();
+    const rng = seeded(3);
+    for (let i = 0; i < 200; i++) {
+      const m = reduce(run(createMatch(setup, seeded()), ...fullTurn(10).slice(0, 5)), { type: 'spin' }, rng);
+      seen.add(m.nextModifier!);
+    }
+    expect(seen.size).toBe(MODIFIERS.length);
   });
 });

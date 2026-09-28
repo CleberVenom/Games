@@ -1,3 +1,4 @@
+import { ModifierId, MODIFIERS, pointsFor } from './modifiers';
 import { SOUNDS } from './sounds';
 import { Phase, Player, PlayerSetup, TurnScore } from './types';
 
@@ -16,6 +17,12 @@ export interface Match {
   deck: string[];
   replaysLeft: number;
   lastScore: TurnScore | null;
+  /** Pontos que a última nota rendeu, já com o modificador. */
+  lastPoints: number | null;
+  /** Efeito da roleta valendo neste turno (sorteado no fim do turno anterior). */
+  modifier: ModifierId | null;
+  /** Efeito sorteado na roleta deste turno; passa a valer no turno do próximo jogador. */
+  nextModifier: ModifierId | null;
 }
 
 export type MatchEvent =
@@ -25,6 +32,7 @@ export type MatchEvent =
   | { type: 'record' }
   | { type: 'recordingEnded' }
   | { type: 'scored'; score: TurnScore }
+  | { type: 'spin' }
   | { type: 'next' };
 
 type Rng = () => number;
@@ -38,8 +46,12 @@ export function shuffle<T>(items: readonly T[], rng: Rng): T[] {
   return out;
 }
 
-/** Janela de gravação: a duração da referência + folga, entre 2,5 s e 6 s. */
-export function recordingWindowMs(referenceMs: number): number {
+/**
+ * Janela de gravação: a duração da referência + folga, entre 2,5 s e 6 s.
+ * Com "Tempo curto" da roleta, a folga cai para 0,3 s (mínimo de 1,5 s).
+ */
+export function recordingWindowMs(referenceMs: number, modifier: ModifierId | null = null): number {
+  if (modifier === 'shortTime') return Math.min(6000, Math.max(1500, referenceMs + 300));
   return Math.min(6000, Math.max(2500, referenceMs + 1500));
 }
 
@@ -62,6 +74,9 @@ export function createMatch(setup: readonly PlayerSetup[], rng: Rng = Math.rando
     deck,
     replaysLeft: REPLAYS_PER_TURN,
     lastScore: null,
+    lastPoints: null,
+    modifier: null,
+    nextModifier: null,
   };
 }
 
@@ -90,18 +105,22 @@ export function reduce(match: Match, event: MatchEvent, rng: Rng = Math.random):
       return match.phase === 'ready' ? { ...match, phase: 'recording' } : match;
     case 'recordingEnded':
       return match.phase === 'recording' ? { ...match, phase: 'analyzing' } : match;
-    case 'scored':
+    case 'scored': {
       if (match.phase !== 'analyzing') return match;
+      const points = pointsFor(event.score.total, match.modifier);
       return {
         ...match,
         phase: 'result',
         lastScore: event.score,
-        players: match.players.map((p, i) =>
-          i === match.current ? { ...p, score: p.score + event.score.total } : p,
-        ),
+        lastPoints: points,
+        players: match.players.map((p, i) => (i === match.current ? { ...p, score: p.score + points } : p)),
       };
-    case 'next': {
+    }
+    case 'spin':
       if (match.phase !== 'result') return match;
+      return { ...match, phase: 'wheel', nextModifier: MODIFIERS[Math.floor(rng() * MODIFIERS.length)].id };
+    case 'next': {
+      if (match.phase !== 'wheel') return match;
       const current = (match.current + 1) % match.players.length;
       const [soundId, ...deck] = match.deck.length > 0 ? match.deck : refill(match.soundId, rng);
       return {
@@ -111,8 +130,11 @@ export function reduce(match: Match, event: MatchEvent, rng: Rng = Math.random):
         phase: 'handoff',
         soundId,
         deck,
-        replaysLeft: REPLAYS_PER_TURN,
+        replaysLeft: match.nextModifier === 'noReplay' ? 0 : REPLAYS_PER_TURN,
         lastScore: null,
+        lastPoints: null,
+        modifier: match.nextModifier,
+        nextModifier: null,
       };
     }
   }

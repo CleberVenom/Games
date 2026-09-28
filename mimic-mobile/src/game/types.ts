@@ -24,6 +24,6 @@ export interface TurnScore {
 /**
  * Fases de um turno:
  * handoff (passar o celular) → listening (referência tocando) → ready (pode repetir 1x ou gravar)
- * → recording (uma única chance) → analyzing → result.
+ * → recording (uma única chance) → analyzing → result → wheel (roleta do próximo turno).
  */
-export type Phase = 'handoff' | 'listening' | 'ready' | 'recording' | 'analyzing' | 'result';
+export type Phase = 'handoff' | 'listening' | 'ready' | 'recording' | 'analyzing' | 'result' | 'wheel';

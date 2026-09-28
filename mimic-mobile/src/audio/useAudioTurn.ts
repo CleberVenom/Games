@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Alert, Platform } from 'react-native';
 
 import type { MatchEvent } from '../game/match';
+import type { SoundEffect } from '../game/modifiers';
 import type { Phase } from '../game/types';
 import { prepareReference, scoreTurn } from './analysis';
 import { engine } from './engine';
@@ -19,7 +20,7 @@ function warn(message: string) {
 /**
  * Liga as fases do turno ao áudio real:
  * - handoff: pré-carrega e analisa a referência (toca sem atraso e a nota sai mais rápido);
- * - listening: toca a referência e avança quando ela termina;
+ * - listening: toca a referência (com a sabotagem de som da roleta) e avança quando ela termina;
  * - recording: grava o microfone até o jogador tocar em parar ou a janela acabar;
  * - analyzing: compara a gravação com a referência (src/dsp) e dá a nota.
  */
@@ -28,6 +29,7 @@ export function useAudioTurn(
   soundId: string,
   referenceMs: number,
   recordingMs: number,
+  effect: SoundEffect | null,
   dispatch: (event: MatchEvent) => void,
 ) {
   const recording = useRef<Promise<Recording> | null>(null);
@@ -43,9 +45,9 @@ export function useAudioTurn(
       prepareReference(soundId).catch(() => {});
     } else if (phase === 'listening') {
       // Rede de segurança: se o fim da reprodução não for notificado, avança mesmo assim.
-      after(referenceMs + 1500, { type: 'referenceEnded' });
+      after(referenceMs + 2500, { type: 'referenceEnded' });
       engine
-        .play(soundId)
+        .play(soundId, effect)
         .catch(() => warn('Não foi possível tocar o som de referência.'))
         .finally(() => active && dispatch({ type: 'referenceEnded' }));
     } else if (phase === 'recording') {
@@ -74,5 +76,5 @@ export function useAudioTurn(
       if (phase === 'listening') engine.stop();
       if (phase === 'recording') recording.current = stopRecording();
     };
-  }, [phase, soundId, referenceMs, recordingMs, dispatch]);
+  }, [phase, soundId, referenceMs, recordingMs, effect, dispatch]);
 }

@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 
+import { getModifier, ModifierId } from '../game/modifiers';
 import type { TurnScore } from '../game/types';
-import { glow, gradients, palette } from '../theme/tokens';
+import { glow, gradients, palette, withAlpha } from '../theme/tokens';
 import { Gradient } from './Gradient';
 import { Icon, IconName } from './Icon';
+import { KIND_STYLE, MODIFIER_ICON } from './ModifierBadge';
 
 function verdict(total: number): { label: string; color: string } {
   if (total >= 90) return { label: 'Lendário!', color: palette.mint[400] };
@@ -32,7 +34,16 @@ function useCountUp(target: number, durationMs: number): number {
   return value;
 }
 
-export function ScoreReveal({ score, playerName }: { score: TurnScore; playerName: string }) {
+interface Props {
+  score: TurnScore;
+  /** Pontos que entraram no placar (a nota com o bônus da roleta). */
+  points: number;
+  modifier: ModifierId | null;
+  playerName: string;
+}
+
+export function ScoreReveal({ score, points, modifier, playerName }: Props) {
+  const bonus = modifier && getModifier(modifier).kind === 'bonus' ? getModifier(modifier) : null;
   const shown = useCountUp(score.total, 900);
   const v = verdict(score.total);
   return (
@@ -56,6 +67,19 @@ export function ScoreReveal({ score, playerName }: { score: TurnScore; playerNam
       </View>
       <ScoreBar icon="musical-notes" label="Tom" value={score.pitch} colors={gradients.listen} delay={150} />
       <ScoreBar icon="pulse" label="Ritmo" value={score.rhythm} colors={gradients.primary} delay={300} />
+      {bonus && (
+        <View
+          className="flex-row items-center gap-2 rounded-2xl px-3 py-2.5"
+          style={{ backgroundColor: withAlpha(KIND_STYLE.bonus.accent, 0.12) }}>
+          <Icon name={MODIFIER_ICON[bonus.id]} size={16} color={KIND_STYLE.bonus.accent} />
+          <Text className="flex-1 font-label text-sm" style={{ color: KIND_STYLE.bonus.accent }}>
+            {bonus.title}
+          </Text>
+          <Text className="font-heading text-base text-mist-50">
+            {points > 0 ? `+${points} no placar` : 'sem som, sem bônus'}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

@@ -1,5 +1,6 @@
 import { Text, View } from 'react-native';
 
+import type { SoundEffect } from '../game/modifiers';
 import { ReferenceSound, SoundCategory } from '../game/sounds';
 import type { Phase } from '../game/types';
 import { gradients, palette } from '../theme/tokens';
@@ -21,17 +22,29 @@ const STATUS: Record<Phase, string> = {
   recording: 'Referência encerrada',
   analyzing: 'Referência encerrada',
   result: 'Referência encerrada',
+  wheel: 'Referência encerrada',
+};
+
+const PLAYING_WITH: Record<SoundEffect, string> = {
+  echo: 'Tocando com eco…',
+  distortion: 'Tocando distorcido…',
+  fast: 'Tocando acelerado…',
+  telephone: 'Tocando como numa ligação…',
 };
 
 interface Props {
   sound: ReferenceSound;
   phase: Phase;
   replaysLeft: number;
+  /** A roleta tirou a repetição deste turno. */
+  replayBlocked: boolean;
+  /** Sabotagem de som da roleta aplicada à referência. */
+  effect: SoundEffect | null;
   onReplay: () => void;
 }
 
 /** O som que deve ser imitado, com o botão da repetição permitida. */
-export function ReferenceCard({ sound, phase, replaysLeft, onReplay }: Props) {
+export function ReferenceCard({ sound, phase, replaysLeft, replayBlocked, effect, onReplay }: Props) {
   const seconds = (sound.durationMs / 1000).toFixed(1).replace('.', ',');
   const canReplay = phase === 'ready' && replaysLeft > 0;
 
@@ -61,7 +74,13 @@ export function ReferenceCard({ sound, phase, replaysLeft, onReplay }: Props) {
             <Text className="font-label text-xs text-cyan-300">Ouvir de novo ({replaysLeft}x)</Text>
           </PressableScale>
         ) : (
-          <Text className="font-body text-xs text-mist-400">{STATUS[phase]}</Text>
+          <Text className="font-body text-xs text-mist-400">
+            {phase === 'listening' && effect
+              ? PLAYING_WITH[effect]
+              : phase === 'ready' && replayBlocked
+                ? 'Sem repetição nesta vez (roleta)'
+                : STATUS[phase]}
+          </Text>
         )}
       </View>
     </View>

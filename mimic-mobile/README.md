@@ -15,7 +15,7 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | 1 | Estrutura do projeto + UI premium: cadastro de jogadores e tela de jogo com todas as fases do turno | ✅ |
 | 2 | Captura do microfone + player do som de referência + catálogo de 37 sons | ✅ |
 | 3 | DSP local: FFT, *pitch tracking* e curva de amplitude → nota | ✅ |
-| 4 | Roleta de modificadores/sabotagens no fim do turno | ⏳ |
+| 4 | Roleta de modificadores/sabotagens no fim do turno | ✅ |
 
 ### Como a nota é calculada (Passo 3)
 
@@ -41,11 +41,30 @@ Todos os parâmetros ficam em `TUNING` (`src/dsp/score.ts`) para calibrar com jo
 cobrem os blocos (FFT, reamostragem, pitch de 110/220/600 Hz, brilho), imitações sintéticas boas e ruins e uma
 regressão com os 37 sons reais: cada som contra ele mesmo dá 100; contra os outros, a média fica em torno de 31.
 
+### Roleta (Passo 4)
+
+Depois da nota, quem jogou toca em **Girar a roleta**: ela dá 5 voltas desacelerando (com vibração a cada
+casa) e o efeito sorteado vale **para o próximo jogador**, só no turno dele. O efeito aparece na tela "passe o
+celular", num selo ao lado do nome durante o turno e, se for bônus, no cartão da nota.
+
+| Tipo | Casas |
+|---|---|
+| **Bônus** | Pontos em dobro · +15 pontos (só se o jogador fizer algum som) |
+| **Sabotagem de som** | Eco · Distorção · Acelerado (1,6×, mais agudo) · Telefone (só 500 Hz–2,5 kHz) |
+| **Sabotagem de regra** | Sem repetição da referência · Tempo curto (gravação = referência + 0,3 s, mínimo 1,5 s) |
+| **Neutra** | Nada acontece |
+
+As sabotagens de som mudam **só a referência que o jogador ouve** (nós `DelayNode`, `WaveShaperNode`,
+`BiquadFilterNode` e `playbackRate`, em `src/audio/effects.ts`); a nota continua comparando com o som limpo.
+As 9 casas têm a mesma chance. A regra fica em `src/game/modifiers.ts` e na máquina de estados (fase
+`wheel`); a roleta desenhada (`src/components/Wheel.tsx`, SVG) só anima até a casa que a regra já sorteou.
+
 ## Regras do turno
 
 `handoff` (passe o celular) → `listening` (a referência toca **sozinha, uma vez**) → `ready` (pode **ouvir de
 novo 1 vez** ou gravar) → `recording` (**uma chance**, sem repetir; termina ao tocar ou no fim da janela de
-referência + 1,5 s, entre 2,5 s e 6 s) → `analyzing` → `result` (nota de tom, ritmo e total) → próximo jogador.
+referência + 1,5 s, entre 2,5 s e 6 s) → `analyzing` → `result` (nota de tom, ritmo e total) → `wheel` (roleta
+para o próximo turno) → próximo jogador.
 A rodada avança quando todos jogaram; os sons não se repetem até o baralho acabar.
 
 A máquina de estados é pura e testada: `src/game/match.ts` + `src/game/__tests__/match.test.ts`.
@@ -108,6 +127,7 @@ título/categoria em `src/game/sounds.ts` (um teste garante que os dois batem).
   compila as mesmas classes para estilos nativos. `1rem = 16px` também no celular (`inlineRem: 16`).
 - **Reanimated 4**: barras de áudio, halo do botão de gravação e toques animados rodam na thread de UI.
 - **expo-linear-gradient** (gradientes neon), **expo-haptics** (resposta tátil), fonte **Inter**.
+- **react-native-svg** 15.15 (versão do SDK 57, roda também no Expo Go e na web) para as fatias da roleta.
 
 ### Design
 

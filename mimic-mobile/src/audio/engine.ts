@@ -7,6 +7,8 @@ import {
   GainNode,
 } from 'react-native-audio-api';
 
+import type { SoundEffect } from '../game/modifiers';
+import { buildEffect } from './effects';
 import { SOUND_FILES } from './soundFiles';
 
 interface Playing {
@@ -17,8 +19,8 @@ interface Playing {
 /**
  * Motor de áudio (Web Audio nativo via react-native-audio-api: Oboe no Android, AVAudioEngine no iOS).
  *
- *   referência ──► alto-falante
- *        └──────► analisador ──► ganho 0 ──► saída   (o analisador precisa estar no grafo)
+ *   referência ──► [sabotagem da roleta] ──► alto-falante
+ *                                     └──────► analisador ──► ganho 0 ──► saída   (o analisador precisa estar no grafo)
  *   microfone ──► analisador                           (ligado por mic.ts / mic.web.ts)
  *
  * Um único AnalyserNode (FFT) alimenta as barras, tanto na referência quanto na gravação; o ramo
@@ -74,25 +76,39 @@ class AudioEngine {
     return pending;
   }
 
-  /** Toca a referência; resolve quando ela termina ou é interrompida por `stop()`. */
-  async play(id: string): Promise<void> {
+  /**
+   * Toca a referência (com a sabotagem de som da roleta, se houver); resolve quando ela termina —
+   * incluindo a cauda do eco — ou é interrompida por `stop()`.
+   */
+  async play(id: string, effect: SoundEffect | null = null): Promise<void> {
     const buffer = await this.load(id);
     await this.resume();
     this.stop();
     const ctx = this.context;
+    const output = ctx.createGain();
+    output.connect(ctx.destination);
+    output.connect(this.analyser);
+    const chain = buildEffect(ctx, effect, output);
     const source = ctx.createBufferSource();
     source.buffer = buffer;
-    source.connect(ctx.destination);
-    source.connect(this.analyser);
+    source.playbackRate.value = chain.playbackRate;
+    source.connect(chain.input);
     return new Promise<void>((resolve) => {
+      let tail: ReturnType<typeof setTimeout> | undefined;
       const playing: Playing = {
         source,
         done: () => {
+          clearTimeout(tail);
           if (this.playing === playing) this.playing = null;
+          source.disconnect();
+          chain.nodes.forEach((n) => n.disconnect());
+          output.disconnect();
           resolve();
         },
       };
-      source.onEnded = () => playing.done();
+      source.onEnded = () => {
+        tail = setTimeout(playing.done, chain.tailMs);
+      };
       this.playing = playing;
       source.start();
     });
@@ -103,7 +119,11 @@ class AudioEngine {
     if (!playing) return;
     this.playing = null;
     playing.source.onEnded = null;
-    playing.source.stop();
+    try {
+      playing.source.stop();
+    } catch {
+      // Já tinha terminado (estava só na cauda do eco).
+    }
     playing.done();
   }
 }

@@ -11,6 +11,7 @@ import { Avatar } from '../components/Avatar';
 import { Backdrop } from '../components/Backdrop';
 import { GradientButton } from '../components/Buttons';
 import { HandoffOverlay } from '../components/HandoffOverlay';
+import { ModifierBadge } from '../components/ModifierBadge';
 import { hapticImpact, hapticResult } from '../components/haptics';
 import { Icon } from '../components/Icon';
 import { PressableScale } from '../components/PressableScale';
@@ -18,7 +19,9 @@ import { RecordButton, RecordState } from '../components/RecordButton';
 import { ReferenceCard } from '../components/ReferenceCard';
 import { Scoreboard } from '../components/Scoreboard';
 import { ScoreReveal } from '../components/ScoreReveal';
+import { WheelOverlay } from '../components/WheelOverlay';
 import { Match, recordingWindowMs } from '../game/match';
+import { getModifier, soundEffectOf } from '../game/modifiers';
 import { getSound } from '../game/sounds';
 import type { Phase } from '../game/types';
 import { useMatch } from '../store/match';
@@ -34,6 +37,7 @@ const RECORD_STATE: Record<Phase, RecordState> = {
   recording: 'recording',
   analyzing: 'busy',
   result: 'busy',
+  wheel: 'busy',
 };
 
 export default function GameScreen() {
@@ -45,14 +49,16 @@ export default function GameScreen() {
 function Game({ match }: { match: Match }) {
   const insets = useSafeAreaInsets();
   const dispatch = useMatch((s) => s.dispatch);
-  const { phase, players, current, round, replaysLeft, lastScore } = match;
+  const { phase, players, current, round, replaysLeft, lastScore, lastPoints, modifier } = match;
   const player = players[current];
   const nextPlayer = players[(current + 1) % players.length];
   const sound = getSound(match.soundId);
-  const recordingMs = recordingWindowMs(sound.durationMs);
+  const recordingMs = recordingWindowMs(sound.durationMs, modifier);
+  const effect = soundEffectOf(modifier);
+  const activeModifier = modifier && modifier !== 'nothing' ? getModifier(modifier) : null;
 
   const levels = useVisualizerLevels(visualizerMode(phase), BAR_COUNT);
-  useAudioTurn(phase, sound.id, sound.durationMs, recordingMs, dispatch);
+  useAudioTurn(phase, sound.id, sound.durationMs, recordingMs, effect, dispatch);
 
   const recordStartedAt = useRef(0);
   const onRecordPress = () => {
@@ -127,12 +133,15 @@ function Game({ match }: { match: Match }) {
                 {player.name}
               </Text>
             </View>
+            {activeModifier && <ModifierBadge modifier={activeModifier} />}
           </View>
 
           <ReferenceCard
             sound={sound}
             phase={phase}
             replaysLeft={replaysLeft}
+            replayBlocked={modifier === 'noReplay'}
+            effect={effect}
             onReplay={() => dispatch({ type: 'replay' })}
           />
 
@@ -140,14 +149,10 @@ function Game({ match }: { match: Match }) {
         </View>
 
         <View className="px-5 pt-5">
-          {phase === 'result' && lastScore ? (
+          {(phase === 'result' || phase === 'wheel') && lastScore ? (
             <Animated.View entering={FadeInDown.duration(350)} style={{ gap: 16 }}>
-              <ScoreReveal score={lastScore} playerName={player.name} />
-              <GradientButton
-                label={`Próximo: ${nextPlayer.name}`}
-                icon="arrow-forward"
-                onPress={() => dispatch({ type: 'next' })}
-              />
+              <ScoreReveal score={lastScore} points={lastPoints ?? lastScore.total} modifier={modifier} playerName={player.name} />
+              <GradientButton label="Girar a roleta" icon="sync" onPress={() => dispatch({ type: 'spin' })} />
             </Animated.View>
           ) : (
             <RecordButton state={RECORD_STATE[phase]} onPress={onRecordPress} levels={levels} />
@@ -160,8 +165,19 @@ function Game({ match }: { match: Match }) {
           player={player}
           round={round}
           insets={insets}
+          modifier={modifier ? getModifier(modifier) : null}
+          replays={replaysLeft}
           onReady={() => dispatch({ type: 'start' })}
           onExit={exit}
+        />
+      )}
+
+      {phase === 'wheel' && match.nextModifier && (
+        <WheelOverlay
+          modifier={match.nextModifier}
+          nextPlayer={nextPlayer}
+          insets={insets}
+          onNext={() => dispatch({ type: 'next' })}
         />
       )}
     </View>

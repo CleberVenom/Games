@@ -30,6 +30,7 @@ const PHASE_UI: Record<Phase, { mode: VisualizerMode; label: string; accent: str
   recording: { mode: 'recording', label: 'Gravando', accent: palette.pink[400], live: true },
   analyzing: { mode: 'analyzing', label: 'Analisando tom e ritmo', accent: palette.violet[400], live: true },
   result: { mode: 'idle', label: 'Imitação avaliada', accent: palette.mint[400], live: false },
+  wheel: { mode: 'idle', label: 'Imitação avaliada', accent: palette.mint[400], live: false },
 };
 
 export function visualizerMode(phase: Phase): VisualizerMode {
