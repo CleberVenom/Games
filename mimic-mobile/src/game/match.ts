@@ -1,14 +1,24 @@
 import { ModifierId, MODIFIERS, pointsFor } from './modifiers';
-import { SOUNDS } from './sounds';
 import { Phase, Player, PlayerSetup, TurnScore } from './types';
 
 /** Repetições da referência permitidas por turno, além da execução automática. */
 export const REPLAYS_PER_TURN = 1;
 
+/** Mínimo de rodadas por partida; com 5 jogadores ou mais, uma rodada por jogador. */
+export const MIN_ROUNDS = 5;
+
+export function roundsFor(players: number): number {
+  return Math.max(MIN_ROUNDS, players);
+}
+
 export interface Match {
   players: Player[];
   /** Começa em 1 e avança quando todos os jogadores jogaram. */
   round: number;
+  /** Rodadas da partida: `roundsFor(jogadores)`. */
+  totalRounds: number;
+  /** Sons sorteáveis (dos packs escolhidos). */
+  pool: string[];
   /** Índice do jogador da vez em `players`. */
   current: number;
   phase: Phase;
@@ -33,7 +43,8 @@ export type MatchEvent =
   | { type: 'recordingEnded' }
   | { type: 'scored'; score: TurnScore }
   | { type: 'spin' }
-  | { type: 'next' };
+  | { type: 'next' }
+  | { type: 'finish' };
 
 type Rng = () => number;
 
@@ -55,19 +66,25 @@ export function recordingWindowMs(referenceMs: number, modifier: ModifierId | nu
   return Math.min(6000, Math.max(2500, referenceMs + 1500));
 }
 
-export function createMatch(setup: readonly PlayerSetup[], rng: Rng = Math.random): Match {
-  const [soundId, ...deck] = shuffle(
-    SOUNDS.map((s) => s.id),
-    rng,
-  );
+/** Última vez da partida: última rodada, último jogador. */
+export function isLastTurn(match: Match): boolean {
+  return match.round === match.totalRounds && match.current === match.players.length - 1;
+}
+
+export function createMatch(setup: readonly PlayerSetup[], pool: readonly string[], rng: Rng = Math.random): Match {
+  if (pool.length === 0) throw new Error('Escolha pelo menos um pack com sons.');
+  const [soundId, ...deck] = shuffle(pool, rng);
   return {
     players: setup.map((p, i) => ({
       id: `p${i + 1}`,
       name: p.name.trim() || `Jogador ${i + 1}`,
       color: p.color,
       score: 0,
+      best: null,
     })),
     round: 1,
+    totalRounds: roundsFor(setup.length),
+    pool: [...pool],
     current: 0,
     phase: 'handoff',
     soundId,
@@ -81,11 +98,8 @@ export function createMatch(setup: readonly PlayerSetup[], rng: Rng = Math.rando
 }
 
 /** Novo baralho quando o atual acaba, sem repetir o último som logo em seguida. */
-function refill(lastId: string, rng: Rng): string[] {
-  const deck = shuffle(
-    SOUNDS.map((s) => s.id),
-    rng,
-  );
+function refill(pool: readonly string[], lastId: string, rng: Rng): string[] {
+  const deck = shuffle(pool, rng);
   if (deck[0] === lastId) [deck[0], deck[deck.length - 1]] = [deck[deck.length - 1], deck[0]];
   return deck;
 }
@@ -113,16 +127,25 @@ export function reduce(match: Match, event: MatchEvent, rng: Rng = Math.random):
         phase: 'result',
         lastScore: event.score,
         lastPoints: points,
-        players: match.players.map((p, i) => (i === match.current ? { ...p, score: p.score + points } : p)),
+        players: match.players.map((p, i) =>
+          i === match.current
+            ? {
+                ...p,
+                score: p.score + points,
+                best:
+                  !p.best || event.score.total > p.best.total ? { total: event.score.total, soundId: match.soundId } : p.best,
+              }
+            : p,
+        ),
       };
     }
     case 'spin':
-      if (match.phase !== 'result') return match;
+      if (match.phase !== 'result' || isLastTurn(match)) return match;
       return { ...match, phase: 'wheel', nextModifier: MODIFIERS[Math.floor(rng() * MODIFIERS.length)].id };
     case 'next': {
       if (match.phase !== 'wheel') return match;
       const current = (match.current + 1) % match.players.length;
-      const [soundId, ...deck] = match.deck.length > 0 ? match.deck : refill(match.soundId, rng);
+      const [soundId, ...deck] = match.deck.length > 0 ? match.deck : refill(match.pool, match.soundId, rng);
       return {
         ...match,
         current,
@@ -137,5 +160,19 @@ export function reduce(match: Match, event: MatchEvent, rng: Rng = Math.random):
         nextModifier: null,
       };
     }
+    case 'finish':
+      return match.phase === 'result' && isLastTurn(match) ? { ...match, phase: 'finished' } : match;
   }
+}
+
+export interface Standing {
+  player: Player;
+  /** 1 = primeiro lugar; empates dividem a posição. */
+  place: number;
+}
+
+/** Classificação final: mais pontos primeiro, empates na mesma posição. */
+export function standings(players: readonly Player[]): Standing[] {
+  const sorted = [...players].sort((a, b) => b.score - a.score);
+  return sorted.map((player) => ({ player, place: sorted.findIndex((p) => p.score === player.score) + 1 }));
 }

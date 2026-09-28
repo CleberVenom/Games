@@ -1,19 +1,13 @@
 import { Text, View } from 'react-native';
 
 import type { SoundEffect } from '../game/modifiers';
-import { ReferenceSound, SoundCategory } from '../game/sounds';
+import type { Pack } from '../game/packs';
+import type { ReferenceSound } from '../game/sounds';
 import type { Phase } from '../game/types';
 import { gradients, palette } from '../theme/tokens';
 import { Gradient } from './Gradient';
 import { Icon, IconName } from './Icon';
 import { PressableScale } from './PressableScale';
-
-const CATEGORY_ICON: Record<SoundCategory, IconName> = {
-  Animais: 'paw',
-  Pessoas: 'happy',
-  Memes: 'flame',
-  Efeitos: 'flash',
-};
 
 const STATUS: Record<Phase, string> = {
   handoff: 'Toca sozinho quando o jogador estiver pronto',
@@ -23,6 +17,7 @@ const STATUS: Record<Phase, string> = {
   analyzing: 'Referência encerrada',
   result: 'Referência encerrada',
   wheel: 'Referência encerrada',
+  finished: 'Referência encerrada',
 };
 
 const PLAYING_WITH: Record<SoundEffect, string> = {
@@ -34,6 +29,8 @@ const PLAYING_WITH: Record<SoundEffect, string> = {
 
 interface Props {
   sound: ReferenceSound;
+  /** Pack do som (título e ícone). */
+  pack: Pick<Pack, 'title' | 'icon'>;
   phase: Phase;
   replaysLeft: number;
   /** A roleta tirou a repetição deste turno. */
@@ -44,7 +41,7 @@ interface Props {
 }
 
 /** O som que deve ser imitado, com o botão da repetição permitida. */
-export function ReferenceCard({ sound, phase, replaysLeft, replayBlocked, effect, onReplay }: Props) {
+export function ReferenceCard({ sound, pack, phase, replaysLeft, replayBlocked, effect, onReplay }: Props) {
   const seconds = (sound.durationMs / 1000).toFixed(1).replace('.', ',');
   const canReplay = phase === 'ready' && replaysLeft > 0;
 
@@ -55,11 +52,11 @@ export function ReferenceCard({ sound, phase, replaysLeft, replayBlocked, effect
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         className="h-14 w-14 items-center justify-center overflow-hidden rounded-2xl">
-        <Icon name={CATEGORY_ICON[sound.category]} size={26} color={palette.mist[50]} />
+        <Icon name={pack.icon as IconName} size={26} color={palette.mist[50]} />
       </Gradient>
       <View className="flex-1 gap-0.5">
-        <Text className="font-label text-[11px] uppercase tracking-[2px] text-cyan-400">
-          {sound.category} · {seconds} s
+        <Text className="font-label text-[11px] uppercase tracking-[2px] text-cyan-400" numberOfLines={1}>
+          {pack.title} · {seconds} s
         </Text>
         <Text className="font-heading text-lg text-mist-50" numberOfLines={1}>
           {sound.title}

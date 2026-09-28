@@ -12,6 +12,7 @@ import { Backdrop } from '../components/Backdrop';
 import { GradientButton } from '../components/Buttons';
 import { HandoffOverlay } from '../components/HandoffOverlay';
 import { ModifierBadge } from '../components/ModifierBadge';
+import { Podium } from '../components/Podium';
 import { hapticImpact, hapticResult } from '../components/haptics';
 import { Icon } from '../components/Icon';
 import { PressableScale } from '../components/PressableScale';
@@ -20,10 +21,10 @@ import { ReferenceCard } from '../components/ReferenceCard';
 import { Scoreboard } from '../components/Scoreboard';
 import { ScoreReveal } from '../components/ScoreReveal';
 import { WheelOverlay } from '../components/WheelOverlay';
-import { Match, recordingWindowMs } from '../game/match';
+import { isLastTurn, Match, recordingWindowMs } from '../game/match';
 import { getModifier, soundEffectOf } from '../game/modifiers';
-import { getSound } from '../game/sounds';
 import type { Phase } from '../game/types';
+import { findPack, findSound } from '../store/library';
 import { useMatch } from '../store/match';
 import { palette, PLAYER_HEX } from '../theme/tokens';
 
@@ -38,6 +39,7 @@ const RECORD_STATE: Record<Phase, RecordState> = {
   analyzing: 'busy',
   result: 'busy',
   wheel: 'busy',
+  finished: 'busy',
 };
 
 export default function GameScreen() {
@@ -49,10 +51,13 @@ export default function GameScreen() {
 function Game({ match }: { match: Match }) {
   const insets = useSafeAreaInsets();
   const dispatch = useMatch((s) => s.dispatch);
-  const { phase, players, current, round, replaysLeft, lastScore, lastPoints, modifier } = match;
+  const rematch = useMatch((s) => s.rematch);
+  const { phase, players, current, round, totalRounds, replaysLeft, lastScore, lastPoints, modifier } = match;
   const player = players[current];
   const nextPlayer = players[(current + 1) % players.length];
-  const sound = getSound(match.soundId);
+  const sound = findSound(match.soundId) ?? { id: match.soundId, title: 'Som removido', pack: '', durationMs: 1000 };
+  const pack = findPack(sound.pack) ?? { title: 'Pack removido', icon: 'help' };
+  const lastTurn = isLastTurn(match);
   const recordingMs = recordingWindowMs(sound.durationMs, modifier);
   const effect = soundEffectOf(modifier);
   const activeModifier = modifier && modifier !== 'nothing' ? getModifier(modifier) : null;
@@ -111,7 +116,7 @@ function Game({ match }: { match: Match }) {
             </PressableScale>
           </View>
           <View className="flex-1 items-center">
-            <Text className="font-label text-[11px] uppercase tracking-[3px] text-mist-400">Rodada {round}</Text>
+            <Text className="font-label text-[11px] uppercase tracking-[3px] text-mist-400">Rodada {round} de {totalRounds}</Text>
             <Text className="font-heading text-base text-mist-50">
               Turno {current + 1} de {players.length}
             </Text>
@@ -138,6 +143,7 @@ function Game({ match }: { match: Match }) {
 
           <ReferenceCard
             sound={sound}
+            pack={pack}
             phase={phase}
             replaysLeft={replaysLeft}
             replayBlocked={modifier === 'noReplay'}
@@ -152,7 +158,11 @@ function Game({ match }: { match: Match }) {
           {(phase === 'result' || phase === 'wheel') && lastScore ? (
             <Animated.View entering={FadeInDown.duration(350)} style={{ gap: 16 }}>
               <ScoreReveal score={lastScore} points={lastPoints ?? lastScore.total} modifier={modifier} playerName={player.name} />
-              <GradientButton label="Girar a roleta" icon="sync" onPress={() => dispatch({ type: 'spin' })} />
+              {lastTurn ? (
+                <GradientButton label="Ver o pódio" icon="trophy" onPress={() => dispatch({ type: 'finish' })} />
+              ) : (
+                <GradientButton label="Girar a roleta" icon="sync" onPress={() => dispatch({ type: 'spin' })} />
+              )}
             </Animated.View>
           ) : (
             <RecordButton state={RECORD_STATE[phase]} onPress={onRecordPress} levels={levels} />
@@ -178,6 +188,16 @@ function Game({ match }: { match: Match }) {
           nextPlayer={nextPlayer}
           insets={insets}
           onNext={() => dispatch({ type: 'next' })}
+        />
+      )}
+
+      {phase === 'finished' && (
+        <Podium
+          players={players}
+          rounds={totalRounds}
+          insets={insets}
+          onRematch={rematch}
+          onNewGame={() => router.dismissTo('/')}
         />
       )}
     </View>

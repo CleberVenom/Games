@@ -9,10 +9,18 @@ Saída:
 Todas as gravações vêm de repositórios no GitHub, em commits fixos, e são CC0 ou domínio público.
 Os sons marcados como "sintetizado" são gerados aqui mesmo (código original deste projeto, CC0).
 
+Packs pessoais (packs-pessoais/<pack>/pack.json + áudios, uso privado — veja packs-pessoais/README.md)
+viram assets/sounds/pessoais/<pack>/*.wav e src/audio/personalPacks.ts.
+
 Uso: pip install numpy imageio-ffmpeg && python3 scripts/build-sounds.py
+     --so-pessoais   só (re)processa os packs pessoais
+     --sem-pessoais  gera o app sem nenhum pack pessoal (ex.: versão para a loja)
 """
 import json
+import re
 import subprocess
+import sys
+import unicodedata
 import urllib.parse
 import urllib.request
 import wave
@@ -303,7 +311,69 @@ def build(spec: dict) -> np.ndarray:
     return finish(auto_trim(x, spec.get("max", 3.0)))
 
 
+PERSONAL_IN = ROOT / "packs-pessoais"
+PERSONAL_OUT = OUT / "pessoais"
+AUDIO_EXT = {".mp3", ".wav", ".ogg", ".oga", ".m4a", ".aac", ".flac", ".opus", ".webm"}
+PERSONAL_MAX_S = 5.0
+
+
+def slug(text: str) -> str:
+    ascii_text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", "-", ascii_text.lower()).strip("-") or "som"
+
+
+def build_personal(include: bool) -> None:
+    """Processa packs-pessoais/ e gera src/audio/personalPacks.ts (lista vazia com include=False)."""
+    packs = []
+    if include and PERSONAL_IN.exists():
+        for folder in sorted(p for p in PERSONAL_IN.iterdir() if (p / "pack.json").exists()):
+            meta = json.loads((folder / "pack.json").read_text(encoding="utf-8"))
+            pack_slug = slug(folder.name)
+            sounds = []
+            for audio in sorted(f for f in folder.iterdir() if f.suffix.lower() in AUDIO_EXT):
+                x = finish(auto_trim(decode(audio), PERSONAL_MAX_S))
+                name = slug(audio.stem)
+                dest = PERSONAL_OUT / pack_slug / f"{name}.wav"
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                write_wav(dest, x)
+                title = re.sub(r"[_-]+", " ", audio.stem).strip()
+                sounds.append((f"personal:{pack_slug}/{name}", title, round(len(x) / SR * 1000), dest))
+                print(f"pessoal {pack_slug}/{name:24} {len(x) / SR:5.2f} s")
+            if sounds:
+                packs.append((pack_slug, meta, sounds))
+
+    body = []
+    for pack_slug, meta, sounds in packs:
+        items = "\n".join(
+            f"      {{ id: {json.dumps(sid)}, title: {json.dumps(title, ensure_ascii=False)}, durationMs: {ms}, "
+            f"file: require('../../{dest.relative_to(ROOT).as_posix()}') }},"
+            for sid, title, ms, dest in sounds
+        )
+        body.append(
+            "  {\n"
+            f"    id: {json.dumps('personal:' + pack_slug)},\n"
+            f"    title: {json.dumps(meta.get('title', pack_slug), ensure_ascii=False)},\n"
+            f"    description: {json.dumps(meta.get('description', 'Pack pessoal'), ensure_ascii=False)},\n"
+            f"    icon: {json.dumps(meta.get('icon', 'albums'))},\n"
+            f"    sounds: [\n{items}\n    ],\n"
+            "  },"
+        )
+    (ROOT / "src" / "audio" / "personalPacks.ts").write_text(
+        "// Gerado por scripts/build-sounds.py — não edite à mão.\n"
+        "// Packs da pasta packs-pessoais/ (uso privado do grupo; veja packs-pessoais/README.md).\n\n"
+        "export interface PersonalPack {\n"
+        "  id: string;\n  title: string;\n  description: string;\n  icon: string;\n"
+        "  sounds: { id: string; title: string; durationMs: number; file: number }[];\n}\n\n"
+        "export const PERSONAL_PACKS: PersonalPack[] = ["
+        + ("\n" + "\n".join(body) + "\n" if body else "")
+        + "];\n"
+    )
+
+
 def main() -> None:
+    if "--so-pessoais" in sys.argv:
+        build_personal(include=True)
+        return
     OUT.mkdir(parents=True, exist_ok=True)
     manifest, credits = {}, []
     for spec in SOUNDS:
@@ -331,6 +401,7 @@ def main() -> None:
         "// Gerado por scripts/build-sounds.py — não edite à mão.\n"
         "export const SOUND_FILES: Record<string, number> = {\n" + "\n".join(lines) + "\n};\n"
     )
+    build_personal(include="--sem-pessoais" not in sys.argv)
 
 
 if __name__ == "__main__":

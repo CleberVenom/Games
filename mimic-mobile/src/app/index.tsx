@@ -11,9 +11,12 @@ import { GradientButton } from '../components/Buttons';
 import { Gradient } from '../components/Gradient';
 import { Icon, IconName } from '../components/Icon';
 import { LogoMark } from '../components/LogoMark';
+import { PackPicker } from '../components/PackPicker';
 import { PressableScale } from '../components/PressableScale';
-import { REPLAYS_PER_TURN } from '../game/match';
+import { REPLAYS_PER_TURN, roundsFor } from '../game/match';
+import { poolFrom } from '../game/packs';
 import { MAX_PLAYERS, MIN_PLAYERS, PLAYER_COLORS, PlayerColor } from '../game/types';
+import { allPacks, useLibrary } from '../store/library';
 import { useMatch } from '../store/match';
 import { gradients, palette } from '../theme/tokens';
 
@@ -56,8 +59,16 @@ export default function LobbyScreen() {
       return ps.map((p) => (p.key === key ? { ...p, color: nextFreeColor(p.color, taken) } : p));
     });
 
+  const custom = useLibrary((s) => s.custom);
+  const selectedIds = useLibrary((s) => s.selected);
+  const toggle = useLibrary((s) => s.toggle);
+  const packs = allPacks(custom);
+  const selected = new Set(selectedIds);
+  const pool = poolFrom(packs, selected);
+
   const [checkingMic, setCheckingMic] = useState(false);
   const begin = async () => {
+    if (pool.length === 0) return;
     setCheckingMic(true);
     const granted = await prepareMic();
     setCheckingMic(false);
@@ -71,7 +82,10 @@ export default function LobbyScreen() {
         ]);
       return;
     }
-    start(players.map(({ name, color }) => ({ name, color })));
+    start(
+      players.map(({ name, color }) => ({ name, color })),
+      pool,
+    );
     router.push('/game');
   };
 
@@ -156,6 +170,19 @@ export default function LobbyScreen() {
           </View>
 
           <View className="gap-3">
+            <View className="flex-row items-center justify-between px-1">
+              <View className="flex-row items-center gap-2">
+                <Icon name="albums" size={18} color={palette.violet[300]} />
+                <Text className="font-heading text-lg text-mist-50">Packs de sons</Text>
+              </View>
+              <Text className="font-label text-sm text-mist-400">
+                {pool.length} {pool.length === 1 ? 'som' : 'sons'}
+              </Text>
+            </View>
+            <PackPicker packs={packs} selected={selected} onToggle={toggle} />
+          </View>
+
+          <View className="gap-3">
             <Text className="px-1 font-label text-[11px] uppercase tracking-[3px] text-mist-500">Como jogar</Text>
             <View className="flex-row gap-3">
               <Step icon="ear" title="Ouça" text={`Toca 1x, com ${REPLAYS_PER_TURN} repetição`} colors={gradients.listen} />
@@ -165,12 +192,17 @@ export default function LobbyScreen() {
           </View>
         </ScrollView>
 
-        <View className="px-5 pt-3" style={{ paddingBottom: insets.bottom + 16 }}>
+        <View className="gap-2 px-5 pt-3" style={{ paddingBottom: insets.bottom + 16 }}>
+          <Text className="text-center font-ui text-xs text-mist-400">
+            {pool.length === 0
+              ? 'Escolha pelo menos um pack de sons'
+              : `${players.length} jogadores · ${roundsFor(players.length)} rodadas · ${pool.length} sons`}
+          </Text>
           <GradientButton
             label={checkingMic ? 'Verificando o microfone…' : 'Começar partida'}
             icon="arrow-forward"
             onPress={begin}
-            disabled={checkingMic}
+            disabled={checkingMic || pool.length === 0}
           />
         </View>
       </KeyboardAvoidingView>

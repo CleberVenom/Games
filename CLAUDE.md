@@ -89,6 +89,8 @@ Nenhuma tela "padrão" ou rudimentar. Toda UI segue:
   Teste o fluxo de áudio no Chromium com `--use-fake-device-for-media-stream` e
   `--use-file-for-fake-audio-capture=<arquivo.wav>` (um cenário com voz e outro com silêncio).
 - TypeScript 6: `"types": ["jest", "expo/types"]` no `tsconfig.json`.
+- `expo prebuild` reescreve os scripts do `package.json`: desfaça só os scripts (`npm pkg set scripts.x=...`),
+  **nunca** `git checkout package.json` com dependências novas ainda não commitadas.
 - `babel-preset-expo` e `nativewind/babel` aplicam o plugin de worklets duas vezes; a saída é idêntica
   (idempotente) — mantenha a configuração oficial do NativeWind.
 
@@ -98,3 +100,8 @@ Sons, imagens, músicas e fontes só com licença clara (CC0, domínio público 
 compatível com distribuição). Registre origem e licença de cada arquivo num `CREDITS.md`. Trechos de TV,
 filmes, músicas e vozes de pessoas (inclusive memes) são protegidos por direito autoral/imagem: não
 entram no repositório sem autorização — prefira recriações próprias ou material CC0.
+
+**Exceção decidida pelo dono do repositório (privado):** `mimic-mobile/packs-pessoais/` guarda packs de uso
+privado do grupo (memes, anime…), adicionados por ele. Não apague nem "limpe" essa pasta; não adicione você
+mesmo conteúdo protegido nela; e lembre que um app gerado com ela não pode ser publicado (use
+`scripts/build-sounds.py --sem-pessoais` para a versão pública).

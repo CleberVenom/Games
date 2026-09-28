@@ -31,6 +31,7 @@ const PHASE_UI: Record<Phase, { mode: VisualizerMode; label: string; accent: str
   analyzing: { mode: 'analyzing', label: 'Analisando tom e ritmo', accent: palette.violet[400], live: true },
   result: { mode: 'idle', label: 'Imitação avaliada', accent: palette.mint[400], live: false },
   wheel: { mode: 'idle', label: 'Imitação avaliada', accent: palette.mint[400], live: false },
+  finished: { mode: 'idle', label: 'Imitação avaliada', accent: palette.mint[400], live: false },
 };
 
 export function visualizerMode(phase: Phase): VisualizerMode {
@@ -47,11 +48,6 @@ interface Props {
 /** Cartão central: status da fase + barras de áudio animadas (+ progresso ao gravar). */
 export function VisualizerCard({ phase, levels, recordingMs }: Props) {
   const ui = PHASE_UI[phase];
-  const colors = useMemo(
-    () =>
-      Array.from({ length: BAR_COUNT }, (_, i) => sampleGradient(MODE_STOPS[ui.mode], i / (BAR_COUNT - 1))),
-    [ui.mode],
-  );
 
   return (
     <View
@@ -69,13 +65,26 @@ export function VisualizerCard({ phase, levels, recordingMs }: Props) {
         )}
       </View>
 
-      <View className="flex-1 flex-row items-center justify-between py-3">
-        {colors.map((color, i) => (
-          <Bar key={i} index={i} color={color} levels={levels} />
-        ))}
+      <View className="flex-1 py-3">
+        <Bars mode={ui.mode} levels={levels} />
       </View>
 
       {phase === 'recording' && <RecordingProgress durationMs={recordingMs} />}
+    </View>
+  );
+}
+
+/** Fileira de barras coloridas pelo gradiente do modo; a altura vem de `levels` (0–1). */
+export function Bars({ mode, levels }: { mode: VisualizerMode; levels: SharedValue<number[]> }) {
+  const colors = useMemo(
+    () => Array.from({ length: BAR_COUNT }, (_, i) => sampleGradient(MODE_STOPS[mode], i / (BAR_COUNT - 1))),
+    [mode],
+  );
+  return (
+    <View className="flex-1 flex-row items-center justify-between">
+      {colors.map((color, i) => (
+        <Bar key={i} index={i} color={color} levels={levels} />
+      ))}
     </View>
   );
 }

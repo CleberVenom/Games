@@ -1,4 +1,3 @@
-import { Asset } from 'expo-asset';
 import {
   AnalyserNode,
   AudioBuffer,
@@ -9,7 +8,7 @@ import {
 
 import type { SoundEffect } from '../game/modifiers';
 import { buildEffect } from './effects';
-import { SOUND_FILES } from './soundFiles';
+import { resolveSource } from './sources';
 
 interface Playing {
   source: AudioBufferSourceNode;
@@ -65,15 +64,16 @@ class AudioEngine {
   load(id: string): Promise<AudioBuffer> {
     let pending = this.buffers.get(id);
     if (!pending) {
-      pending = (async () => {
-        const asset = Asset.fromModule(SOUND_FILES[id]);
-        if (!asset.localUri) await asset.downloadAsync();
-        return this.context.decodeAudioData(asset.localUri ?? asset.uri);
-      })();
+      pending = resolveSource(id).then((source) => this.context.decodeAudioData(source));
       pending.catch(() => this.buffers.delete(id));
       this.buffers.set(id, pending);
     }
     return pending;
+  }
+
+  /** Decodifica um áudio qualquer (arquivo importado no editor de packs). */
+  decode(source: string | ArrayBuffer): Promise<AudioBuffer> {
+    return this.context.decodeAudioData(source);
   }
 
   /**

@@ -12,6 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useLibrary } from '../store/library';
 import { palette } from '../theme/tokens';
 
 SplashScreen.preventAutoHideAsync();
@@ -37,11 +38,17 @@ export default function RootLayout() {
     Inter_800ExtraBold,
   });
 
+  const libraryReady = useLibrary((s) => s.hydrated);
   useEffect(() => {
-    if (loaded || error) SplashScreen.hideAsync();
-  }, [loaded, error]);
+    useLibrary.getState().hydrate();
+  }, []);
 
-  if (!loaded && !error) return null;
+  const ready = (loaded || error) && libraryReady;
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
+
+  if (!ready) return null;
 
   return (
     <SafeAreaProvider>

@@ -1,6 +1,8 @@
-import { createMatch, Match, MatchEvent, recordingWindowMs, reduce, REPLAYS_PER_TURN } from '../match';
+import { createMatch, isLastTurn, Match, MatchEvent, recordingWindowMs, reduce, REPLAYS_PER_TURN, roundsFor, standings } from '../match';
 import { MODIFIERS, ModifierId, pointsFor } from '../modifiers';
 import { SOUNDS } from '../sounds';
+
+const POOL = SOUNDS.map((s) => s.id);
 
 const setup = [
   { name: 'Ana', color: 'violet' as const },
@@ -46,21 +48,21 @@ function turnLanding(match: Match, total: number, id: ModifierId): Match {
 
 describe('createMatch', () => {
   it('cria os jogadores zerados e dá nome padrão para nomes vazios', () => {
-    const m = createMatch(setup, seeded());
+    const m = createMatch(setup, POOL, seeded());
     expect(m.players.map((p) => p.name)).toEqual(['Ana', 'Jogador 2', 'Caio']);
     expect(m.players.every((p) => p.score === 0)).toBe(true);
     expect(m).toMatchObject({ round: 1, current: 0, phase: 'handoff', replaysLeft: REPLAYS_PER_TURN });
   });
 
   it('usa todos os sons, sem repetir, entre o som atual e o baralho', () => {
-    const m = createMatch(setup, seeded());
+    const m = createMatch(setup, POOL, seeded());
     expect([m.soundId, ...m.deck].sort()).toEqual(SOUNDS.map((s) => s.id).sort());
   });
 });
 
 describe('turno', () => {
   it('segue handoff → listening → ready → recording → analyzing → result', () => {
-    let m = createMatch(setup, seeded());
+    let m = createMatch(setup, POOL, seeded());
     const phases = [m.phase];
     for (const e of fullTurn(80).slice(0, 5)) {
       m = reduce(m, e);
@@ -72,7 +74,7 @@ describe('turno', () => {
   });
 
   it('permite ouvir a referência de novo só uma vez', () => {
-    let m = run(createMatch(setup, seeded()), { type: 'start' }, { type: 'referenceEnded' });
+    let m = run(createMatch(setup, POOL, seeded()), { type: 'start' }, { type: 'referenceEnded' });
     m = reduce(m, { type: 'replay' });
     expect(m).toMatchObject({ phase: 'listening', replaysLeft: 0 });
     m = run(m, { type: 'referenceEnded' }, { type: 'replay' });
@@ -80,13 +82,13 @@ describe('turno', () => {
   });
 
   it('não deixa repetir a referência depois de começar a gravar (uma chance só)', () => {
-    const m = run(createMatch(setup, seeded()), { type: 'start' }, { type: 'referenceEnded' }, { type: 'record' });
+    const m = run(createMatch(setup, POOL, seeded()), { type: 'start' }, { type: 'referenceEnded' }, { type: 'record' });
     expect(reduce(m, { type: 'replay' })).toBe(m);
     expect(reduce(m, { type: 'record' })).toBe(m);
   });
 
   it('ignora eventos fora de hora', () => {
-    const m = createMatch(setup, seeded());
+    const m = createMatch(setup, POOL, seeded());
     expect(reduce(m, { type: 'record' })).toBe(m);
     expect(reduce(m, score(50))).toBe(m);
     expect(reduce(m, { type: 'spin' })).toBe(m);
@@ -94,7 +96,7 @@ describe('turno', () => {
   });
 
   it('depois da nota é preciso girar a roleta para passar a vez', () => {
-    const result = run(createMatch(setup, seeded()), ...fullTurn(60).slice(0, 5));
+    const result = run(createMatch(setup, POOL, seeded()), ...fullTurn(60).slice(0, 5));
     expect(result.phase).toBe('result');
     expect(reduce(result, { type: 'next' })).toBe(result);
     const wheel = reduce(result, { type: 'spin' }, landOn('echo'));
@@ -105,7 +107,7 @@ describe('turno', () => {
 
 describe('rodadas', () => {
   it('passa a vez em ordem, soma os pontos e avança a rodada quando todos jogaram', () => {
-    let m = createMatch(setup, seeded());
+    let m = createMatch(setup, POOL, seeded());
     m = run(m, ...fullTurn(70), ...fullTurn(40));
     expect(m).toMatchObject({ round: 1, current: 2, phase: 'handoff', replaysLeft: REPLAYS_PER_TURN, lastScore: null });
     m = run(m, ...fullTurn(90), ...fullTurn(10));
@@ -114,7 +116,7 @@ describe('rodadas', () => {
   });
 
   it('só repete sons depois de usar o baralho inteiro, e nunca o mesmo som duas vezes seguidas', () => {
-    let m = createMatch(setup, seeded(7));
+    let m: Match = { ...createMatch(setup, POOL, seeded(7)), totalRounds: 999 };
     const played = [m.soundId];
     for (let i = 0; i < SOUNDS.length * 3; i++) {
       m = run(m, ...fullTurn(50));
@@ -140,7 +142,7 @@ describe('recordingWindowMs', () => {
 
 describe('roleta', () => {
   it('o efeito sorteado vale para o próximo jogador, só no turno dele', () => {
-    let m = turnLanding(createMatch(setup, seeded()), 50, 'double');
+    let m = turnLanding(createMatch(setup, POOL, seeded()), 50, 'double');
     expect(m).toMatchObject({ current: 1, modifier: 'double', nextModifier: null });
     m = turnLanding(m, 40, 'nothing');
     expect(m.players.map((p) => p.score)).toEqual([50, 80, 0]);
@@ -150,14 +152,14 @@ describe('roleta', () => {
   it('"+15 pontos" só vale se o jogador fez algum som', () => {
     expect(pointsFor(62, 'plus15')).toBe(77);
     expect(pointsFor(0, 'plus15')).toBe(0);
-    let m = turnLanding(createMatch(setup, seeded()), 50, 'plus15');
+    let m = turnLanding(createMatch(setup, POOL, seeded()), 50, 'plus15');
     m = run(m, ...fullTurn(70).slice(0, 5));
     expect(m).toMatchObject({ lastPoints: 85, lastScore: { total: 70 } });
     expect(m.players[1].score).toBe(85);
   });
 
   it('"Sem repetição" tira a repetição da referência', () => {
-    const m = turnLanding(createMatch(setup, seeded()), 50, 'noReplay');
+    const m = turnLanding(createMatch(setup, POOL, seeded()), 50, 'noReplay');
     expect(m.replaysLeft).toBe(0);
     const ready = run(m, { type: 'start' }, { type: 'referenceEnded' });
     expect(reduce(ready, { type: 'replay' })).toBe(ready);
@@ -171,9 +173,69 @@ describe('roleta', () => {
     const seen = new Set<ModifierId>();
     const rng = seeded(3);
     for (let i = 0; i < 200; i++) {
-      const m = reduce(run(createMatch(setup, seeded()), ...fullTurn(10).slice(0, 5)), { type: 'spin' }, rng);
+      const m = reduce(run(createMatch(setup, POOL, seeded()), ...fullTurn(10).slice(0, 5)), { type: 'spin' }, rng);
       seen.add(m.nextModifier!);
     }
     expect(seen.size).toBe(MODIFIERS.length);
+  });
+});
+
+describe('rodadas e fim de partida', () => {
+  it('são 5 rodadas com até 5 jogadores e uma por jogador acima disso', () => {
+    expect([2, 3, 4, 5, 6].map(roundsFor)).toEqual([5, 5, 5, 5, 6]);
+    expect(createMatch(setup, POOL, seeded()).totalRounds).toBe(5);
+  });
+
+  it('a última vez da última rodada não gira a roleta: termina no pódio', () => {
+    let m = createMatch(setup.slice(0, 2), POOL, seeded());
+    for (let t = 0; t < 9; t++) m = run(m, ...fullTurn(10 * t));
+    expect(m).toMatchObject({ round: 5, current: 1, phase: 'handoff' });
+    m = run(m, ...fullTurn(55).slice(0, 5));
+    expect(isLastTurn(m)).toBe(true);
+    expect(reduce(m, { type: 'spin' })).toBe(m);
+    m = reduce(m, { type: 'finish' });
+    expect(m.phase).toBe('finished');
+    expect(m.players.map((p) => p.score)).toEqual([0 + 20 + 40 + 60 + 80, 10 + 30 + 50 + 70 + 55]);
+  });
+
+  it('não termina antes da hora', () => {
+    const m = run(createMatch(setup, POOL, seeded()), ...fullTurn(50).slice(0, 5));
+    expect(reduce(m, { type: 'finish' })).toBe(m);
+  });
+
+  it('guarda a melhor imitação de cada jogador', () => {
+    let m = createMatch(setup.slice(0, 2), POOL, seeded());
+    const first = m.soundId;
+    m = run(m, ...fullTurn(70), ...fullTurn(20), ...fullTurn(40));
+    expect(m.players[0].best).toEqual({ total: 70, soundId: first });
+    expect(m.players[1].best?.total).toBe(20);
+  });
+
+  it('classificação: mais pontos primeiro, empate divide a posição', () => {
+    const base = createMatch(setup, POOL, seeded()).players;
+    const players = base.map((p, i) => ({ ...p, score: [120, 300, 120][i] }));
+    expect(standings(players).map((s) => [s.player.name, s.place])).toEqual([
+      ['Jogador 2', 1],
+      ['Ana', 2],
+      ['Caio', 2],
+    ]);
+  });
+});
+
+describe('sons dos packs escolhidos', () => {
+  it('só sorteia sons do pool e o reabastece quando acaba', () => {
+    const pool = ['dog-bark', 'cat-meow', 'rooster'];
+    let m: Match = { ...createMatch(setup, pool, seeded(5)), totalRounds: 99 };
+    const played = [m.soundId];
+    for (let i = 0; i < 9; i++) {
+      m = run(m, ...fullTurn(30));
+      played.push(m.soundId);
+    }
+    expect(new Set(played)).toEqual(new Set(pool));
+    for (let i = 1; i < played.length; i++) expect(played[i]).not.toBe(played[i - 1]);
+  });
+
+  it('exige pelo menos um som', () => {
+    expect(() => createMatch(setup, [], seeded())).toThrow();
   });
 });

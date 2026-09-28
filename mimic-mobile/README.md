@@ -16,6 +16,7 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | 2 | Captura do microfone + player do som de referência + catálogo de 37 sons | ✅ |
 | 3 | DSP local: FFT, *pitch tracking* e curva de amplitude → nota | ✅ |
 | 4 | Roleta de modificadores/sabotagens no fim do turno | ✅ |
+| + | Rodadas, pódio, seleção de packs, editor de packs no app e packs pessoais | ✅ |
 
 ### Como a nota é calculada (Passo 3)
 
@@ -59,13 +60,35 @@ As sabotagens de som mudam **só a referência que o jogador ouve** (nós `Delay
 As 9 casas têm a mesma chance. A regra fica em `src/game/modifiers.ts` e na máquina de estados (fase
 `wheel`); a roleta desenhada (`src/components/Wheel.tsx`, SVG) só anima até a casa que a regra já sorteou.
 
+### Partida, rodadas e pódio
+
+A partida tem **5 rodadas** com até 5 jogadores e **uma rodada por jogador** acima disso (6 jogadores → 6
+rodadas). O cabeçalho mostra "Rodada X de N". Na última vez da última rodada não há roleta: o botão vira
+**Ver o pódio** — 1º, 2º e 3º em degraus animados, demais colocados em lista, melhor imitação de cada um e
+empates dividindo a posição. **Jogar de novo** repete jogadores e packs com o placar zerado.
+
+### Packs de sons
+
+Como no Mimic Party, a partida sorteia só os sons dos **packs marcados** na tela inicial (a seleção fica salva):
+
+| Origem | O que é | Onde fica |
+|---|---|---|
+| **Oficial** | Animais · Vozes · Memes & zoeira · Máquinas & efeitos (os 37 sons CC0) | `assets/sounds/` |
+| **Pessoal** | Seus packs de uso privado (memes BR/gringos, anime…) empacotados no app | `packs-pessoais/` — veja o [README](packs-pessoais/README.md) |
+| **Meu pack** | Criados no próprio celular, no editor: grave pelo microfone ou importe MP3/WAV/M4A/OGG | só no aparelho |
+
+O **editor de packs** (botão "Criar pack" ou o lápis de um pack seu) tem nome, ícone e lista de sons com
+ouvir, renomear e remover. Cada som passa pelo mesmo tratamento dos oficiais (`src/dsp/clip.ts`): silêncio
+cortado, volume igualado e no máximo 5 s. O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
+lista de packs no AsyncStorage (`src/store/library.ts`).
+
 ## Regras do turno
 
 `handoff` (passe o celular) → `listening` (a referência toca **sozinha, uma vez**) → `ready` (pode **ouvir de
 novo 1 vez** ou gravar) → `recording` (**uma chance**, sem repetir; termina ao tocar ou no fim da janela de
 referência + 1,5 s, entre 2,5 s e 6 s) → `analyzing` → `result` (nota de tom, ritmo e total) → `wheel` (roleta
 para o próximo turno) → próximo jogador.
-A rodada avança quando todos jogaram; os sons não se repetem até o baralho acabar.
+A rodada avança quando todos jogaram; os sons dos packs escolhidos não se repetem até o baralho acabar.
 
 A máquina de estados é pura e testada: `src/game/match.ts` + `src/game/__tests__/match.test.ts`.
 
@@ -128,6 +151,7 @@ título/categoria em `src/game/sounds.ts` (um teste garante que os dois batem).
 - **Reanimated 4**: barras de áudio, halo do botão de gravação e toques animados rodam na thread de UI.
 - **expo-linear-gradient** (gradientes neon), **expo-haptics** (resposta tátil), fonte **Inter**.
 - **react-native-svg** 15.15 (versão do SDK 57, roda também no Expo Go e na web) para as fatias da roleta.
+- **expo-file-system**, **expo-document-picker** e **AsyncStorage** (versões do SDK 57) para os packs criados no app.
 
 ### Design
 
@@ -149,7 +173,7 @@ botões que encolhem com mola ao toque (e crescem no *hover* do mouse, na web). 
 
 ```bash
 npm install
-npm test            # máquina de estados, catálogo de sons, espectro → barras, DSP e nota
+npm test            # partida, rodadas e pódio, packs, catálogo, espectro → barras, DSP, nota e recorte de sons
 npm run typecheck
 npm run lint
 ```
