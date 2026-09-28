@@ -166,20 +166,19 @@ instala esse APK no celular.
 
    | Pergunta (em inglês) | O que responder |
    |---|---|
-   | *Would you like to automatically create an EAS project for @seu-usuario/mimic-mobile?* | Aperte **Enter** (= sim) |
-   | *Generate a new Android Keystore?* (a "assinatura" do app) | Aperte **Enter** (= sim) |
+   | *Generate a new Android Keystore?* (a "assinatura" do app; só aparece se ainda não existir) | Aperte **Enter** (= sim) |
    | Qualquer outra pergunta de sim/não | Aperte **Enter** (a resposta padrão serve) |
 
 5. O terminal envia o projeto para a Expo e mostra um link **"Build details: https://expo.dev/…"**.
    A fabricação leva, em média, **10 a 30 minutos** (no plano gratuito às vezes há fila e demora mais).
    - Pode deixar a janela aberta esperando **ou** fechar — a fabricação continua na nuvem.
-   - Para acompanhar: abra o link mostrado, ou entre em **expo.dev** → seu projeto **mimic-mobile** → **Builds**.
+   - Para acompanhar: abra o link mostrado, ou entre em **expo.dev** → conta **v3-app** → projeto **cleber-santarosa** → **Builds**.
 6. Quando terminar, aparece **"Build finished"**, um **QR code** e um link para baixar o arquivo `.apk`.
 
 ### 3.4 Instalar o APK no celular
 
 1. No celular, **aponte a câmera para o QR code** (no terminal ou na página do build) e toque no link que aparecer.
-   Alternativa: abra **expo.dev** no navegador do celular, entre na sua conta → **mimic-mobile** → **Builds** →
+   Alternativa: abra **expo.dev** no navegador do celular, entre na sua conta → **v3-app** → **cleber-santarosa** → **Builds** →
    o build mais recente → **Install**.
 2. Baixe o arquivo `.apk` e toque nele para abrir (ou vá em **Arquivos → Downloads**).
 3. O Android vai avisar que não pode instalar apps "desta fonte". Toque em **Configurações** → ative

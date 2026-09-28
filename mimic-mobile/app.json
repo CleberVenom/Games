@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Mimic Mobile",
-    "slug": "mimic-mobile",
+    "slug": "cleber-santarosa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -52,6 +52,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c97490be-bb95-418b-9124-bea84ec6cb4b"
+      }
+    },
+    "owner": "v3-app"
   }
 }
