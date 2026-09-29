@@ -9,6 +9,7 @@ import {
 import type { SoundEffect } from '../game/modifiers';
 import { buildEffect } from './effects';
 import { resolveSource } from './sources';
+import { ANALYSER } from './spectrum';
 
 interface Playing {
   source: AudioBufferSourceNode;
@@ -34,10 +35,10 @@ class AudioEngine {
     if (!this.nodes) {
       const ctx = new AudioContext();
       const analyser = ctx.createAnalyser();
-      analyser.fftSize = 1024;
-      analyser.minDecibels = -85;
-      analyser.maxDecibels = -20;
-      analyser.smoothingTimeConstant = 0.55;
+      analyser.fftSize = ANALYSER.fftSize;
+      analyser.minDecibels = ANALYSER.minDecibels;
+      analyser.maxDecibels = ANALYSER.maxDecibels;
+      analyser.smoothingTimeConstant = ANALYSER.smoothing;
       const mute: GainNode = ctx.createGain();
       mute.gain.value = 0;
       analyser.connect(mute);

@@ -2,8 +2,16 @@ import { OFFICIAL_PACKS, Pack, poolFrom } from '../packs';
 import { SOUNDS } from '../sounds';
 
 describe('packs oficiais', () => {
-  it('são Animais, Vozes, Memes & zoeira e Máquinas & efeitos, com todos os 37 sons, sem repetir', () => {
-    expect(OFFICIAL_PACKS.map((p) => p.title)).toEqual(['Animais', 'Vozes', 'Memes & zoeira', 'Máquinas & efeitos']);
+  it('são os 7 packs oficiais, com todos os sons do catálogo, sem repetir', () => {
+    expect(OFFICIAL_PACKS.map((p) => p.title)).toEqual([
+      'Animais',
+      'Vozes',
+      'Memes & zoeira',
+      'Máquinas & efeitos',
+      'Games & 8-bit',
+      'Casa & cotidiano',
+      'Natureza & clima',
+    ]);
     const ids = OFFICIAL_PACKS.flatMap((p) => p.sounds.map((s) => s.id));
     expect(ids.sort()).toEqual(SOUNDS.map((s) => s.id).sort());
     expect(OFFICIAL_PACKS.every((p) => p.sounds.length > 0 && p.source === 'official')).toBe(true);

@@ -11,7 +11,7 @@ import Animated, {
 
 import type { VisualizerMode } from '../audio/useVisualizerLevels';
 import type { Phase } from '../game/types';
-import { glow, gradients, palette, sampleGradient } from '../theme/tokens';
+import { glow, gradients, palette, sampleGradient, withAlpha } from '../theme/tokens';
 import { Gradient } from './Gradient';
 
 export const BAR_COUNT = 32;
@@ -43,11 +43,14 @@ interface Props {
   levels: SharedValue<number[]>;
   /** Janela de gravação, para a barra de progresso. */
   recordingMs: number;
+  /** Silhueta do som original (0–1 por barra): fica fixa atrás das barras na hora de imitar. */
+  profile: number[] | null;
 }
 
-/** Cartão central: status da fase + barras de áudio animadas (+ progresso ao gravar). */
-export function VisualizerCard({ phase, levels, recordingMs }: Props) {
+/** Cartão central: status da fase + barras de áudio animadas (+ silhueta e progresso ao imitar). */
+export function VisualizerCard({ phase, levels, recordingMs, profile }: Props) {
   const ui = PHASE_UI[phase];
+  const ghost = phase === 'ready' || phase === 'recording' ? profile : null;
 
   return (
     <View
@@ -60,22 +63,37 @@ export function VisualizerCard({ phase, levels, recordingMs }: Props) {
         </View>
         {phase === 'recording' && (
           <Text className="font-ui text-xs text-mist-400">
-            máx. {(recordingMs / 1000).toFixed(1).replace('.', ',')} s
+            {(recordingMs / 1000).toFixed(1).replace('.', ',')} s
           </Text>
         )}
       </View>
 
       <View className="flex-1 py-3">
-        <Bars mode={ui.mode} levels={levels} />
+        <Bars mode={ui.mode} levels={levels} ghost={ghost} />
       </View>
 
+      {ghost && <Legend />}
       {phase === 'recording' && <RecordingProgress durationMs={recordingMs} />}
     </View>
   );
 }
 
-/** Fileira de barras coloridas pelo gradiente do modo; a altura vem de `levels` (0–1). */
-export function Bars({ mode, levels }: { mode: VisualizerMode; levels: SharedValue<number[]> }) {
+/** Altura (0–1) que uma barra ao vivo teria com o nível `v` do espectro — a mesma regra do visualizador. */
+const barHeight = (v: number) => 0.06 + 0.94 * Math.min(Math.max(v, 0), 1);
+
+/**
+ * Fileira de barras coloridas pelo gradiente do modo; a altura vem de `levels` (0–1).
+ * Com `ghost`, a silhueta do som original fica fixa e translúcida atrás de cada barra.
+ */
+export function Bars({
+  mode,
+  levels,
+  ghost = null,
+}: {
+  mode: VisualizerMode;
+  levels: SharedValue<number[]>;
+  ghost?: number[] | null;
+}) {
   const colors = useMemo(
     () => Array.from({ length: BAR_COUNT }, (_, i) => sampleGradient(MODE_STOPS[mode], i / (BAR_COUNT - 1))),
     [mode],
@@ -83,7 +101,23 @@ export function Bars({ mode, levels }: { mode: VisualizerMode; levels: SharedVal
   return (
     <View className="flex-1 flex-row items-center justify-between">
       {colors.map((color, i) => (
-        <Bar key={i} index={i} color={color} levels={levels} />
+        <View key={i} className="h-full items-center justify-center" style={{ width: 7 }}>
+          {ghost && (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                width: 7,
+                height: `${6 + barHeight(ghost[i] ?? 0) * 94}%`,
+                borderRadius: 4,
+                borderWidth: 1,
+                borderColor: withAlpha(palette.cyan[300], 0.55),
+                backgroundColor: withAlpha(palette.cyan[400], 0.16),
+              }}
+            />
+          )}
+          <Bar index={i} color={color} levels={levels} />
+        </View>
       ))}
     </View>
   );
@@ -95,6 +129,31 @@ function Bar({ index, color, levels }: { index: number; color: string; levels: S
     return { height: `${6 + v * 94}%`, opacity: 0.35 + 0.65 * v };
   });
   return <Animated.View style={[{ width: 5, borderRadius: 3, backgroundColor: color }, animated]} />;
+}
+
+/** Legenda da comparação: silhueta = som original; barras = voz ao vivo. */
+function Legend() {
+  return (
+    <View className="flex-row items-center justify-center gap-5 pb-3">
+      <View className="flex-row items-center gap-2">
+        <View
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: 3,
+            borderWidth: 1,
+            borderColor: withAlpha(palette.cyan[300], 0.7),
+            backgroundColor: withAlpha(palette.cyan[400], 0.2),
+          }}
+        />
+        <Text className="font-ui text-xs text-mist-200">Som original</Text>
+      </View>
+      <View className="flex-row items-center gap-2">
+        <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: palette.pink[400] }} />
+        <Text className="font-ui text-xs text-mist-200">Sua voz</Text>
+      </View>
+    </View>
+  );
 }
 
 function StatusDot({ color, live }: { color: string; live: boolean }) {

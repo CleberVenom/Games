@@ -16,7 +16,7 @@ import { Gradient } from '../../components/Gradient';
 import { hapticImpact } from '../../components/haptics';
 import { Icon, IconName } from '../../components/Icon';
 import { PressableScale } from '../../components/PressableScale';
-import { CLIP_RATE, encodeWav, MAX_CLIP_SECONDS, prepareClip } from '../../dsp/clip';
+import { CLIP_RATE, encodeWav, MAX_CLIP_SECONDS, MIN_CLIP_SECONDS, prepareClip } from '../../dsp/clip';
 import { CustomSound, newId, useLibrary } from '../../store/library';
 import { glow, gradients, palette, withAlpha } from '../../theme/tokens';
 
@@ -86,6 +86,14 @@ export default function PackEditorScreen() {
     if (!clip) {
       setMode('idle');
       notify('Nenhum som encontrado', 'O áudio está em silêncio ou muito baixo. Tente de novo mais perto do microfone.');
+      return;
+    }
+    if (clip.length / CLIP_RATE < MIN_CLIP_SECONDS) {
+      setMode('idle');
+      notify(
+        'Som muito curto',
+        `Depois de cortar o silêncio, o som precisa ter pelo menos ${MIN_CLIP_SECONDS} segundos: a imitação dura o mesmo tempo que ele.`,
+      );
       return;
     }
     const soundId = newId('sound');
@@ -277,8 +285,8 @@ export default function PackEditorScreen() {
                 <Icon name="albums" size={30} color={palette.mist[500]} />
                 <Text className="text-center font-label text-sm text-mist-200">Nenhum som ainda</Text>
                 <Text className="text-center font-body text-xs leading-5 text-mist-400">
-                  Grave com o microfone ou importe um áudio (MP3, WAV, M4A, OGG). Cada som fica com até{' '}
-                  {MAX_CLIP_SECONDS} s: o silêncio é cortado e o volume é ajustado sozinho.
+                  Grave com o microfone ou importe um áudio (MP3, WAV, M4A, OGG). Cada som fica com{' '}
+                  {MIN_CLIP_SECONDS} a {MAX_CLIP_SECONDS} s: o silêncio é cortado e o volume é ajustado sozinho.
                 </Text>
               </View>
             )}

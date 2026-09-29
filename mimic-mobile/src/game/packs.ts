@@ -1,4 +1,4 @@
-import { OfficialPackId, ReferenceSound, SOUNDS } from './sounds';
+import { OFFICIAL_PACK_IDS, OfficialPackId, ReferenceSound, SOUNDS } from './sounds';
 
 /** De onde vem o pack: incluso no app, da pasta packs-pessoais/ do repositório ou criado no celular. */
 export type PackSource = 'official' | 'personal' | 'custom';
@@ -14,13 +14,16 @@ export interface Pack {
 }
 
 const OFFICIAL: Record<OfficialPackId, Omit<Pack, 'id' | 'source' | 'sounds'>> = {
-  animais: { title: 'Animais', description: 'Latidos, miados, mugidos e rugidos', icon: 'paw' },
-  vozes: { title: 'Vozes', description: 'Risadas, espirros, roncos e outros sons de gente', icon: 'happy' },
-  memes: { title: 'Memes & zoeira', description: 'Trombone triste, ba dum tss, caminhão do gás…', icon: 'flame' },
-  maquinas: { title: 'Máquinas & efeitos', description: 'Buzinas, sirenes, apitos e alarmes', icon: 'flash' },
+  animais: { title: 'Animais', description: 'Latidos, miados, zurros e uivos', icon: 'paw' },
+  vozes: { title: 'Vozes', description: 'Risadas, arrotos, roncos e outros sons de gente', icon: 'happy' },
+  memes: { title: 'Memes & zoeira', description: 'Trombone triste, caminhão do gás, internet discada…', icon: 'flame' },
+  maquinas: { title: 'Máquinas & efeitos', description: 'Buzinas, sirenes, motores e ferramentas', icon: 'flash' },
+  games: { title: 'Games & 8-bit', description: 'Narrador de luta, moedinhas, power-up e fliperama', icon: 'game-controller' },
+  casa: { title: 'Casa & cotidiano', description: 'Panela de pressão, campainha, zíper e liquidificador', icon: 'home' },
+  natureza: { title: 'Natureza & clima', description: 'Chuva, trovão, arara, bugio e cigarra', icon: 'leaf' },
 };
 
-export const OFFICIAL_PACKS: readonly Pack[] = (Object.keys(OFFICIAL) as OfficialPackId[]).map((id) => ({
+export const OFFICIAL_PACKS: readonly Pack[] = OFFICIAL_PACK_IDS.map((id) => ({
   id,
   source: 'official',
   ...OFFICIAL[id],

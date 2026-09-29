@@ -8,6 +8,11 @@ Pasta para os **seus** packs (memes BR, memes gringos, trechos de anime, sons do
 > esses sons **não pode ser publicado** (Play Store etc.) — para a versão pública, gere o app sem eles
 > (veja abaixo). Os packs criados pelo editor dentro do app ficam só no celular e não passam por aqui.
 
+## Pack pronto para usar: Animes & filmes
+
+A pasta `animes-e-filmes/` já está criada, com o `pack.json`. Coloque ali os trechos (em português) e rode
+o passo 4 abaixo. Enquanto a pasta não tiver áudios, o pack não aparece no app.
+
 ## Como adicionar um pack
 
 1. Crie uma pasta por pack, por exemplo `packs-pessoais/memes-br/`.
@@ -30,12 +35,13 @@ Pasta para os **seus** packs (memes BR, memes gringos, trechos de anime, sons do
    ```
 
    Cada áudio é tratado como os sons oficiais: o silêncio é cortado, o volume é igualado e o som fica com
-   **no máximo 5 segundos** (o trecho mais forte). O resultado vai para `assets/sounds/pessoais/` e a lista
-   para `src/audio/personalPacks.ts`.
+   **2 a 5 segundos** (se passar de 5 s, fica o trecho mais forte). Áudios que ficarem **com menos de 2 s**
+   depois do corte são **descartados** (o script avisa): a gravação da imitação dura o mesmo tempo que o
+   som. O resultado vai para `assets/sounds/pessoais/` e a lista para `src/audio/personalPacks.ts`.
 5. Faça commit da pasta do pack, de `assets/sounds/pessoais/` e de `src/audio/personalPacks.ts`. Os packs
    aparecem na tela inicial com o selo **Pessoal**.
 
-Dica: sons curtos e marcantes (1 a 3 s) são os mais divertidos de imitar e os que o jogo avalia melhor.
+Dica: trechos marcantes de 2 a 4 s são os mais divertidos de imitar e os que o jogo avalia melhor.
 
 ## Versão pública, sem os packs pessoais
 

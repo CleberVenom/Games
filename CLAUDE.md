@@ -22,9 +22,14 @@ Nunca escolha stack de memória. No início de cada projeto (e ao adicionar qual
    - manutenção ativa, suporte a Android (prioridade) e iOS, e se roda no Expo Go ou exige *development build*.
 3. **Prefira** o módulo oficial do framework (ex.: módulos `expo-*`) > biblioteca madura e mantida > código próprio.
 4. **Registre a escolha e o porquê** no README do projeto (tabela "Stack").
-5. Pesquisa na web: use `WebSearch`/`WebFetch`. Neste ambiente de nuvem só GitHub, npm e PyPI são
-   baixáveis; `docs.expo.dev` e `api.expo.dev` são bloqueados — leia a documentação pelo código-fonte no
+5. Pesquisa na web: use `WebSearch`/`WebFetch`. A rede deste ambiente de nuvem foi liberada (set/2026):
+   GitHub, npm, PyPI, `expo.dev`/`api.expo.dev` (EAS Build com o `EXPO_TOKEN` do ambiente), Freesound,
+   OpenGameArt e Kenney funcionam; pixabay continua bloqueado. Se um site falhar, confira
+   `curl -sS "$HTTPS_PROXY/__agentproxy/status"`; sem acesso à Expo, leia a documentação pelo código-fonte no
    GitHub (ex.: `expo/expo/docs/pages/...`) e use `EXPO_OFFLINE=1 npx expo install ...`.
+6. Sons livres: prefira CC0/domínio público (ESC-50 só com clipes marcados `[CC0]` no LICENSE; prévias HQ de
+   sons CC0 do Freesound; packs CC0 da Kenney/OpenGameArt). Confira cada candidato com um espectrograma antes
+   de usar, e registre a origem no `CREDITS.md`.
 
 ### Stack já validada (set/2026) — ponto de partida, revalide as versões
 

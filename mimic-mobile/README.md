@@ -13,10 +13,11 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | Passo | O quê | Status |
 |---|---|---|
 | 1 | Estrutura do projeto + UI premium: cadastro de jogadores e tela de jogo com todas as fases do turno | ✅ |
-| 2 | Captura do microfone + player do som de referência + catálogo de 37 sons | ✅ |
+| 2 | Captura do microfone + player do som de referência + catálogo de sons | ✅ |
 | 3 | DSP local: FFT, *pitch tracking* e curva de amplitude → nota | ✅ |
 | 4 | Roleta de modificadores/sabotagens no fim do turno | ✅ |
 | + | Rodadas, pódio, seleção de packs, editor de packs no app e packs pessoais | ✅ |
+| + | 1ª rodada de testes: gravação com o tempo do som (sem parar), silhueta do som original, 97 sons em 7 packs | ✅ |
 
 ### Como a nota é calculada (Passo 3)
 
@@ -28,7 +29,7 @@ Tudo roda no aparelho, em TypeScript puro (`src/dsp/`), sem bibliotecas nem APIs
    - **energia** em dB → a curva de amplitude (ritmo/ataques);
    - **pitch** pelo método de McLeod (NSDF a partir da autocorrelação via FFT), de 65 a 1000 Hz; quadros sem
      periodicidade clara ficam "sem tom";
-   - **centroide espectral** → o "brilho", que faz o papel de tom nos sons de ruído (espirro, descarga, arroto).
+   - **centroide espectral** → o "brilho", que faz o papel de tom nos sons de ruído (chuva, descarga, arroto).
 3. **Trecho ativo** — o silêncio antes e depois é ignorado (atrasar o começo não perde ponto).
 4. **Tom (0–100)** — contornos em semitons, em 24 fatias de tempo, comparados **sem exigir o mesmo tom de voz**
    (o deslocamento médio é descontado e erros de oitava não contam): imitar o galo uma oitava abaixo vale; imitar a
@@ -40,7 +41,8 @@ Tudo roda no aparelho, em TypeScript puro (`src/dsp/`), sem bibliotecas nem APIs
 
 Todos os parâmetros ficam em `TUNING` (`src/dsp/score.ts`) para calibrar com jogadores de verdade. Os testes
 cobrem os blocos (FFT, reamostragem, pitch de 110/220/600 Hz, brilho), imitações sintéticas boas e ruins e uma
-regressão com os 37 sons reais: cada som contra ele mesmo dá 100; contra os outros, a média fica em torno de 31.
+regressão com os 97 sons reais: cada som contra ele mesmo dá 100; contra os outros, nenhum passa de 90 e a média
+fica em torno de 29.
 
 ### Roleta (Passo 4)
 
@@ -52,7 +54,7 @@ celular", num selo ao lado do nome durante o turno e, se for bônus, no cartão 
 |---|---|
 | **Bônus** | Pontos em dobro · +15 pontos (só se o jogador fizer algum som) |
 | **Sabotagem de som** | Eco · Distorção · Acelerado (1,6×, mais agudo) · Telefone (só 500 Hz–2,5 kHz) |
-| **Sabotagem de regra** | Sem repetição da referência · Tempo curto (gravação = referência + 0,3 s, mínimo 1,5 s) |
+| **Sabotagem de regra** | Sem repetição da referência · Tempo curto (a gravação dura só 70% do tempo do som) |
 | **Neutra** | Nada acontece |
 
 As sabotagens de som mudam **só a referência que o jogador ouve** (nós `DelayNode`, `WaveShaperNode`,
@@ -73,21 +75,26 @@ Como no Mimic Party, a partida sorteia só os sons dos **packs marcados** na tel
 
 | Origem | O que é | Onde fica |
 |---|---|---|
-| **Oficial** | Animais · Vozes · Memes & zoeira · Máquinas & efeitos (os 37 sons CC0) | `assets/sounds/` |
+| **Oficial** | Animais · Vozes · Memes & zoeira · Máquinas & efeitos · Games & 8-bit · Casa & cotidiano · Natureza & clima (97 sons CC0) | `assets/sounds/` |
 | **Pessoal** | Seus packs de uso privado (memes BR/gringos, anime…) empacotados no app | `packs-pessoais/` — veja o [README](packs-pessoais/README.md) |
 | **Meu pack** | Criados no próprio celular, no editor: grave pelo microfone ou importe MP3/WAV/M4A/OGG | só no aparelho |
 
 O **editor de packs** (botão "Criar pack" ou o lápis de um pack seu) tem nome, ícone e lista de sons com
 ouvir, renomear e remover. Cada som passa pelo mesmo tratamento dos oficiais (`src/dsp/clip.ts`): silêncio
-cortado, volume igualado e no máximo 5 s. O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
+cortado, volume igualado e **de 2 a 5 s** (mais curto que 2 s é recusado, com aviso). O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
 lista de packs no AsyncStorage (`src/store/library.ts`).
 
 ## Regras do turno
 
 `handoff` (passe o celular) → `listening` (a referência toca **sozinha, uma vez**) → `ready` (pode **ouvir de
-novo 1 vez** ou gravar) → `recording` (**uma chance**, sem repetir; termina ao tocar ou no fim da janela de
-referência + 1,5 s, entre 2,5 s e 6 s) → `analyzing` → `result` (nota de tom, ritmo e total) → `wheel` (roleta
-para o próximo turno) → próximo jogador.
+novo 1 vez** ou gravar) → `recording` (**uma chance**, sem repetir e **sem botão de parar**: dura exatamente o
+tempo do som original, com um anel de contagem regressiva) → `analyzing` → `result` (nota de tom, ritmo e
+total) → `wheel` (roleta para o próximo turno) → próximo jogador.
+
+Na hora de imitar (`ready` e `recording`), a **silhueta do som original** fica fixa e translúcida atrás das
+barras: é a média das barras do som, calculada com a mesma FFT do analisador (`referenceProfile` em
+`src/audio/spectrum.ts`). As barras da voz oscilam por cima, e o jogador tenta preencher a silhueta.
+Todo som tem de **2 a 5 s** (os mais curtos ficam fora do catálogo), para a gravação nunca ser curta demais.
 A rodada avança quando todos jogaram; os sons dos packs escolhidos não se repetem até o baralho acabar.
 
 A máquina de estados é pura e testada: `src/game/match.ts` + `src/game/__tests__/match.test.ts`.
@@ -104,7 +111,7 @@ src/
   dsp/          FFT, reamostragem, extração de pitch/energia/brilho e a nota (+ testes)
   theme/        paleta única (Tailwind + gradientes) e utilitários de cor/brilho
 assets/images/  ícones e splash (gerados por scripts/make-icons.py)
-assets/sounds/  37 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
+assets/sounds/  97 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
 ```
 
 
@@ -122,26 +129,37 @@ microfone ───► AnalyserNode                                 (ramo mudo: 
 - `src/audio/mic.ts`: `AudioRecorder` + `RecorderAdapterNode` do `react-native-audio-api`, 22,05 kHz mono;
   pede a permissão do microfone ao começar a partida (com atalho para as configurações se negada).
   `mic.web.ts` faz o mesmo no navegador com `getUserMedia`.
-- `src/audio/useAudioTurn.ts`: liga cada fase do turno ao áudio (tocar, gravar até parar/estourar a janela,
-  analisar) e limpa tudo se o jogador sair no meio.
+- `src/audio/useAudioTurn.ts`: liga cada fase do turno ao áudio (tocar, gravar pelo tempo do som, analisar)
+  e limpa tudo se o jogador sair no meio.
 - `src/audio/analysis.ts`: analisa a referência já na tela "passe o celular" (com cache) e dá a nota da gravação.
+  Também calcula a silhueta do som original (`prepareProfile`), mostrada atrás das barras na hora de imitar.
 
 ### Sons de referência
 
-37 sons em 4 categorias — **Animais** (cachorro, gato, galo, vaca, porco, ovelha, galinha, corvo, leão,
-cavalo), **Pessoas** (risada maligna, espirro, ronco, bebê, arroto), **Memes** (trombone triste, ba dum tss,
-scratch de DJ, buzina de torcida, caminhão do gás, toque de celular antigo, dun dun duuun, "flawless victory",
-"fire in the hole", "game over", grilos, boom) e **Efeitos** (buzina, sirene, apito de juiz, apito de trem,
-boing, despertador, descarga, robô, laser, vuvuzela).
+97 sons em 7 packs (todos com 2 a 5 s):
+
+| Pack | Sons |
+|---|---|
+| **Animais** (16) | cachorro, gato, galo, vaca, porco, ovelha, galinha, corvo, leão, cavalo, burro, pato, cabra, lobo, baleia, águia |
+| **Vozes** (11) | risada maligna, ronco, bebê, arroto, risada de criança, tosse, palmas, bocejo, soluço, gargarejo, grito de queda |
+| **Memes & zoeira** (14) | trombone triste, scratch de DJ, buzina de torcida, caminhão do gás, celular antigo, dun dun duuun, "fire in the hole", grilos, boom dramático, apito de desenho, rufar de tambores, vaia, internet discada, parabéns pra você |
+| **Máquinas & efeitos** (17) | buzina, sirene, apito de juiz, apito de trem, boing, despertador, descarga, robô, lasers, vuvuzela, motosserra, sino de igreja, fogos, serrote, moto, furadeira, pneu cantando |
+| **Games & 8-bit** (11) | "Ready… set… go!", "Round 1… Fight!", "3, 2, 1… Go!", "Choose your character!", "Game over" de fliperama, risada do chefão, explosão, moedinhas, power-up, fase completa, pulos |
+| **Casa & cotidiano** (15) | batida na porta, porta rangendo, lata abrindo, aspirador, tique-taque, vidro quebrando, escova de dentes, goles, panela de pressão, chaleira, micro-ondas, campainha, zíper, liquidificador, celular vibrando |
+| **Natureza & clima** (13) | chuva, ondas, fogueira, goteira, trovão, passarinho, arara, bugio, tucano, coruja, papagaio, cigarra, mosca |
+
+Ficaram de fora, por terem menos de 2 s mesmo sem silêncio: espirro, "ba dum tss" e "flawless victory".
 
 Todos são **CC0 ou domínio público** (origem de cada arquivo em `assets/sounds/CREDITS.md`): gravações dos
-repositórios ESC-50 (só clipes CC0), Sonic Pi, VCSL, Animal-Sounds, learntoread e CC0-Public-Domain-Sounds,
-mais efeitos sintetizados pelo próprio script. Memes que são trechos de TV, filmes, músicas ou vozes de
+repositórios ESC-50 (só clipes CC0), Sonic Pi, VCSL, learntoread e CC0-Public-Domain-Sounds (packs da
+Kenney, The Motion Monkey e Ben Burnes), prévias de sons CC0 do Freesound e efeitos sintetizados pelo próprio
+script (inclusive os 8-bit, com melodias próprias). Memes que são trechos de TV, filmes, músicas ou vozes de
 pessoas (ex.: Faustão, Galvão, Chaves) **não** estão incluídos: são protegidos por direito autoral e de imagem.
-Os memes musicais usam obras em domínio público (Für Elise no caminhão do gás; Gran Vals no celular antigo).
+Os memes musicais usam obras em domínio público (Für Elise no caminhão do gás; Gran Vals no celular antigo;
+a melodia de Happy Birthday no "Parabéns pra você").
 
-Para adicionar um som: inclua a fonte em `SOUNDS` no `scripts/build-sounds.py`, rode o script e adicione
-título/categoria em `src/game/sounds.ts` (um teste garante que os dois batem).
+Para adicionar um som: inclua em `SOUNDS` no `scripts/build-sounds.py` (id, pack, título, fonte e crédito) e
+rode o script. Título, pack e duração vão para `assets/sounds/manifest.json`, lido por `src/game/sounds.ts`.
 
 ### Stack
 

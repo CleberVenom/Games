@@ -1,10 +1,11 @@
 import { Redirect, router } from 'expo-router';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Alert, BackHandler, Platform, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAudioTurn } from '../audio/useAudioTurn';
+import { useReferenceProfile } from '../audio/useReferenceProfile';
 import { useVisualizerLevels } from '../audio/useVisualizerLevels';
 import { BAR_COUNT, VisualizerCard, visualizerMode } from '../components/AudioVisualizer';
 import { Avatar } from '../components/Avatar';
@@ -27,9 +28,6 @@ import type { Phase } from '../game/types';
 import { findPack, findSound } from '../store/library';
 import { useMatch } from '../store/match';
 import { palette, PLAYER_HEX } from '../theme/tokens';
-
-/** Evita encerrar a gravação (a única chance) com um toque duplo acidental. */
-const MIN_RECORDING_MS = 600;
 
 const RECORD_STATE: Record<Phase, RecordState> = {
   handoff: 'locked',
@@ -63,18 +61,14 @@ function Game({ match }: { match: Match }) {
   const activeModifier = modifier && modifier !== 'nothing' ? getModifier(modifier) : null;
 
   const levels = useVisualizerLevels(visualizerMode(phase), BAR_COUNT);
+  const profile = useReferenceProfile(sound.id, BAR_COUNT);
   useAudioTurn(phase, sound.id, sound.durationMs, recordingMs, effect, dispatch);
 
-  const recordStartedAt = useRef(0);
+  // A gravação termina sozinha no tempo do som original: não há como parar antes.
   const onRecordPress = () => {
-    if (phase === 'ready') {
-      hapticImpact();
-      recordStartedAt.current = Date.now();
-      dispatch({ type: 'record' });
-    } else if (phase === 'recording' && Date.now() - recordStartedAt.current >= MIN_RECORDING_MS) {
-      hapticImpact();
-      dispatch({ type: 'recordingEnded' });
-    }
+    if (phase !== 'ready') return;
+    hapticImpact();
+    dispatch({ type: 'record' });
   };
 
   useEffect(() => {
@@ -151,7 +145,7 @@ function Game({ match }: { match: Match }) {
             onReplay={() => dispatch({ type: 'replay' })}
           />
 
-          <VisualizerCard phase={phase} levels={levels} recordingMs={recordingMs} />
+          <VisualizerCard phase={phase} levels={levels} recordingMs={recordingMs} profile={profile} />
         </View>
 
         <View className="px-5 pt-5">
@@ -165,7 +159,7 @@ function Game({ match }: { match: Match }) {
               )}
             </Animated.View>
           ) : (
-            <RecordButton state={RECORD_STATE[phase]} onPress={onRecordPress} levels={levels} />
+            <RecordButton state={RECORD_STATE[phase]} onPress={onRecordPress} levels={levels} durationMs={recordingMs} />
           )}
         </View>
       </View>

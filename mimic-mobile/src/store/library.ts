@@ -74,8 +74,12 @@ interface Library {
   deletePack: (packId: string) => Promise<void>;
 }
 
+/** Packs oficiais da primeira versão, de quando o armazenamento ainda não guardava `known`. */
+const LEGACY_OFFICIAL = ['animais', 'vozes', 'memes', 'maquinas'];
+
 function persist(custom: CustomPack[], selected: string[]) {
-  AsyncStorage.setItem(KEY, JSON.stringify({ custom, selected })).catch(() => {});
+  const known = OFFICIAL_PACKS.map((p) => p.id);
+  AsyncStorage.setItem(KEY, JSON.stringify({ custom, selected, known })).catch(() => {});
 }
 
 export const useLibrary = create<Library>((set, get) => ({
@@ -87,11 +91,14 @@ export const useLibrary = create<Library>((set, get) => ({
     try {
       const raw = await AsyncStorage.getItem(KEY);
       if (raw) {
-        const data = JSON.parse(raw) as { custom?: CustomPack[]; selected?: string[] };
+        const data = JSON.parse(raw) as { custom?: CustomPack[]; selected?: string[]; known?: string[] };
         const custom = data.custom ?? [];
         const exists = new Set(allPacks(custom).map((p) => p.id));
-        const selected = (data.selected ?? get().selected).filter((id) => exists.has(id));
-        set({ custom, selected });
+        // Packs oficiais que chegaram numa versão nova do app já entram marcados.
+        const known = new Set(data.known ?? LEGACY_OFFICIAL);
+        const fresh = OFFICIAL_PACKS.map((p) => p.id).filter((id) => !known.has(id));
+        const kept = (data.selected ?? get().selected).filter((id) => exists.has(id));
+        set({ custom, selected: [...new Set([...kept, ...fresh])] });
       }
     } catch {
       // Dados corrompidos ou indisponíveis: começa com os packs oficiais.

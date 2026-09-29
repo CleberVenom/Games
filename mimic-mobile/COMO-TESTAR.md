@@ -219,15 +219,17 @@ Com 6 jogadores, são 6 rodadas.
 - [ ] Tocar no **círculo colorido** (avatar) e ver a cor mudar.
 - [ ] Remover um jogador (ícone de lixeira — só aparece com 3 ou mais jogadores).
 - [ ] Conferir a linha acima do botão: com 2 jogadores diz **"5 rodadas"**; com 6, **"6 rodadas"**.
-- [ ] Na seção **Packs de sons**, desmarcar e marcar packs (Animais, Vozes, Memes & zoeira, Máquinas & efeitos)
-      e ver o total de sons mudar.
+- [ ] Na seção **Packs de sons** há **7 packs oficiais** (Animais, Vozes, Memes & zoeira, Máquinas & efeitos,
+      Games & 8-bit, Casa & cotidiano, Natureza & clima), com **97 sons** no total. Desmarcar e marcar packs e
+      ver o total de sons mudar.
 - [ ] Desmarcar **todos** os packs: o botão fica apagado com o texto **"Escolha pelo menos um pack de sons"**.
 
 ### Criar o seu próprio pack
 
 - [ ] Tocar em **Criar pack (gravar ou importar sons)**.
 - [ ] Dar um nome e escolher um ícone.
-- [ ] Tocar em **Gravar**, fazer um som (até 5 segundos) e tocar em **Parar e salvar o som**.
+- [ ] Tocar em **Gravar**, fazer um som (de 2 a 5 segundos) e tocar em **Parar e salvar o som**.
+- [ ] Gravar um som **bem curto** (menos de 2 s): aparece o aviso **"Som muito curto"** e ele não entra.
 - [ ] Tocar em **Importar áudio** e escolher um MP3/WAV/M4A do aparelho (ex.: um áudio do WhatsApp salvo).
 - [ ] Ouvir, renomear e remover um som da lista.
 - [ ] Tocar em **Salvar pack**: ele aparece na tela inicial com o selo **Meu pack**.
@@ -240,8 +242,11 @@ Com 6 jogadores, são 6 rodadas.
 - [ ] Tocar em **Começar partida**. Aparece **"Passe o celular para [nome]"** → tocar em **Estou pronto**.
 - [ ] O som de referência **toca sozinho** e as barrinhas se mexem com o som.
 - [ ] Tocar em **Ouvir de novo (1x)**: toca mais uma vez. Depois disso, não dá para repetir de novo.
-- [ ] Tocar no botão grande **Toque para imitar** e imitar o som. A gravação para sozinha, ou toque em
-      **Toque para parar**. As barrinhas devem reagir à sua voz.
+- [ ] Depois que o som toca, o quadro das barrinhas mostra a **silhueta do som original** (contorno azul, fixo) e
+      a legenda **"Som original / Sua voz"**. Embaixo do botão aparece quanto tempo a gravação vai durar.
+- [ ] Tocar no botão grande **Toque para imitar** e imitar o som, tentando **preencher a silhueta** com as
+      barrinhas rosa da sua voz. A gravação dura **exatamente o tempo do som** e termina sozinha: **não há botão
+      de parar**, e um anel em volta do botão vai se apagando até o fim do tempo.
 - [ ] Aparece **"Analisando…"** e depois a **nota de 0 a 100**, com as barras **Tom** e **Ritmo**.
 - [ ] Faça uma vez **em silêncio** (sem imitar nada): a nota deve ser **0** ("Isso foi um som?").
 - [ ] Faça uma imitação caprichada e uma de propósito errada: a caprichada deve ganhar nota maior.
@@ -259,7 +264,7 @@ Com 6 jogadores, são 6 rodadas.
   | **Acelerado** | O som toca rápido e mais fino |
   | **Telefone** | O som toca abafado, como numa ligação |
   | **Sem repetição** | O botão "Ouvir de novo" não aparece |
-  | **Tempo curto** | A gravação acaba bem mais cedo |
+  | **Tempo curto** | A gravação dura só 70% do tempo do som |
   | **Pontos em dobro** | A nota conta em dobro no placar |
   | **+15 pontos** | Ganha 15 pontos extras (só se fizer algum som) |
   | **Nada acontece** | Vez normal |

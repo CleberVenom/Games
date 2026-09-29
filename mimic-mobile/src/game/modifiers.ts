@@ -23,7 +23,7 @@ export const MODIFIERS: readonly Modifier[] = [
   { id: 'fast', kind: 'sound', title: 'Acelerado', description: 'O som de referência toca rápido e mais agudo.' },
   { id: 'plus15', kind: 'bonus', title: '+15 pontos', description: 'Ganha 15 pontos extras se fizer algum som.' },
   { id: 'telephone', kind: 'sound', title: 'Telefone', description: 'O som de referência toca abafado, como numa ligação.' },
-  { id: 'shortTime', kind: 'rule', title: 'Tempo curto', description: 'A gravação acaba bem mais cedo.' },
+  { id: 'shortTime', kind: 'rule', title: 'Tempo curto', description: 'A gravação dura só 70% do tempo do som.' },
 ];
 
 export function getModifier(id: ModifierId): Modifier {

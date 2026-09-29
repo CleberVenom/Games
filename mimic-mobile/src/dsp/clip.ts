@@ -4,6 +4,8 @@ import { resample } from './resample';
 export const CLIP_RATE = 22050;
 /** Duração máxima de um som criado no app. */
 export const MAX_CLIP_SECONDS = 5;
+/** Duração mínima de um som (depois de cortar o silêncio): a gravação da imitação dura o mesmo que ele. */
+export const MIN_CLIP_SECONDS = 2;
 const HOP = 220; // ~10 ms
 
 function envelopeDb(x: Float32Array): Float64Array {

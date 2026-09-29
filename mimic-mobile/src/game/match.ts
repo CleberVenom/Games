@@ -57,13 +57,15 @@ export function shuffle<T>(items: readonly T[], rng: Rng): T[] {
   return out;
 }
 
+/** Fração do tempo do som que sobra para gravar com "Tempo curto" da roleta. */
+export const SHORT_TIME_FACTOR = 0.7;
+
 /**
- * Janela de gravação: a duração da referência + folga, entre 2,5 s e 6 s.
- * Com "Tempo curto" da roleta, a folga cai para 0,3 s (mínimo de 1,5 s).
+ * Janela de gravação: exatamente a duração da referência (sem botão de parar).
+ * Com "Tempo curto" da roleta, 70% dessa duração.
  */
 export function recordingWindowMs(referenceMs: number, modifier: ModifierId | null = null): number {
-  if (modifier === 'shortTime') return Math.min(6000, Math.max(1500, referenceMs + 300));
-  return Math.min(6000, Math.max(2500, referenceMs + 1500));
+  return modifier === 'shortTime' ? Math.round(referenceMs * SHORT_TIME_FACTOR) : referenceMs;
 }
 
 /** Última vez da partida: última rodada, último jogador. */

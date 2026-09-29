@@ -17,24 +17,40 @@ import { PressableScale } from './PressableScale';
 export type RecordState = 'locked' | 'ready' | 'recording' | 'busy';
 
 const SIZE = 104;
+const RING = SIZE + 28;
+/** Segmentos do anel de contagem regressiva da gravação. */
+const SEGMENTS = 40;
 
-const STATE_UI: Record<RecordState, { icon: IconName; title: string; hint: string }> = {
-  locked: { icon: 'ear', title: 'Ouça a referência', hint: 'O botão libera quando o som terminar' },
-  ready: { icon: 'mic', title: 'Toque para imitar', hint: 'Uma chance só — sem repetir' },
-  recording: { icon: 'stop', title: 'Toque para parar', hint: 'Imite agora!' },
-  busy: { icon: 'hourglass', title: 'Analisando…', hint: 'Comparando com a referência' },
-};
+const seconds = (ms: number) => `${(ms / 1000).toFixed(1).replace('.', ',')} s`;
+
+function stateUi(state: RecordState, durationMs: number): { icon: IconName; title: string; hint: string } {
+  switch (state) {
+    case 'locked':
+      return { icon: 'ear', title: 'Ouça a referência', hint: 'O botão libera quando o som terminar' };
+    case 'ready':
+      return { icon: 'mic', title: 'Toque para imitar', hint: `Uma chance só: grava por ${seconds(durationMs)}` };
+    case 'recording':
+      return { icon: 'mic', title: 'Imite agora!', hint: `Termina sozinho em ${seconds(durationMs)}` };
+    case 'busy':
+      return { icon: 'hourglass', title: 'Analisando…', hint: 'Comparando com a referência' };
+  }
+}
 
 interface Props {
   state: RecordState;
   onPress: () => void;
   /** Níveis de áudio: o halo pulsa com a voz durante a gravação. */
   levels: SharedValue<number[]>;
+  /** Tempo da gravação (o do som original): o anel conta regressivamente. */
+  durationMs: number;
 }
 
-/** Botão de gravação: gradiente neon, anel externo e halo que respira (pronto) ou reage à voz (gravando). */
-export function RecordButton({ state, onPress, levels }: Props) {
-  const ui = STATE_UI[state];
+/**
+ * Botão de gravação: gradiente neon e halo que respira (pronto) ou reage à voz (gravando).
+ * Gravando, não aceita toque: o anel externo se apaga até o fim do tempo do som original.
+ */
+export function RecordButton({ state, onPress, levels, durationMs }: Props) {
+  const ui = stateUi(state, durationMs);
   const active = state === 'ready' || state === 'recording';
   const colors = state === 'recording' ? gradients.record : gradients.primary;
   const pulse = useSharedValue(0);
@@ -61,7 +77,7 @@ export function RecordButton({ state, onPress, levels }: Props) {
 
   return (
     <View className="items-center gap-4">
-      <View className="items-center justify-center" style={{ width: SIZE + 28, height: SIZE + 28 }}>
+      <View className="items-center justify-center" style={{ width: RING, height: RING }}>
         <Animated.View
           pointerEvents="none"
           style={[
@@ -75,14 +91,18 @@ export function RecordButton({ state, onPress, levels }: Props) {
             halo,
           ]}
         />
-        <View
-          pointerEvents="none"
-          className="absolute rounded-full border border-white/10"
-          style={{ width: SIZE + 28, height: SIZE + 28 }}
-        />
+        {state === 'recording' ? (
+          <CountdownRing durationMs={durationMs} />
+        ) : (
+          <View
+            pointerEvents="none"
+            className="absolute rounded-full border border-white/10"
+            style={{ width: RING, height: RING }}
+          />
+        )}
         <PressableScale
           onPress={onPress}
-          disabled={!active}
+          disabled={state !== 'ready'}
           pressedScale={0.9}
           haptic={false}
           accessibilityRole="button"
@@ -113,5 +133,45 @@ export function RecordButton({ state, onPress, levels }: Props) {
         <Text className="font-body text-sm text-mist-400">{ui.hint}</Text>
       </View>
     </View>
+  );
+}
+
+/** Anel de segmentos em volta do botão; eles se apagam no sentido horário até o tempo acabar. */
+function CountdownRing({ durationMs }: { durationMs: number }) {
+  const progress = useSharedValue(0);
+  useEffect(() => {
+    progress.value = 0;
+    progress.value = withTiming(1, { duration: durationMs, easing: Easing.linear });
+  }, [durationMs, progress]);
+  return (
+    <View pointerEvents="none" style={{ position: 'absolute', width: RING, height: RING }}>
+      {Array.from({ length: SEGMENTS }, (_, i) => (
+        <Segment key={i} index={i} progress={progress} />
+      ))}
+    </View>
+  );
+}
+
+function Segment({ index, progress }: { index: number; progress: SharedValue<number> }) {
+  const angle = (index / SEGMENTS) * 360;
+  const r = RING / 2 - 4;
+  const rad = (angle * Math.PI) / 180;
+  const animated = useAnimatedStyle(() => ({ opacity: progress.value <= index / SEGMENTS ? 1 : 0.14 }));
+  return (
+    <Animated.View
+      style={[
+        {
+          position: 'absolute',
+          width: 3,
+          height: 8,
+          borderRadius: 2,
+          left: RING / 2 + r * Math.sin(rad) - 1.5,
+          top: RING / 2 - r * Math.cos(rad) - 4,
+          backgroundColor: palette.pink[400],
+          transform: [{ rotate: `${angle}deg` }],
+        },
+        animated,
+      ]}
+    />
   );
 }

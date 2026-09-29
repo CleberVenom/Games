@@ -128,15 +128,15 @@ describe('rodadas', () => {
 });
 
 describe('recordingWindowMs', () => {
-  it('dá 1,5 s de folga sobre a referência, entre 2,5 s e 6 s', () => {
-    expect(recordingWindowMs(900)).toBe(2500);
-    expect(recordingWindowMs(2000)).toBe(3500);
-    expect(recordingWindowMs(5000)).toBe(6000);
+  it('é exatamente o tempo do som original', () => {
+    expect(recordingWindowMs(2000)).toBe(2000);
+    expect(recordingWindowMs(3450)).toBe(3450);
+    expect(recordingWindowMs(2000, 'echo')).toBe(2000);
   });
 
-  it('com "Tempo curto" a folga cai para 0,3 s (mínimo 1,5 s)', () => {
-    expect(recordingWindowMs(900, 'shortTime')).toBe(1500);
-    expect(recordingWindowMs(2000, 'shortTime')).toBe(2300);
+  it('com "Tempo curto" fica com 70% do tempo do som', () => {
+    expect(recordingWindowMs(2000, 'shortTime')).toBe(1400);
+    expect(recordingWindowMs(3450, 'shortTime')).toBe(2415);
   });
 });
 

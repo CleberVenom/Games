@@ -1,113 +1,487 @@
 {
   "dog-bark": {
-    "durationMs": 1018
+    "durationMs": 2594,
+    "title": "Latido de cachorro",
+    "pack": "animais"
   },
   "cat-meow": {
-    "durationMs": 1347
+    "durationMs": 2165,
+    "title": "Miado de gato",
+    "pack": "animais"
   },
   "rooster": {
-    "durationMs": 1746
+    "durationMs": 2814,
+    "title": "Canto do galo",
+    "pack": "animais"
   },
   "cow-moo": {
-    "durationMs": 1756
+    "durationMs": 3073,
+    "title": "Mugido de vaca",
+    "pack": "animais"
   },
   "pig-oink": {
-    "durationMs": 1227
+    "durationMs": 2604,
+    "title": "Porco guinchando",
+    "pack": "animais"
   },
   "sheep-baa": {
-    "durationMs": 479
+    "durationMs": 2604,
+    "title": "Balido de ovelha",
+    "pack": "animais"
   },
   "hen-cluck": {
-    "durationMs": 948
+    "durationMs": 3083,
+    "title": "Cacarejo de galinha",
+    "pack": "animais"
   },
   "crow": {
-    "durationMs": 479
+    "durationMs": 2604,
+    "title": "Corvo",
+    "pack": "animais"
   },
   "lion-roar": {
-    "durationMs": 1676
+    "durationMs": 2604,
+    "title": "Rugido de leão",
+    "pack": "animais"
   },
   "horse-neigh": {
-    "durationMs": 2155
+    "durationMs": 2155,
+    "title": "Relincho de cavalo",
+    "pack": "animais"
+  },
+  "donkey-bray": {
+    "durationMs": 3103,
+    "title": "Burro zurrando",
+    "pack": "animais"
+  },
+  "duck-quack": {
+    "durationMs": 2794,
+    "title": "Pato grasnando",
+    "pack": "animais"
+  },
+  "goat": {
+    "durationMs": 2604,
+    "title": "Cabra berrando",
+    "pack": "animais"
+  },
+  "wolf-howl": {
+    "durationMs": 3602,
+    "title": "Lobo uivando",
+    "pack": "animais"
+  },
+  "whale": {
+    "durationMs": 3602,
+    "title": "Canto de baleia",
+    "pack": "animais"
+  },
+  "eagle": {
+    "durationMs": 2434,
+    "title": "Grito de águia",
+    "pack": "animais"
   },
   "evil-laugh": {
-    "durationMs": 2315
-  },
-  "sneeze": {
-    "durationMs": 698
+    "durationMs": 2315,
+    "title": "Risada maligna",
+    "pack": "vozes"
   },
   "snore": {
-    "durationMs": 2105
+    "durationMs": 2305,
+    "title": "Ronco",
+    "pack": "vozes"
   },
   "baby-cry": {
-    "durationMs": 2504
+    "durationMs": 2504,
+    "title": "Bebê chorando",
+    "pack": "vozes"
   },
   "burp": {
-    "durationMs": 539
+    "durationMs": 2454,
+    "title": "Arroto",
+    "pack": "vozes"
+  },
+  "kid-laugh": {
+    "durationMs": 3103,
+    "title": "Risada de criança",
+    "pack": "vozes"
+  },
+  "cough": {
+    "durationMs": 3073,
+    "title": "Tosse",
+    "pack": "vozes"
+  },
+  "clapping": {
+    "durationMs": 3063,
+    "title": "Palmas",
+    "pack": "vozes"
+  },
+  "yawn": {
+    "durationMs": 3602,
+    "title": "Bocejo",
+    "pack": "vozes"
+  },
+  "hiccup": {
+    "durationMs": 3602,
+    "title": "Soluço",
+    "pack": "vozes"
+  },
+  "gargle": {
+    "durationMs": 3582,
+    "title": "Gargarejo",
+    "pack": "vozes"
+  },
+  "falling-scream": {
+    "durationMs": 2434,
+    "title": "Grito de queda",
+    "pack": "vozes"
   },
   "sad-trombone": {
-    "durationMs": 2375
-  },
-  "rimshot": {
-    "durationMs": 1666
+    "durationMs": 2375,
+    "title": "Trombone triste",
+    "pack": "memes"
   },
   "record-scratch": {
-    "durationMs": 1058
+    "durationMs": 2574,
+    "title": "Scratch de DJ",
+    "pack": "memes"
   },
   "air-horn": {
-    "durationMs": 1527
+    "durationMs": 2175,
+    "title": "Buzina de torcida",
+    "pack": "memes"
   },
   "gas-truck": {
-    "durationMs": 2484
+    "durationMs": 2484,
+    "title": "Caminhão do gás",
+    "pack": "memes"
   },
   "old-phone": {
-    "durationMs": 2883
+    "durationMs": 2883,
+    "title": "Toque de celular antigo",
+    "pack": "memes"
   },
   "dun-dun-dun": {
-    "durationMs": 2175
-  },
-  "flawless-victory": {
-    "durationMs": 1756
+    "durationMs": 2175,
+    "title": "Dun dun duuun",
+    "pack": "memes"
   },
   "fire-in-the-hole": {
-    "durationMs": 1317
-  },
-  "game-over": {
-    "durationMs": 1666
+    "durationMs": 3372,
+    "title": "“Fire in the hole!”",
+    "pack": "memes"
   },
   "crickets": {
-    "durationMs": 2604
+    "durationMs": 2604,
+    "title": "Grilos (silêncio constrangedor)",
+    "pack": "memes"
   },
   "dramatic-boom": {
-    "durationMs": 1297
+    "durationMs": 3103,
+    "title": "Boom dramático",
+    "pack": "memes"
+  },
+  "cartoon-whistle": {
+    "durationMs": 3103,
+    "title": "Apito de desenho animado",
+    "pack": "memes"
+  },
+  "drumroll": {
+    "durationMs": 2634,
+    "title": "Rufar de tambores",
+    "pack": "memes"
+  },
+  "boo": {
+    "durationMs": 2065,
+    "title": "Vaia",
+    "pack": "memes"
+  },
+  "dial-up": {
+    "durationMs": 3602,
+    "title": "Internet discada",
+    "pack": "memes"
+  },
+  "happy-birthday": {
+    "durationMs": 2744,
+    "title": "Parabéns pra você",
+    "pack": "memes"
   },
   "car-horn": {
-    "durationMs": 2654
+    "durationMs": 2654,
+    "title": "Buzina de carro",
+    "pack": "maquinas"
   },
   "siren": {
-    "durationMs": 2863
+    "durationMs": 2863,
+    "title": "Sirene de polícia",
+    "pack": "maquinas"
   },
   "referee-whistle": {
-    "durationMs": 1686
+    "durationMs": 2045,
+    "title": "Apito de juiz",
+    "pack": "maquinas"
   },
   "train-whistle": {
-    "durationMs": 2444
+    "durationMs": 2444,
+    "title": "Apito de trem",
+    "pack": "maquinas"
   },
   "boing": {
-    "durationMs": 2105
+    "durationMs": 2305,
+    "title": "Boing",
+    "pack": "maquinas"
   },
   "alarm-clock": {
-    "durationMs": 3093
+    "durationMs": 3093,
+    "title": "Despertador",
+    "pack": "maquinas"
   },
   "toilet-flush": {
-    "durationMs": 2604
+    "durationMs": 2604,
+    "title": "Descarga",
+    "pack": "maquinas"
   },
   "robot": {
-    "durationMs": 1217
+    "durationMs": 2434,
+    "title": "Robô",
+    "pack": "maquinas"
   },
   "laser": {
-    "durationMs": 738
+    "durationMs": 2005,
+    "title": "Tiros de laser",
+    "pack": "maquinas"
   },
   "vuvuzela": {
-    "durationMs": 1796
+    "durationMs": 2594,
+    "title": "Vuvuzela",
+    "pack": "maquinas"
+  },
+  "chainsaw": {
+    "durationMs": 3073,
+    "title": "Motosserra",
+    "pack": "maquinas"
+  },
+  "church-bell": {
+    "durationMs": 3602,
+    "title": "Sino de igreja",
+    "pack": "maquinas"
+  },
+  "fireworks": {
+    "durationMs": 3173,
+    "title": "Fogos de artifício",
+    "pack": "maquinas"
+  },
+  "hand-saw": {
+    "durationMs": 2524,
+    "title": "Serrote",
+    "pack": "maquinas"
+  },
+  "motorcycle": {
+    "durationMs": 3602,
+    "title": "Moto acelerando",
+    "pack": "maquinas"
+  },
+  "drill": {
+    "durationMs": 2345,
+    "title": "Furadeira",
+    "pack": "maquinas"
+  },
+  "tire-screech": {
+    "durationMs": 2584,
+    "title": "Pneu cantando",
+    "pack": "maquinas"
+  },
+  "ready-set-go": {
+    "durationMs": 2644,
+    "title": "“Ready… set… go!”",
+    "pack": "games"
+  },
+  "round-fight": {
+    "durationMs": 2524,
+    "title": "“Round 1… Fight!”",
+    "pack": "games"
+  },
+  "countdown": {
+    "durationMs": 3662,
+    "title": "“3, 2, 1… Go!”",
+    "pack": "games"
+  },
+  "choose-character": {
+    "durationMs": 3532,
+    "title": "“Player 1… Choose your character!”",
+    "pack": "games"
+  },
+  "game-over": {
+    "durationMs": 2484,
+    "title": "“Game over” de fliperama",
+    "pack": "games"
+  },
+  "boss-laugh": {
+    "durationMs": 2405,
+    "title": "Risada do chefão",
+    "pack": "games"
+  },
+  "explosion": {
+    "durationMs": 3103,
+    "title": "Explosão",
+    "pack": "games"
+  },
+  "coins": {
+    "durationMs": 2035,
+    "title": "Moedinhas e vida extra",
+    "pack": "games"
+  },
+  "power-up": {
+    "durationMs": 2205,
+    "title": "Power-up",
+    "pack": "games"
+  },
+  "level-complete": {
+    "durationMs": 2025,
+    "title": "Fase completa",
+    "pack": "games"
+  },
+  "jumps": {
+    "durationMs": 2584,
+    "title": "Pulo, pulo, pulo, pulo",
+    "pack": "games"
+  },
+  "door-knock": {
+    "durationMs": 2325,
+    "title": "Batida na porta",
+    "pack": "casa"
+  },
+  "door-creak": {
+    "durationMs": 3602,
+    "title": "Porta rangendo",
+    "pack": "casa"
+  },
+  "can-open": {
+    "durationMs": 2155,
+    "title": "Lata de refrigerante abrindo",
+    "pack": "casa"
+  },
+  "vacuum": {
+    "durationMs": 3073,
+    "title": "Aspirador de pó",
+    "pack": "casa"
+  },
+  "clock-tick": {
+    "durationMs": 3522,
+    "title": "Tique-taque do relógio",
+    "pack": "casa"
+  },
+  "glass-break": {
+    "durationMs": 2873,
+    "title": "Vidro quebrando",
+    "pack": "casa"
+  },
+  "brushing-teeth": {
+    "durationMs": 2854,
+    "title": "Escovando os dentes",
+    "pack": "casa"
+  },
+  "gulps": {
+    "durationMs": 2863,
+    "title": "Goles d'água",
+    "pack": "casa"
+  },
+  "pressure-cooker": {
+    "durationMs": 3602,
+    "title": "Panela de pressão",
+    "pack": "casa"
+  },
+  "kettle": {
+    "durationMs": 3103,
+    "title": "Chaleira apitando",
+    "pack": "casa"
+  },
+  "microwave": {
+    "durationMs": 3103,
+    "title": "Micro-ondas apitando",
+    "pack": "casa"
+  },
+  "doorbell": {
+    "durationMs": 2424,
+    "title": "Campainha (dim-dom)",
+    "pack": "casa"
+  },
+  "zipper": {
+    "durationMs": 2804,
+    "title": "Zíper",
+    "pack": "casa"
+  },
+  "blender": {
+    "durationMs": 3103,
+    "title": "Liquidificador",
+    "pack": "casa"
+  },
+  "phone-vibrate": {
+    "durationMs": 2694,
+    "title": "Celular vibrando",
+    "pack": "casa"
+  },
+  "rain": {
+    "durationMs": 3083,
+    "title": "Chuva",
+    "pack": "natureza"
+  },
+  "sea-waves": {
+    "durationMs": 3552,
+    "title": "Ondas do mar",
+    "pack": "natureza"
+  },
+  "campfire": {
+    "durationMs": 3073,
+    "title": "Fogueira estalando",
+    "pack": "natureza"
+  },
+  "dripping": {
+    "durationMs": 3103,
+    "title": "Goteira",
+    "pack": "natureza"
+  },
+  "thunder": {
+    "durationMs": 3592,
+    "title": "Trovão",
+    "pack": "natureza"
+  },
+  "songbird": {
+    "durationMs": 3572,
+    "title": "Passarinho cantando",
+    "pack": "natureza"
+  },
+  "macaw": {
+    "durationMs": 3602,
+    "title": "Arara gritando",
+    "pack": "natureza"
+  },
+  "howler-monkey": {
+    "durationMs": 3602,
+    "title": "Bugio uivando",
+    "pack": "natureza"
+  },
+  "toucan": {
+    "durationMs": 3602,
+    "title": "Tucano",
+    "pack": "natureza"
+  },
+  "owl": {
+    "durationMs": 3602,
+    "title": "Coruja",
+    "pack": "natureza"
+  },
+  "parrot": {
+    "durationMs": 3602,
+    "title": "Papagaio",
+    "pack": "natureza"
+  },
+  "cicada": {
+    "durationMs": 3103,
+    "title": "Cigarra",
+    "pack": "natureza"
+  },
+  "fly": {
+    "durationMs": 3073,
+    "title": "Mosca zumbindo",
+    "pack": "natureza"
   }
 }
