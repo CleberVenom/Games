@@ -103,6 +103,12 @@ Nenhuma tela "padrão" ou rudimentar. Toda UI segue:
   -u GLOBAL_AGENT_HTTPS_PROXY -u npm_config_https_proxy ...`), senão o envio das regras para `localhost` falha. As
   regras só valem no namespace `<projeto>-default-rtdb` (ex.: `?ns=demo-mimic-default-rtdb`); em outro namespace
   tudo é liberado e o teste de segurança passa sem querer.
+- Variáveis `EXPO_PUBLIC_*` são embutidas no bundle e o cache do Metro guarda o valor antigo: ao trocar (ex.: tirar
+  `EXPO_PUBLIC_FIREBASE_EMULATOR`), exporte com `--clear`.
+- Playwright com serviços reais (Firebase etc.): o Chromium daqui não confia na CA do proxy. Lance com
+  `--proxy-server=https=<host:porta do $HTTPS_PROXY>` (o `localhost` segue direto) e
+  `--ignore-certificate-errors-spki-list=<SPKI da /root/.ccr/agent-proxy-ca.crt>` (fixa só essa CA). WebSocket não
+  passa pelo proxy (erro 500); o Firebase cai sozinho para *long polling*.
 - Playwright: `getByText('Próxima rodada')` casa por substring sem diferenciar maiúsculas (pega títulos como
   "…na próxima rodada"); use `{ exact: true }`. Na web o Expo Router mantém as telas anteriores montadas.
 

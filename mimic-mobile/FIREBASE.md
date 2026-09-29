@@ -110,17 +110,15 @@ Os jogadores não precisam criar conta: o app entra como "visitante" sozinho. Pa
    do projeto (a configuração aparece lá, em "Seus apps").
 5. **Copie tudo o que está entre as chaves `{ }`, incluindo as chaves.**
 
-## 5. Me passar a configuração (sem colar no chat)
+## 5. Me passar a configuração
 
-Do mesmo jeito que você fez com o token da Expo:
+Cole no chat o bloco copiado no passo 4.5 (um print da tela também serve). Eu coloco a configuração no app em
+`src/online/firebaseConfig.ts`, testo com o projeto de verdade e gero o APK.
 
-1. Aqui no Claude Code, abra o **menu do ambiente de nuvem** na barra de título da sessão → **Edit**.
-2. Adicione uma variável de ambiente chamada **`FIREBASE_WEB_CONFIG`** e cole como valor o que você copiou no
-   passo 4.5.
-3. Abra uma **sessão nova** e me diga: "configurei o Firebase". Eu coloco a configuração no app, testo e gero o APK.
+> Esses valores **não são senha** (diferente do token da Expo): eles só dizem ao app qual projeto usar e vão dentro
+> do app de qualquer jeito. Quem protege os dados são as regras do passo 2.
 
-> Esses valores **não são senha**: eles só dizem ao app qual projeto usar e vão dentro do app de qualquer jeito.
-> Quem protege os dados são as regras do passo 2.
+**Já feito (set/2026):** o app usa o projeto `mimic-mobile-v3ltda`.
 
 ---
 

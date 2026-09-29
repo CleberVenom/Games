@@ -18,7 +18,7 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | 4 | Roleta de modificadores/sabotagens no fim do turno | ✅ |
 | + | Rodadas, pódio, seleção de packs, editor de packs no app e packs pessoais | ✅ |
 | + | 1ª rodada de testes: gravação com o tempo do som (sem parar), silhueta do som original, 97 sons em 7 packs | ✅ |
-| + | **Modo online** com amigos: salas com código, todos imitam juntos, apresentação das imitações com reações | ✅ (falta ligar o Firebase: [FIREBASE.md](FIREBASE.md)) |
+| + | **Modo online** com amigos: salas com código, todos imitam juntos, apresentação das imitações com reações | ✅ (projeto Firebase `mimic-mobile-v3ltda`; veja [FIREBASE.md](FIREBASE.md)) |
 
 ### Como a nota é calculada (Passo 3)
 
