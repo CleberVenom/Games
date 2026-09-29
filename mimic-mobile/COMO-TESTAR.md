@@ -278,6 +278,26 @@ Com 6 jogadores, são 6 rodadas.
 - [ ] **Novo jogo (trocar jogadores ou packs)**: volta para a tela inicial.
 - [ ] No meio de uma partida, apertar o **voltar** do Android: pergunta **"Sair da partida?"** antes de sair.
 
+### Modo online (depois de ligar o Firebase — veja o [FIREBASE.md](FIREBASE.md))
+
+Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi-Fi ou dados).
+
+- [ ] Na tela inicial, tocar em **Jogar online com amigos**, digitar o nome e **Criar sala**: aparece o **código de 4
+      letras**.
+- [ ] **Convidar amigos** abre o compartilhamento (WhatsApp etc.) com o código.
+- [ ] No outro celular: **Jogar online com amigos → Entrar numa sala**, digitar o código → aparece na lista dos dois
+      celulares (com o ponto verde de online).
+- [ ] Código errado mostra **"Sala não encontrada"**.
+- [ ] O anfitrião escolhe os packs e toca em **Começar partida** (só libera com 2 ou mais pessoas).
+- [ ] Cada um toca em **Ouvir o som**, imita e vê **"Imitação enviada!"** com quem ainda falta.
+- [ ] Quando todos enviam, começa a **apresentação** em todos os celulares: nome do jogador, a imitação dele
+      tocando e a nota.
+- [ ] Tocar nos emojis **😂 🍅 😄 😱**: eles sobem na tela de **todo mundo** e a contagem aparece nos botões.
+- [ ] **Placar** da rodada com os pontos e as reações; o anfitrião gira a **roleta** (o efeito vale para todos na
+      próxima rodada) e toca em **Próxima rodada**.
+- [ ] Na última rodada, **pódio** em todos os celulares; só o anfitrião vê **Jogar de novo**.
+- [ ] Se o anfitrião sair da sala, os outros veem **"A sala foi encerrada"**.
+
 ---
 
 ## Parte 5 — Se algo der errado

@@ -107,6 +107,31 @@ export default function LobbyScreen() {
             </View>
           </View>
 
+          <PressableScale
+            onPress={() => router.push('/online')}
+            accessibilityRole="button"
+            accessibilityLabel="Jogar online com amigos"
+            className="flex-row items-center gap-4 rounded-3xl border border-cyan-400/25 bg-cyan-500/10 p-4">
+            <Gradient
+              colors={gradients.listen}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              className="h-12 w-12 items-center justify-center overflow-hidden rounded-2xl">
+              <Icon name="globe" size={24} color={palette.mist[50]} />
+            </Gradient>
+            <View className="flex-1">
+              <Text className="font-heading text-base text-mist-50">Jogar online com amigos</Text>
+              <Text className="font-body text-xs leading-4 text-mist-400">
+                Cada um no seu celular, com código de sala e reações ao vivo
+              </Text>
+            </View>
+            <Icon name="chevron-forward" size={20} color={palette.cyan[300]} />
+          </PressableScale>
+
+          <Text className="-mb-4 px-1 font-label text-[11px] uppercase tracking-[3px] text-mist-500">
+            Ou no mesmo celular, passando a vez
+          </Text>
+
           <View
             className="gap-3 rounded-4xl border border-white/5 bg-night-850/80 p-5"
             style={{ boxShadow: '0px 24px 48px rgba(4, 5, 15, 0.55)' }}>

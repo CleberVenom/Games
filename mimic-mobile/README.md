@@ -18,6 +18,7 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | 4 | Roleta de modificadores/sabotagens no fim do turno | ✅ |
 | + | Rodadas, pódio, seleção de packs, editor de packs no app e packs pessoais | ✅ |
 | + | 1ª rodada de testes: gravação com o tempo do som (sem parar), silhueta do som original, 97 sons em 7 packs | ✅ |
+| + | **Modo online** com amigos: salas com código, todos imitam juntos, apresentação das imitações com reações | ✅ (falta ligar o Firebase: [FIREBASE.md](FIREBASE.md)) |
 
 ### Como a nota é calculada (Passo 3)
 
@@ -84,6 +85,36 @@ ouvir, renomear e remover. Cada som passa pelo mesmo tratamento dos oficiais (`s
 cortado, volume igualado e **de 2 a 5 s** (mais curto que 2 s é recusado, com aviso). O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
 lista de packs no AsyncStorage (`src/store/library.ts`).
 
+### Modo online (com amigos)
+
+Cada um no seu celular. O anfitrião cria a sala (**código de 4 letras**, botão "Convidar amigos") e escolhe os
+packs; os outros entram pelo código (até 6 jogadores, só antes de começar). Em cada rodada:
+
+1. **Todos imitam ao mesmo tempo** o mesmo som: cada celular toca a referência quando o jogador toca em "Ouvir o
+   som" (com a repetição e a silhueta de sempre), grava no tempo do som, calcula a nota e envia a imitação.
+2. **Apresentação das gravações**: quando todos enviaram (ou em 30 s + 4× o som), cada imitação aparece em todos os
+   celulares — nome do jogador, a gravação tocando com as barras e a nota. Todos reagem com **😂 🍅 😄 😱**: os emojis
+   sobem na tela de todo mundo e a contagem fica no resultado.
+3. **Placar da rodada** e **roleta**: o efeito sorteado vale **para todos** na rodada seguinte.
+4. Na última rodada, **pódio** (com a melhor imitação de cada um); "Jogar de novo" volta ao lobby da mesma sala.
+
+Rodadas: as mesmas da partida local (5, ou uma por jogador acima disso). Só valem os packs que vêm no app (oficiais
+e pessoais) — os criados no celular não existem nos outros aparelhos. Se o anfitrião sair, a sala é encerrada.
+
+**Como funciona por dentro** (`src/online/`):
+
+- **Firebase**: *Realtime Database* guarda a sala (`rooms/{código}`: meta, jogadores, rodada, notas, imitações e
+  reações) e *Authentication* anônima identifica cada celular, sem cadastro. As regras (`database.rules.json`)
+  deixam só o anfitrião avançar a partida e cada jogador escrever só a própria nota/imitação.
+- **O anfitrião é a autoridade** (`useHost.ts`): fecha a rodada, passa as apresentações no tempo de cada imitação e
+  soma o placar; a lógica é pura e testada (`room.ts`, `turn.ts`).
+- **Imitação pela rede** (`clipCodec.ts`): 16 kHz, μ-law de 8 bits em base64 (~77 KB para 3,6 s), baixada só na
+  hora da apresentação. A nota é calculada no próprio celular (mesmo DSP do modo local).
+- **Testes sem internet**: `npm run emulators` sobe o emulador do Firebase (Java 11+); com
+  `EXPO_PUBLIC_FIREBASE_EMULATOR=127.0.0.1` o app usa o emulador em vez do projeto real.
+- **Ligar de verdade**: siga o [FIREBASE.md](FIREBASE.md) e coloque a configuração do app da Web em
+  `src/online/firebaseConfig.ts`. Sem ela, a tela "Jogar online" avisa que falta ligar o servidor.
+
 ## Regras do turno
 
 `handoff` (passe o celular) → `listening` (a referência toca **sozinha, uma vez**) → `ready` (pode **ouvir de
@@ -103,12 +134,13 @@ A máquina de estados é pura e testada: `src/game/match.ts` + `src/game/__tests
 
 ```
 src/
-  app/          telas (Expo Router): index = cadastro de jogadores, game = tela de jogo
+  app/          telas (Expo Router): index = cadastro de jogadores, game = tela de jogo, online/ = salas online
   components/   UI: botões com gradiente, visualizador de áudio, botão de gravação, placar, nota…
   game/         lógica pura: tipos, catálogo de sons, máquina de estados da partida (+ testes)
   store/        estado da partida (zustand)
   audio/        motor de áudio, microfone (nativo e web), espectro → barras, fluxo de áudio do turno (+ testes)
   dsp/          FFT, reamostragem, extração de pitch/energia/brilho e a nota (+ testes)
+  online/       modo online: sala e rodadas (lógica pura), Firebase, imitação pela rede (+ testes)
   theme/        paleta única (Tailwind + gradientes) e utilitários de cor/brilho
 assets/images/  ícones e splash (gerados por scripts/make-icons.py)
 assets/sounds/  97 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
@@ -170,6 +202,10 @@ rode o script. Título, pack e duração vão para `assets/sounds/manifest.json`
 - **expo-linear-gradient** (gradientes neon), **expo-haptics** (resposta tátil), fonte **Inter**.
 - **react-native-svg** 15.15 (versão do SDK 57, roda também no Expo Go e na web) para as fatias da roleta.
 - **expo-file-system**, **expo-document-picker** e **AsyncStorage** (versões do SDK 57) para os packs criados no app.
+- **Firebase JS SDK 12.19** (Realtime Database + Authentication anônima) para o modo online — é o caminho indicado no
+  guia do Expo para o SDK 57 (roda no app e na web, sem código nativo). Comparado em set/2026: Supabase (grátis,
+  mas o projeto pausa após 1 semana sem uso) e servidor próprio (Colyseus/Cloudflare, exige hospedar). O plano
+  grátis do Firebase aguenta 100 conexões simultâneas sem cartão.
 
 ### Design
 

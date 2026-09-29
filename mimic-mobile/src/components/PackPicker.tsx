@@ -20,10 +20,12 @@ interface Props {
   packs: Pack[];
   selected: ReadonlySet<string>;
   onToggle: (packId: string) => void;
+  /** Mostra o botão "Criar pack" (no online só valem packs que todos os celulares têm). */
+  allowCreate?: boolean;
 }
 
 /** Grade de packs de sons: toque para marcar/desmarcar; packs criados no app têm botão de editar. */
-export function PackPicker({ packs, selected, onToggle }: Props) {
+export function PackPicker({ packs, selected, onToggle, allowCreate = true }: Props) {
   const [width, setWidth] = useState(0);
   const tile = width > 0 ? (width - GAP) / 2 : 0;
 
@@ -35,13 +37,15 @@ export function PackPicker({ packs, selected, onToggle }: Props) {
             <PackTile key={p.id} pack={p} width={tile} on={selected.has(p.id)} onPress={() => onToggle(p.id)} />
           ))}
       </View>
-      <PressableScale
-        onPress={() => router.push('/pack/new')}
-        accessibilityRole="button"
-        className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-pink-400/40 bg-pink-500/5">
-        <Icon name="add" size={20} color={palette.pink[300]} />
-        <Text className="font-label text-sm text-pink-300">Criar pack (gravar ou importar sons)</Text>
-      </PressableScale>
+      {allowCreate && (
+        <PressableScale
+          onPress={() => router.push('/pack/new')}
+          accessibilityRole="button"
+          className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-pink-400/40 bg-pink-500/5">
+          <Icon name="add" size={20} color={palette.pink[300]} />
+          <Text className="font-label text-sm text-pink-300">Criar pack (gravar ou importar sons)</Text>
+        </PressableScale>
+      )}
     </View>
   );
 }

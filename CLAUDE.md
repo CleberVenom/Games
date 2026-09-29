@@ -45,6 +45,7 @@ Nunca escolha stack de memória. No início de cada projeto (e ao adicionar qual
 | Estado | `zustand` | lógica de jogo pura fora do store, testável |
 | Áudio | `react-native-audio-api` | exige *development build* |
 | Testes | `jest-expo` | |
+| Online (salas, tempo real) | **Firebase JS SDK 12** — Realtime Database + Auth anônimo | roda no Expo Go; `initializeAuth` com `inMemoryPersistence`; regras versionadas em `database.rules.json` |
 | Web (se o projeto for web) | Tailwind CSS 4 + React — **validar na hora** | |
 
 ## 2. Padrão visual premium (obrigatório)
@@ -98,6 +99,12 @@ Nenhuma tela "padrão" ou rudimentar. Toda UI segue:
   **nunca** `git checkout package.json` com dependências novas ainda não commitadas.
 - `babel-preset-expo` e `nativewind/babel` aplicam o plugin de worklets duas vezes; a saída é idêntica
   (idempotente) — mantenha a configuração oficial do NativeWind.
+- Emulador do Firebase (`firebase-tools`): rode **sem** as variáveis de proxy (`env -u HTTPS_PROXY -u https_proxy
+  -u GLOBAL_AGENT_HTTPS_PROXY -u npm_config_https_proxy ...`), senão o envio das regras para `localhost` falha. As
+  regras só valem no namespace `<projeto>-default-rtdb` (ex.: `?ns=demo-mimic-default-rtdb`); em outro namespace
+  tudo é liberado e o teste de segurança passa sem querer.
+- Playwright: `getByText('Próxima rodada')` casa por substring sem diferenciar maiúsculas (pega títulos como
+  "…na próxima rodada"); use `{ exact: true }`. Na web o Expo Router mantém as telas anteriores montadas.
 
 ## 5. Conteúdo e licenças
 

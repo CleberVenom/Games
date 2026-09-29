@@ -29,8 +29,10 @@ interface Props {
   players: Player[];
   rounds: number;
   insets: { top: number; bottom: number };
-  onRematch: () => void;
+  /** Sem ele (convidados online), o botão "Jogar de novo" não aparece. */
+  onRematch?: () => void;
   onNewGame: () => void;
+  newGameLabel?: string;
 }
 
 function bestLine(p: Player): string {
@@ -39,7 +41,14 @@ function bestLine(p: Player): string {
 }
 
 /** Fim de partida: pódio dos 3 primeiros, demais colocados e revanche. */
-export function Podium({ players, rounds, insets, onRematch, onNewGame }: Props) {
+export function Podium({
+  players,
+  rounds,
+  insets,
+  onRematch,
+  onNewGame,
+  newGameLabel = 'Novo jogo (trocar jogadores ou packs)',
+}: Props) {
   const ranking = standings(players);
   const top = ranking.slice(0, 3);
   const winners = ranking.filter((s) => s.place === 1);
@@ -93,13 +102,13 @@ export function Podium({ players, rounds, insets, onRematch, onNewGame }: Props)
         )}
 
         <View className="gap-3">
-          <GradientButton label="Jogar de novo" icon="refresh" onPress={onRematch} />
+          {onRematch && <GradientButton label="Jogar de novo" icon="refresh" onPress={onRematch} />}
           <PressableScale
             onPress={onNewGame}
             accessibilityRole="button"
             className="h-14 flex-row items-center justify-center gap-2 rounded-[20px] border border-white/10 bg-white/5">
             <Icon name="people" size={18} color={palette.mist[200]} />
-            <Text className="font-label text-base text-mist-200">Novo jogo (trocar jogadores ou packs)</Text>
+            <Text className="font-label text-base text-mist-200">{newGameLabel}</Text>
           </PressableScale>
         </View>
       </ScrollView>

@@ -82,7 +82,17 @@ class AudioEngine {
    * incluindo a cauda do eco — ou é interrompida por `stop()`.
    */
   async play(id: string, effect: SoundEffect | null = null): Promise<void> {
-    const buffer = await this.load(id);
+    return this.playBuffer(await this.load(id), effect);
+  }
+
+  /** Toca um áudio qualquer em PCM (ex.: a imitação de um amigo, na apresentação online). */
+  playSamples(samples: Float32Array<ArrayBuffer>, sampleRate: number): Promise<void> {
+    const buffer = this.context.createBuffer(1, samples.length, sampleRate);
+    buffer.copyToChannel(samples, 0);
+    return this.playBuffer(buffer, null);
+  }
+
+  private async playBuffer(buffer: AudioBuffer, effect: SoundEffect | null): Promise<void> {
     await this.resume();
     this.stop();
     const ctx = this.context;

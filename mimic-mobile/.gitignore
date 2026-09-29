@@ -44,3 +44,6 @@ yarn-error.*
 # cache de downloads do scripts/build-sounds.py
 scripts/.cache/
 __pycache__/
+
+# logs do emulador do Firebase (npm run emulators)
+*-debug.log

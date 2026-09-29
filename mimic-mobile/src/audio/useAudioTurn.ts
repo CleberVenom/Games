@@ -9,6 +9,9 @@ import { engine } from './engine';
 import { startRecording, stopRecording } from './mic';
 import type { Recording } from './recording';
 
+/** Eventos que o áudio do turno dispara (servem à partida local e à vez de cada celular no online). */
+export type AudioTurnEvent = Extract<MatchEvent, { type: 'referenceEnded' | 'recordingEnded' | 'scored' }>;
+
 /** Tempo mínimo da tela "Analisando…" (o DSP leva poucas dezenas de ms; a pausa dá suspense). */
 const ANALYSIS_MS = 1400;
 
@@ -30,14 +33,16 @@ export function useAudioTurn(
   referenceMs: number,
   recordingMs: number,
   effect: SoundEffect | null,
-  dispatch: (event: MatchEvent) => void,
+  dispatch: (event: AudioTurnEvent) => void,
+  /** Recebe a gravação antes da nota (o modo online envia a imitação para a sala). */
+  onRecorded?: (recording: Recording | null) => void,
 ) {
   const recording = useRef<Promise<Recording> | null>(null);
 
   useEffect(() => {
     let active = true;
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const after = (ms: number, event: MatchEvent) => {
+    const after = (ms: number, event: AudioTurnEvent) => {
       timer = setTimeout(() => active && dispatch(event), ms);
     };
 
@@ -59,7 +64,10 @@ export function useAudioTurn(
         },
       );
     } else if (phase === 'analyzing') {
-      const score = (recording.current ?? Promise.resolve(null)).then((rec) => scoreTurn(soundId, rec));
+      const score = (recording.current ?? Promise.resolve(null)).then((rec) => {
+        onRecorded?.(rec);
+        return scoreTurn(soundId, rec);
+      });
       Promise.all([score, new Promise((r) => setTimeout(r, ANALYSIS_MS))]).then(
         ([result]) => active && dispatch({ type: 'scored', score: result }),
         () => {
@@ -76,5 +84,5 @@ export function useAudioTurn(
       if (phase === 'listening') engine.stop();
       if (phase === 'recording') recording.current = stopRecording();
     };
-  }, [phase, soundId, referenceMs, recordingMs, effect, dispatch]);
+  }, [phase, soundId, referenceMs, recordingMs, effect, dispatch, onRecorded]);
 }

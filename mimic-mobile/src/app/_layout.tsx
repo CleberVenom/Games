@@ -61,6 +61,7 @@ export default function RootLayout() {
             contentStyle: { backgroundColor: palette.night[950] },
           }}>
           <Stack.Screen name="game" options={{ gestureEnabled: false }} />
+          <Stack.Screen name="online/room" options={{ gestureEnabled: false }} />
         </Stack>
       </ThemeProvider>
     </SafeAreaProvider>

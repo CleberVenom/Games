@@ -1,0 +1,45 @@
+{
+  "rules": {
+    "rooms": {
+      "$code": {
+        ".read": "auth != null",
+        ".write": "auth != null && data.child('meta/host').val() === auth.uid",
+        "meta": {
+          ".write": "auth != null && !data.exists() && newData.child('host').val() === auth.uid && newData.child('status').val() === 'lobby'"
+        },
+        "players": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && (data.exists() || root.child('rooms').child($code).child('meta/status').val() === 'lobby')",
+            ".validate": "!newData.exists() || (newData.child('name').isString() && newData.child('name').val().length <= 24)"
+          }
+        },
+        "scores": {
+          "$round": {
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid",
+              ".validate": "newData.hasChildren(['total', 'pitch', 'rhythm', 'points', 'clipMs'])"
+            }
+          }
+        },
+        "clips": {
+          "$round": {
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid",
+              ".validate": "newData.child('data').isString() && newData.child('data').val().length < 700000"
+            }
+          }
+        },
+        "reactions": {
+          "$round": {
+            "$target": {
+              "$id": {
+                ".write": "auth != null && !data.exists() && newData.child('from').val() === auth.uid",
+                ".validate": "newData.child('emoji').val().matches(/^(laugh|tomato|happy|scared)$/)"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -179,9 +179,13 @@ function Game({ match }: { match: Match }) {
       {phase === 'wheel' && match.nextModifier && (
         <WheelOverlay
           modifier={match.nextModifier}
-          nextPlayer={nextPlayer}
+          heading={
+            <>
+              Efeito para a vez de <Text style={{ color: PLAYER_HEX[nextPlayer.color] }}>{nextPlayer.name}</Text>
+            </>
+          }
           insets={insets}
-          onNext={() => dispatch({ type: 'next' })}
+          action={{ label: `Próximo: ${nextPlayer.name}`, onPress: () => dispatch({ type: 'next' }) }}
         />
       )}
 

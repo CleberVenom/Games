@@ -20,6 +20,7 @@
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",
+    "firebase": "^12.19.0",
     "nativewind": "^4.2.7",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -51,7 +52,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "emulators": "npx -y firebase-tools@15.32.0 emulators:start --only auth,database --project demo-mimic"
   },
   "private": true,
   "jest": {
