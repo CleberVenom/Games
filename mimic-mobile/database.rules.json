@@ -38,6 +38,28 @@
               }
             }
           }
+        },
+        "voice": {
+          "peers": {
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()",
+              ".validate": "!newData.exists() || newData.child('session').isString()"
+            }
+          },
+          "mic": {
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()",
+              ".validate": "newData.child('on').isBoolean() && newData.child('by').val() === auth.uid && (newData.child('on').val() === false || $uid === auth.uid)"
+            }
+          },
+          "signals": {
+            "$to": {
+              "$id": {
+                ".write": "auth != null && ((!data.exists() && newData.child('from').val() === auth.uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()) || (!newData.exists() && auth.uid === $to))",
+                ".validate": "!newData.exists() || (newData.child('kind').val().matches(/^(offer|answer|ice)$/) && (!newData.child('sdp').exists() || newData.child('sdp').val().length < 30000) && (!newData.child('candidate').exists() || newData.child('candidate').val().length < 2000))"
+              }
+            }
+          }
         }
       }
     }

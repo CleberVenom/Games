@@ -46,6 +46,7 @@ Nunca escolha stack de memória. No início de cada projeto (e ao adicionar qual
 | Áudio | `react-native-audio-api` | exige *development build* |
 | Testes | `jest-expo` | |
 | Online (salas, tempo real) | **Firebase JS SDK 12** — Realtime Database + Auth anônimo | roda no Expo Go; `initializeAuth` com `inMemoryPersistence`; regras versionadas em `database.rules.json` |
+| Voz entre jogadores | **react-native-webrtc 124** + `@config-plugins/react-native-webrtc` + `react-native-incall-manager` | P2P com sinalização no Firebase; exige *development build*; alternativas pagas por minuto: LiveKit, Agora |
 | Web (se o projeto for web) | Tailwind CSS 4 + React — **validar na hora** | |
 
 ## 2. Padrão visual premium (obrigatório)
@@ -109,6 +110,12 @@ Nenhuma tela "padrão" ou rudimentar. Toda UI segue:
   `--proxy-server=https=<host:porta do $HTTPS_PROXY>` (o `localhost` segue direto) e
   `--ignore-certificate-errors-spki-list=<SPKI da /root/.ccr/agent-proxy-ca.crt>` (fixa só essa CA). WebSocket não
   passa pelo proxy (erro 500); o Firebase cai sozinho para *long polling*.
+- WebRTC no celular: sem `InCallManager.start({ media: 'video' })` a voz sai no alto-falante de ligação do Android;
+  chame `InCallManager.stop()` ao sair da voz para o áudio do jogo voltar ao normal. O plugin do WebRTC adiciona
+  `CAMERA` e `SYSTEM_ALERT_WINDOW`: bloqueie em `android.blockedPermissions` se o app não usa. Os tipos do
+  react-native-webrtc não aceitam `echoCancellation` (o celular já liga por padrão).
+- WebRTC no Playwright: `--disable-features=WebRtcHideLocalIpsWithMdns` (senão os contextos não se acham) e um
+  `addInitScript` que guarda as `RTCPeerConnection` em `window.__pcs` para medir `bytesReceived`/`audioLevel`.
 - Playwright: `getByText('Próxima rodada')` casa por substring sem diferenciar maiúsculas (pega títulos como
   "…na próxima rodada"); use `{ exact: true }`. Na web o Expo Router mantém as telas anteriores montadas.
 

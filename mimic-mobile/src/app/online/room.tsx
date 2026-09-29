@@ -11,12 +11,14 @@ import { PlayerStatus, PlayerStrip } from '../../components/online/PlayerStrip';
 import { PresentView } from '../../components/online/PresentView';
 import { RoomLobby } from '../../components/online/RoomLobby';
 import { RoundResults } from '../../components/online/RoundResults';
+import { VoiceButton } from '../../components/online/VoiceButton';
 import { Podium } from '../../components/Podium';
 import { PressableScale } from '../../components/PressableScale';
 import { WheelOverlay } from '../../components/WheelOverlay';
 import { isLastRound, playerOrder } from '../../online/room';
 import { hostActions, useHostDriver } from '../../online/useHost';
 import { useOnline } from '../../store/online';
+import { useVoice, useVoiceAllowed, useVoiceChat, voiceActions } from '../../store/voice';
 import { palette } from '../../theme/tokens';
 
 export default function OnlineRoomScreen() {
@@ -38,6 +40,10 @@ function Room() {
   const leave = useOnline((s) => s.leave);
   const [busy, setBusy] = useState(false);
   useHostDriver();
+  useVoiceChat();
+  const voiceOn = useVoiceAllowed();
+  const mics = useVoice((s) => s.mics);
+  const speaking = useVoice((s) => s.speaking);
 
   const me = session?.uid ?? '';
   const isHost = Boolean(meta && meta.host === me);
@@ -114,6 +120,7 @@ function Room() {
           onNewGame={exit}
           newGameLabel="Sair da sala"
         />
+        <VoiceButton top={insets.top + 8} />
       </View>
     );
   }
@@ -140,14 +147,25 @@ function Room() {
             <Text className="font-label text-[11px] uppercase tracking-[3px] text-mist-400">
               {playing ? `Rodada ${round.number} de ${meta.totalRounds}` : 'Sala online'}
             </Text>
-            <Text className="font-heading text-base text-mist-50">{session.code}</Text>
+            <View className="flex-row items-center gap-2">
+              <Text className="font-heading text-base text-mist-50">{session.code}</Text>
+              {isHost && <Text className="font-label text-[10px] uppercase tracking-[2px] text-amber-400">Anfitrião</Text>}
+            </View>
           </View>
-          <View className="w-24 items-end">
-            {isHost && <Text className="font-label text-[11px] uppercase tracking-[2px] text-amber-400">Anfitrião</Text>}
-          </View>
+          {/* Espaço do botão de voz (fixo por cima de tudo, também na roleta e no pódio). */}
+          <View className="w-24" />
         </View>
 
-        {playing && <PlayerStrip ids={ids} players={players} me={me} status={statusOf} showScore />}
+        {playing && (
+          <PlayerStrip
+            ids={ids}
+            players={players}
+            me={me}
+            status={statusOf}
+            showScore
+            voice={voiceOn ? { mics, speaking, onMute: isHost ? voiceActions.mute : undefined } : undefined}
+          />
+        )}
 
         <ScrollView
           className="flex-1"
@@ -200,6 +218,8 @@ function Room() {
           waitingText={`Aguardando ${hostName} começar a próxima rodada…`}
         />
       )}
+
+      <VoiceButton top={insets.top + 8} />
     </View>
   );
 }

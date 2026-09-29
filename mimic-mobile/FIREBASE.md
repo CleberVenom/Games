@@ -67,6 +67,28 @@ chato).
                  }
                }
              }
+           },
+           "voice": {
+             "peers": {
+               "$uid": {
+                 ".write": "auth != null && auth.uid === $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()",
+                 ".validate": "!newData.exists() || newData.child('session').isString()"
+               }
+             },
+             "mic": {
+               "$uid": {
+                 ".write": "auth != null && auth.uid === $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()",
+                 ".validate": "newData.child('on').isBoolean() && newData.child('by').val() === auth.uid && (newData.child('on').val() === false || $uid === auth.uid)"
+               }
+             },
+             "signals": {
+               "$to": {
+                 "$id": {
+                   ".write": "auth != null && ((!data.exists() && newData.child('from').val() === auth.uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()) || (!newData.exists() && auth.uid === $to))",
+                   ".validate": "!newData.exists() || (newData.child('kind').val().matches(/^(offer|answer|ice)$/) && (!newData.child('sdp').exists() || newData.child('sdp').val().length < 30000) && (!newData.child('candidate').exists() || newData.child('candidate').val().length < 2000))"
+                 }
+               }
+             }
            }
          }
        }
@@ -74,8 +96,9 @@ chato).
    }
    ```
 
-   Essas regras são a "segurança" do jogo: só o anfitrião avança a partida, cada jogador só mexe na própria nota e
-   ninguém de fora apaga a sala dos outros.
+   Essas regras são a "segurança" do jogo: só o anfitrião avança a partida, cada jogador só mexe na própria nota,
+   ninguém de fora apaga a sala dos outros e, no chat de voz, o anfitrião pode mutar alguém mas nunca ligar o
+   microfone de outra pessoa.
 
 ## 3. Ligar o login anônimo
 
@@ -119,6 +142,12 @@ Cole no chat o bloco copiado no passo 4.5 (um print da tela também serve). Eu c
 > do app de qualquer jeito. Quem protege os dados são as regras do passo 2.
 
 **Já feito (set/2026):** o app usa o projeto `mimic-mobile-v3ltda`.
+
+## Quando as regras mudarem (ex.: chat de voz, set/2026)
+
+Se eu avisar que as regras mudaram, repita só o passo 2.5: **Realtime Database → Regras**, apague tudo, cole o bloco
+atualizado acima e clique em **Publicar**. Sem isso, as partes novas (como o chat de voz) não funcionam para os
+convidados.
 
 ---
 

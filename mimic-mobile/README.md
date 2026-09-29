@@ -18,7 +18,7 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | 4 | Roleta de modificadores/sabotagens no fim do turno | ✅ |
 | + | Rodadas, pódio, seleção de packs, editor de packs no app e packs pessoais | ✅ |
 | + | 1ª rodada de testes: gravação com o tempo do som (sem parar), silhueta do som original, 97 sons em 7 packs | ✅ |
-| + | **Modo online** com amigos: salas com código, todos imitam juntos, apresentação das imitações com reações | ✅ (projeto Firebase `mimic-mobile-v3ltda`; veja [FIREBASE.md](FIREBASE.md)) |
+| + | **Modo online** com amigos: salas com código, todos imitam juntos, apresentação das imitações com reações e chat de voz | ✅ (projeto Firebase `mimic-mobile-v3ltda`; veja [FIREBASE.md](FIREBASE.md)) |
 
 ### Como a nota é calculada (Passo 3)
 
@@ -101,6 +101,13 @@ packs; os outros entram pelo código (até 10 jogadores, só antes de começar).
 Rodadas: as mesmas da partida local (5, ou uma por jogador acima disso). Só valem os packs que vêm no app (oficiais
 e pessoais) — os criados no celular não existem nos outros aparelhos. Se o anfitrião sair, a sala é encerrada.
 
+**Chat de voz**: todos se falam na sala antes de começar, no placar da rodada, na roleta e no pódio. Na imitação e
+na apresentação a voz é **desligada em todos os celulares** (e o microfone fica livre para a gravação); quando os sons
+acabam, ela volta sozinha. O microfone entra **aberto**; o botão fixo no canto de cima liga e desliga o seu. O
+**anfitrião pode mutar qualquer um** (botão na lista da sala ou tocando no jogador na faixa de cima), mas **só a
+própria pessoa liga o microfone de volta** — as regras do banco não aceitam o anfitrião ligando o microfone de outro.
+Quem está falando ganha um anel verde no avatar.
+
 **Como funciona por dentro** (`src/online/`):
 
 - **Firebase**: *Realtime Database* guarda a sala (`rooms/{código}`: meta, jogadores, rodada, notas, imitações e
@@ -110,6 +117,11 @@ e pessoais) — os criados no celular não existem nos outros aparelhos. Se o an
   soma o placar; a lógica é pura e testada (`room.ts`, `turn.ts`).
 - **Imitação pela rede** (`clipCodec.ts`): 16 kHz, μ-law de 8 bits em base64 (~77 KB para 3,6 s), baixada só na
   hora da apresentação. A nota é calculada no próprio celular (mesmo DSP do modo local).
+- **Voz** (`voice.ts`, `voiceMesh.ts`, `rtc.ts`/`rtc.web.ts`, `src/store/voice.ts`): o áudio vai **direto entre os
+  celulares** (WebRTC, cada um ligado com todos). O Firebase só passa os recados para eles se acharem
+  (`rooms/{código}/voice`: quem está na voz, microfones e recados lidos e apagados). Usa STUN gratuito do Google e da
+  Cloudflare, sem servidor de retransmissão (TURN): em algumas redes 4G a ligação direta pode falhar, e o botão avisa
+  "Voz sem conexão". O volume de quem fala vem das estatísticas do WebRTC.
 - **Testes sem internet**: `npm run emulators` sobe o emulador do Firebase (Java 11+); com
   `EXPO_PUBLIC_FIREBASE_EMULATOR=127.0.0.1` o app usa o emulador em vez do projeto real.
 - **Ligar de verdade**: siga o [FIREBASE.md](FIREBASE.md) e coloque a configuração do app da Web em
@@ -140,7 +152,7 @@ src/
   store/        estado da partida (zustand)
   audio/        motor de áudio, microfone (nativo e web), espectro → barras, fluxo de áudio do turno (+ testes)
   dsp/          FFT, reamostragem, extração de pitch/energia/brilho e a nota (+ testes)
-  online/       modo online: sala e rodadas (lógica pura), Firebase, imitação pela rede (+ testes)
+  online/       modo online: sala e rodadas (lógica pura), Firebase, imitação pela rede, chat de voz (+ testes)
   theme/        paleta única (Tailwind + gradientes) e utilitários de cor/brilho
 assets/images/  ícones e splash (gerados por scripts/make-icons.py)
 assets/sounds/  97 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
@@ -206,6 +218,12 @@ rode o script. Título, pack e duração vão para `assets/sounds/manifest.json`
   guia do Expo para o SDK 57 (roda no app e na web, sem código nativo). Comparado em set/2026: Supabase (grátis,
   mas o projeto pausa após 1 semana sem uso) e servidor próprio (Colyseus/Cloudflare, exige hospedar). O plano
   grátis do Firebase aguenta 100 conexões simultâneas sem cartão.
+- **react-native-webrtc 124.0.8** + **@config-plugins/react-native-webrtc 15.0.2** (plugin oficial da Expo para o
+  SDK 56+) para o chat de voz, e **react-native-incall-manager 4.3.0** para a voz sair no alto-falante (sem ele, o
+  Android usa o alto-falante de ligação) e o áudio voltar ao normal na hora dos sons. Exigem *development build* (o
+  APK do EAS). Comparados em set/2026: LiveKit (5.000 min/mês grátis) e Agora (10.000 min/mês) — melhores em redes
+  ruins, mas precisam de um servidor para gerar as chaves das salas; a conexão direta não tem custo por minuto. O
+  plugin do WebRTC pede câmera e "sobrepor apps": as duas ficam bloqueadas em `android.blockedPermissions`.
 
 ### Design
 

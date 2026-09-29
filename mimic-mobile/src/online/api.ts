@@ -1,6 +1,7 @@
 import {
   DataSnapshot,
   get,
+  onChildAdded,
   onDisconnect,
   onValue,
   push,
@@ -14,6 +15,7 @@ import {
 import type { TurnScore } from '../game/types';
 import { firebase, signIn } from './firebase';
 import { canJoin, freeColor, JoinCheck, Reaction, RoomMeta, RoomPlayer, RoomRound, RoomScore, roomCode } from './room';
+import type { MicState } from './voice';
 
 /**
  * Onde cada coisa fica no Realtime Database (regras em database.rules.json):
@@ -23,6 +25,9 @@ import { canJoin, freeColor, JoinCheck, Reaction, RoomMeta, RoomPlayer, RoomRoun
  *   rooms/{code}/scores/{rodada}/{uid}     nota de cada um
  *   rooms/{code}/clips/{rodada}/{uid}      imitação (μ-law em base64), baixada na apresentação
  *   rooms/{code}/reactions/{rodada}/{uid}  reações recebidas por quem foi apresentado
+ *   rooms/{code}/voice/peers/{uid}         quem está na voz agora (some quando a voz pausa ou o celular cai)
+ *   rooms/{code}/voice/mic/{uid}           microfone ligado ou não, e quem pediu (o anfitrião só muta)
+ *   rooms/{code}/voice/signals/{uid}/{id}  recados para montar as ligações de voz (lidos e apagados)
  */
 const roomRef = (code: string, path = '') => ref(firebase().db, `rooms/${code}${path ? `/${path}` : ''}`);
 
@@ -167,4 +172,63 @@ export function hostUpdate(code: string, changes: Record<string, unknown>): Prom
 /** Apaga as notas, imitações e reações de uma rodada que já acabou (economiza a cota grátis). */
 export function clearRound(code: string, round: number): Promise<void> {
   return update(roomRef(code), { [`scores/${round}`]: null, [`clips/${round}`]: null, [`reactions/${round}`]: null });
+}
+
+// ——— Chat de voz: o áudio vai direto entre os celulares (WebRTC); aqui só passam os recados para se acharem.
+
+export interface VoiceSignal {
+  from: string;
+  fromSession: string;
+  toSession: string;
+  kind: 'offer' | 'answer' | 'ice';
+  sdp?: string;
+  /** Candidato ICE em JSON. */
+  candidate?: string;
+}
+
+/** Entra na voz com uma sessão nova; se o celular cair, o servidor tira o jogador sozinho. */
+export async function joinVoice(code: string, uid: string, session: string): Promise<void> {
+  const peer = roomRef(code, `voice/peers/${uid}`);
+  await onDisconnect(peer).remove();
+  await set(peer, { session, at: Date.now() });
+}
+
+/** Sai da voz, mas só se a sessão ainda for esta (uma sessão nova do mesmo celular fica). */
+export async function leaveVoice(code: string, uid: string, session: string): Promise<void> {
+  await runTransaction(roomRef(code, `voice/peers/${uid}`), (current: { session?: string } | null) =>
+    current?.session === session ? null : undefined,
+  );
+}
+
+/** Quem está na voz agora: uid → sessão. */
+export function watchVoicePeers(code: string, on: (peers: Record<string, string>) => void) {
+  return onValue(roomRef(code, 'voice/peers'), (s) => {
+    const raw = (s.val() ?? {}) as Record<string, { session: string }>;
+    on(Object.fromEntries(Object.entries(raw).map(([uid, p]) => [uid, p.session])));
+  });
+}
+
+/** Recados de voz endereçados a mim, um por vez (quem recebe apaga). */
+export function watchSignals(code: string, uid: string, on: (id: string, signal: VoiceSignal) => void) {
+  return onChildAdded(roomRef(code, `voice/signals/${uid}`), (s) => {
+    if (s.key) on(s.key, s.val() as VoiceSignal);
+  });
+}
+
+export async function sendSignal(code: string, to: string, signal: VoiceSignal): Promise<void> {
+  await push(roomRef(code, `voice/signals/${to}`), signal);
+}
+
+export function dropSignal(code: string, uid: string, id: string): Promise<void> {
+  return remove(roomRef(code, `voice/signals/${uid}/${id}`));
+}
+
+export function watchMics(code: string, on: (mics: Record<string, MicState>) => void) {
+  return onValue(roomRef(code, 'voice/mic'), (s) => on(s.val() ?? {}));
+}
+
+/** Liga ou desliga um microfone, registrando quem pediu (o anfitrião mutando alguém, ou a própria pessoa). */
+export function setMic(code: string, by: string, target: string, on: boolean): Promise<void> {
+  const state: MicState = { on, by };
+  return set(roomRef(code, `voice/mic/${target}`), state);
 }

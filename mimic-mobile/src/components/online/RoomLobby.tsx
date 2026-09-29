@@ -5,14 +5,16 @@ import { roundsFor } from '../../game/match';
 import { poolFrom } from '../../game/packs';
 import { MAX_ROOM_PLAYERS, MIN_PLAYERS } from '../../game/types';
 import type { RoomPlayer } from '../../online/room';
+import { micOpen, mutedByOther } from '../../online/voice';
 import { allPacks, useLibrary } from '../../store/library';
+import { useVoice, useVoiceAllowed, voiceActions } from '../../store/voice';
 import { palette } from '../../theme/tokens';
-import { Avatar } from '../Avatar';
 import { GradientButton } from '../Buttons';
 import { Icon } from '../Icon';
 import { PackPicker } from '../PackPicker';
 import { PressableScale } from '../PressableScale';
 import { LiveDot } from './LiveDot';
+import { VoiceAvatar } from './VoiceAvatar';
 
 interface Props {
   code: string;
@@ -42,6 +44,9 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
   const packs = allPacks([]);
   const pool = poolFrom(packs, selected);
   const online = ids.filter((uid) => players[uid]?.online).length;
+  const voice = useVoiceAllowed();
+  const mics = useVoice((s) => s.mics);
+  const speaking = useVoice((s) => s.speaking);
 
   return (
     <View className="gap-6">
@@ -75,18 +80,39 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
         </View>
         {ids.map((uid) => {
           const p = players[uid];
+          const talking = voice && p.online;
+          const open = micOpen(uid, mics[uid]);
           return (
             <Animated.View key={uid} entering={FadeInDown.duration(250)}>
               <View className="flex-row items-center gap-3 rounded-2xl border border-white/5 bg-night-800 p-2 pr-4">
-                <Avatar label={p.name} color={p.color} size={44} active={uid === me} />
+                <VoiceAvatar
+                  label={p.name}
+                  color={p.color}
+                  size={44}
+                  active={uid === me}
+                  speaking={talking && Boolean(speaking[uid])}
+                  muted={talking && !open}
+                />
                 <View className="flex-1">
                   <Text className="font-label text-base text-mist-50" numberOfLines={1}>
                     {p.name}
                     {uid === me ? ' (você)' : ''}
                   </Text>
-                  <Text className="font-body text-xs text-mist-400">{uid === host ? 'Anfitrião' : 'Convidado'}</Text>
+                  <Text className="font-body text-xs text-mist-400">
+                    {uid === host ? 'Anfitrião' : 'Convidado'}
+                    {talking && !open ? (mutedByOther(uid, mics[uid]) ? ' · mutado pelo anfitrião' : ' · mudo') : ''}
+                  </Text>
                 </View>
                 {uid === host && <Icon name="star" size={16} color={palette.amber[400]} />}
+                {talking && isHost && uid !== me && open && (
+                  <PressableScale
+                    onPress={() => voiceActions.mute(uid)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Mutar ${p.name}`}
+                    className="h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+                    <Icon name="mic" size={18} color={palette.mint[400]} />
+                  </PressableScale>
+                )}
                 <View
                   className="h-2.5 w-2.5 rounded-full"
                   style={{ backgroundColor: p.online ? palette.mint[400] : palette.mist[500] }}

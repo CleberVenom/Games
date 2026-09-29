@@ -298,6 +298,21 @@ Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi
 - [ ] Na última rodada, **pódio** em todos os celulares; só o anfitrião vê **Jogar de novo**.
 - [ ] Se o anfitrião sair da sala, os outros veem **"A sala foi encerrada"**.
 
+#### Chat de voz (de preferência com os celulares em cômodos diferentes, ou com fone)
+
+- [ ] Ao entrar na sala, aparece **"Microfone aberto: a sala te ouve"** e todos se ouvem pelo alto-falante (não pelo
+      alto-falante de ligação, o de encostar no ouvido).
+- [ ] Quem fala ganha um **anel verde** no avatar; o botão de microfone (canto de cima) brilha quando **você** fala.
+- [ ] Tocar no botão de microfone: fica **mudo** (os outros veem "mudo" e deixam de te ouvir); tocar de novo, volta.
+- [ ] O anfitrião toca no **microfone ao lado de um jogador** (ou no jogador, na faixa de cima): ele fica mutado e vê
+      **"O anfitrião mutou o seu microfone"**. O anfitrião **não tem** como ligar de volta; só o próprio jogador, no
+      botão dele.
+- [ ] Quando o anfitrião começa a partida, aparece **"Voz pausada durante os sons"** e ninguém se ouve durante a
+      imitação e a apresentação. A gravação da imitação funciona normalmente.
+- [ ] No **placar da rodada**, na **roleta** e no **pódio**, a voz volta sozinha (quem estava mudo continua mudo).
+- [ ] Se aparecer **"Voz sem conexão"**, tocar no botão para tentar de novo. Em algumas redes 4G a ligação direta não
+      funciona — anote qual operadora/rede para eu investigar.
+
 ---
 
 ## Parte 5 — Se algo der errado
