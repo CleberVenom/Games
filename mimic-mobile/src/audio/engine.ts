@@ -8,6 +8,7 @@ import {
 
 import type { SoundEffect } from '../game/modifiers';
 import { buildEffect } from './effects';
+import { atContextRate } from './recording';
 import { resolveSource } from './sources';
 import { ANALYSER } from './spectrum';
 
@@ -86,9 +87,11 @@ class AudioEngine {
   }
 
   /** Toca um áudio qualquer em PCM (ex.: a imitação de um amigo, na apresentação online). */
-  playSamples(samples: Float32Array<ArrayBuffer>, sampleRate: number): Promise<void> {
-    const buffer = this.context.createBuffer(1, samples.length, sampleRate);
-    buffer.copyToChannel(samples, 0);
+  playSamples(samples: Float32Array, sampleRate: number): Promise<void> {
+    const rate = this.context.sampleRate;
+    const data = atContextRate(samples, sampleRate, rate);
+    const buffer = this.context.createBuffer(1, data.length, rate);
+    buffer.copyToChannel(data, 0);
     return this.playBuffer(buffer, null);
   }
 

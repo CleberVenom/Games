@@ -110,6 +110,10 @@ Nenhuma tela "padrão" ou rudimentar. Toda UI segue:
   `--proxy-server=https=<host:porta do $HTTPS_PROXY>` (o `localhost` segue direto) e
   `--ignore-certificate-errors-spki-list=<SPKI da /root/.ccr/agent-proxy-ca.crt>` (fixa só essa CA). WebSocket não
   passa pelo proxy (erro 500); o Firebase cai sozinho para *long polling*.
+- `react-native-audio-api` no celular **ignora a taxa do AudioBuffer** ao tocar (lê uma amostra por quadro, na taxa
+  do contexto): um buffer de 16 kHz num contexto de 48 kHz toca 3× mais rápido. Converta o PCM para
+  `context.sampleRate` antes de `createBuffer` (`atContextRate` no Mimic). Na web o navegador converte sozinho, então
+  o teste no navegador **não** pega esse erro — confira a taxa em teste unitário.
 - WebRTC no celular: sem `InCallManager.start({ media: 'video' })` a voz sai no alto-falante de ligação do Android;
   chame `InCallManager.stop()` ao sair da voz para o áudio do jogo voltar ao normal. O plugin do WebRTC adiciona
   `CAMERA` e `SYSTEM_ALERT_WINDOW`: bloqueie em `android.blockedPermissions` se o app não usa. Os tipos do
