@@ -25,6 +25,10 @@ const palette = {
   mint: { 400: '#62E4AE' },
   amber: { 400: '#FFC96B' },
   coral: { 400: '#FF7D8C' },
+  sky: { 400: '#6FA8FF' },
+  lime: { 400: '#BFEA6A' },
+  orange: { 400: '#FFA15C' },
+  orchid: { 400: '#E58CFF' },
 };
 
 module.exports = { palette };

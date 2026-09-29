@@ -10,6 +10,10 @@ export const PLAYER_HEX: Record<PlayerColor, string> = {
   mint: palette.mint[400],
   amber: palette.amber[400],
   coral: palette.coral[400],
+  sky: palette.sky[400],
+  lime: palette.lime[400],
+  orange: palette.orange[400],
+  orchid: palette.orchid[400],
 };
 
 type Stops = readonly [string, string, ...string[]];

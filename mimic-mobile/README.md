@@ -88,7 +88,7 @@ lista de packs no AsyncStorage (`src/store/library.ts`).
 ### Modo online (com amigos)
 
 Cada um no seu celular. O anfitrião cria a sala (**código de 4 letras**, botão "Convidar amigos") e escolhe os
-packs; os outros entram pelo código (até 6 jogadores, só antes de começar). Em cada rodada:
+packs; os outros entram pelo código (até 10 jogadores, só antes de começar). Em cada rodada:
 
 1. **Todos imitam ao mesmo tempo** o mesmo som: cada celular toca a referência quando o jogador toca em "Ouvir o
    som" (com a repetição e a silhueta de sempre), grava no tempo do som, calcula a nota e envia a imitação.

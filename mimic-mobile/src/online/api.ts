@@ -65,7 +65,7 @@ export async function createRoom(name: string): Promise<Session> {
   throw new RoomError('unavailable');
 }
 
-/** Entra numa sala pelo código (só enquanto ela está no lobby, até 6 jogadores). */
+/** Entra numa sala pelo código (só enquanto ela está no lobby, até 10 jogadores). */
 export async function joinRoom(code: string, name: string): Promise<Session> {
   const uid = await signIn();
   const [metaSnap, playersSnap] = await Promise.all([get(roomRef(code, 'meta')), get(roomRef(code, 'players'))]);

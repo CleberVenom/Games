@@ -1,6 +1,6 @@
 import { roundsFor, shuffle } from '../game/match';
 import { ModifierId, MODIFIERS } from '../game/modifiers';
-import { MAX_PLAYERS, PlayerColor, PLAYER_COLORS, TurnScore } from '../game/types';
+import { MAX_ROOM_PLAYERS, PlayerColor, PLAYER_COLORS, TurnScore } from '../game/types';
 
 /**
  * Modo online (todos imitam ao mesmo tempo). O anfitrião é a autoridade: só ele avança as fases da sala;
@@ -100,7 +100,7 @@ export function canJoin(meta: RoomMeta | null, players: Record<string, RoomPlaye
   if (!meta) return 'missing';
   if (players[uid]) return 'ok';
   if (meta.status !== 'lobby') return 'started';
-  if (Object.keys(players).length >= MAX_PLAYERS) return 'full';
+  if (Object.keys(players).length >= MAX_ROOM_PLAYERS) return 'full';
   return 'ok';
 }
 

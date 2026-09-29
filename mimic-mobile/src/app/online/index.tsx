@@ -11,6 +11,7 @@ import { GradientButton } from '../../components/Buttons';
 import { Gradient } from '../../components/Gradient';
 import { Icon, IconName } from '../../components/Icon';
 import { PressableScale } from '../../components/PressableScale';
+import { MAX_ROOM_PLAYERS } from '../../game/types';
 import { RoomError } from '../../online/api';
 import { onlineConfigured } from '../../online/firebase';
 import { normalizeCode } from '../../online/room';
@@ -22,7 +23,7 @@ const NAME_KEY = 'mimic.online.name';
 const JOIN_ERROR: Record<string, string> = {
   missing: 'Sala não encontrada. Confira o código com quem criou.',
   started: 'Essa partida já começou. Peça para o anfitrião voltar ao lobby.',
-  full: 'A sala está cheia (máximo de 6 jogadores).',
+  full: `A sala está cheia (máximo de ${MAX_ROOM_PLAYERS} jogadores).`,
   unavailable: 'Não foi possível criar a sala agora. Tente de novo.',
 };
 

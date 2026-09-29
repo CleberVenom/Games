@@ -1,8 +1,11 @@
-export const PLAYER_COLORS = ['violet', 'cyan', 'pink', 'mint', 'amber', 'coral'] as const;
+export const PLAYER_COLORS = ['violet', 'cyan', 'pink', 'mint', 'amber', 'coral', 'sky', 'lime', 'orange', 'orchid'] as const;
 export type PlayerColor = (typeof PLAYER_COLORS)[number];
 
 export const MIN_PLAYERS = 2;
-export const MAX_PLAYERS = PLAYER_COLORS.length;
+/** Máximo no modo local (um celular passando a vez). */
+export const MAX_PLAYERS = 6;
+/** Máximo numa sala online (uma cor diferente para cada um). */
+export const MAX_ROOM_PLAYERS = PLAYER_COLORS.length;
 
 export interface PlayerSetup {
   name: string;

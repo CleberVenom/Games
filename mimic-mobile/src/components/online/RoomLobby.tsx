@@ -3,7 +3,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { roundsFor } from '../../game/match';
 import { poolFrom } from '../../game/packs';
-import { MIN_PLAYERS } from '../../game/types';
+import { MAX_ROOM_PLAYERS, MIN_PLAYERS } from '../../game/types';
 import type { RoomPlayer } from '../../online/room';
 import { allPacks, useLibrary } from '../../store/library';
 import { palette } from '../../theme/tokens';
@@ -71,7 +71,7 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
             <Icon name="people" size={18} color={palette.violet[300]} />
             <Text className="font-heading text-lg text-mist-50">Na sala</Text>
           </View>
-          <Text className="font-label text-sm text-mist-400">{ids.length}/6</Text>
+          <Text className="font-label text-sm text-mist-400">{ids.length}/{MAX_ROOM_PLAYERS}</Text>
         </View>
         {ids.map((uid) => {
           const p = players[uid];

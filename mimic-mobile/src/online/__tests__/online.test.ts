@@ -53,19 +53,23 @@ describe('sala online', () => {
     expect(normalizeCode(' ab-c d9e ')).toBe('ABCD');
   });
 
-  it('só entra no lobby, até 6 jogadores; quem já está pode voltar', () => {
+  it('só entra no lobby, até 10 jogadores; quem já está pode voltar', () => {
     expect(canJoin(null, {}, 'x')).toBe('missing');
     expect(canJoin(lobby, PLAYERS, 'x')).toBe('ok');
     expect(canJoin({ ...lobby, status: 'playing' }, PLAYERS, 'x')).toBe('started');
     expect(canJoin({ ...lobby, status: 'playing' }, PLAYERS, 'a')).toBe('ok');
-    const full = Object.fromEntries(Array.from({ length: 6 }, (_, i) => [`p${i}`, player(`P${i}`, i)]));
-    expect(canJoin(lobby, full, 'x')).toBe('full');
+    const room = (n: number) => Object.fromEntries(Array.from({ length: n }, (_, i) => [`p${i}`, player(`P${i}`, i)]));
+    expect(canJoin(lobby, room(9), 'x')).toBe('ok');
+    expect(canJoin(lobby, room(10), 'x')).toBe('full');
   });
 
   it('cada jogador novo pega uma cor livre', () => {
     expect(freeColor({ a: player('Ana', 1, { color: 'violet' }), b: player('Bia', 2, { color: 'cyan' }) })).toBe(
       'pink',
     );
+    const room: Record<string, ReturnType<typeof player>> = {};
+    for (let i = 0; i < 10; i++) room[`p${i}`] = player(`P${i}`, i, { color: freeColor(room) });
+    expect(new Set(Object.values(room).map((p) => p.color)).size).toBe(10);
   });
 
   it('começar: rodadas pelo número de jogadores (mínimo 5), placar zerado, primeiro som do baralho', () => {
