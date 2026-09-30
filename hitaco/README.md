@@ -44,7 +44,7 @@ prévia toca essa versão, mas o ano da carta continua sendo o do lançamento or
 
 1. **Coloque o app no ar** (uma vez só). O QR code das cartas aponta para
    `https://clebervenom.github.io/Games/hitaco/`. Para esse endereço funcionar, ative o GitHub Pages do
-   repositório: *Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)`*.
+   repositório: *Settings → Pages → Build and deployment → Deploy from a branch →* a branch principal do repositório (hoje `claude/gamified-drum-app-p5rqjq`) *e a pasta `/ (root)`*.
    (Em outro endereço, abra `cartas.html` de lá e gere de novo o PDF: o QR usa o endereço da página.)
 2. **Imprima** o `Hitaco-cartas.pdf` em A4, **frente e verso virando na borda longa**, escala 100%,
    de preferência em papel de 180 g ou mais. Corte seguindo as marcas: cada carta tem 6,4 × 6,4 cm.
