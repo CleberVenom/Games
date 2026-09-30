@@ -180,7 +180,10 @@ instala esse APK no celular.
 1. No celular, **aponte a câmera para o QR code** (no terminal ou na página do build) e toque no link que aparecer.
    Alternativa: abra **expo.dev** no navegador do celular, entre na sua conta → **v3-app** → **cleber-santarosa** → **Builds** →
    o build mais recente → **Install**.
-2. Baixe o arquivo `.apk` e toque nele para abrir (ou vá em **Arquivos → Downloads**).
+2. Baixe o arquivo `.apk` (uns 105 MB — de preferência no Wi-Fi) e toque nele para abrir (ou vá em **Arquivos →
+   Downloads**). Se o Chrome avisar que **"este tipo de arquivo pode ser perigoso"**, toque em **Baixar mesmo
+   assim** — sem isso o download fica parado, mesmo parecendo completo (o aviso pode estar na notificação ou na
+   lista de downloads do Chrome).
 3. O Android vai avisar que não pode instalar apps "desta fonte". Toque em **Configurações** → ative
    **Permitir desta fonte** → volte.
 4. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes** →
@@ -188,8 +191,11 @@ instala esse APK no celular.
 5. Abra o **Mimic Mobile**. Quando ele pedir o **microfone**, toque em **Durante o uso do app** (ou **Permitir**).
 6. Siga o **roteiro de teste da Parte 4**.
 
-Para testar uma versão nova no futuro: baixe o ZIP de novo (Parte 1.1), rode `npm install` e repita a 3.3.
-Instale o APK novo por cima do antigo.
+**Versões novas, depois deste APK:** não precisa baixar APK. Ao abrir o jogo, aparece na tela inicial **"Nova
+versão disponível"** → toque em **Atualizar**: ele baixa só o que mudou e reinicia sozinho. No rodapé da tela inicial
+aparece **"Versão 1.0.0 · atualizada em dd/mm às hh:mm"** — é assim que você confere que está na versão nova. Só
+quando eu avisar que mudou uma parte nativa (biblioteca nova, permissão) é preciso instalar um APK novo por cima do
+antigo.
 
 ### Atalho: eu mesmo gero o APK para você
 
@@ -330,6 +336,9 @@ Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi
 | A nota é sempre 0 | O microfone não está captando: fale mais perto e mais alto; no computador, confira o microfone escolhido nas configurações de som do Windows. |
 | O build da Expo terminou com **"Build failed"** | Abra o link do build, copie o link e me mande — eu vejo o erro. |
 | O APK não instala ("app não instalado") | Desinstale uma versão antiga do Mimic Mobile, se houver, e tente de novo. |
+| O download do APK "termina", mas o arquivo não aparece | No Chrome, abra **⋮ → Downloads** e toque em **Baixar mesmo assim** no aviso de arquivo perigoso. Confira se há uns 500 MB livres e use o Wi-Fi. |
+| Não aparece o aviso "Nova versão disponível" | Feche o jogo de verdade (tire da lista de apps recentes) e abra de novo, com internet. Ele procura ao abrir, no máximo a cada 10 minutos. |
+| Tocou em **Atualizar** e apareceu "Não deu para baixar" | Confira a internet e toque em **Tentar de novo**. |
 | Tentou abrir pelo app **Expo Go** | Não funciona com este jogo. Use o APK (Parte 3). |
 
 ---

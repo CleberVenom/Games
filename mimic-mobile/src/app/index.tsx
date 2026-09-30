@@ -13,12 +13,14 @@ import { Icon, IconName } from '../components/Icon';
 import { LogoMark } from '../components/LogoMark';
 import { PackPicker } from '../components/PackPicker';
 import { PressableScale } from '../components/PressableScale';
+import { UpdateBanner } from '../components/UpdateBanner';
 import { REPLAYS_PER_TURN, roundsFor } from '../game/match';
 import { poolFrom } from '../game/packs';
 import { MAX_PLAYERS, MIN_PLAYERS, PLAYER_COLORS, PlayerColor } from '../game/types';
 import { allPacks, useLibrary } from '../store/library';
 import { useMatch } from '../store/match';
 import { gradients, palette } from '../theme/tokens';
+import { appVersionLabel, installUpdate, useAppUpdate } from '../updates/useAppUpdate';
 
 interface Draft {
   key: number;
@@ -39,6 +41,7 @@ function nextFreeColor(from: PlayerColor, taken: Set<PlayerColor>): PlayerColor 
 export default function LobbyScreen() {
   const insets = useSafeAreaInsets();
   const start = useMatch((s) => s.start);
+  const update = useAppUpdate();
   const nextKey = useRef(MIN_PLAYERS);
   const [players, setPlayers] = useState<Draft[]>(() =>
     PLAYER_COLORS.slice(0, MIN_PLAYERS).map((color, key) => ({ key, name: '', color })),
@@ -106,6 +109,13 @@ export default function LobbyScreen() {
               </Text>
             </View>
           </View>
+
+          <UpdateBanner
+            view={update.view}
+            progress={update.progress}
+            publishedAt={update.publishedAt}
+            onUpdate={() => installUpdate(update.pending)}
+          />
 
           <PressableScale
             onPress={() => router.push('/online')}
@@ -215,6 +225,8 @@ export default function LobbyScreen() {
               <Step icon="trophy" title="Pontue" text="Nota de 0 a 100" colors={gradients.primary} />
             </View>
           </View>
+
+          <Text className="text-center font-body text-[11px] text-mist-500">{appVersionLabel()}</Text>
         </ScrollView>
 
         <View className="gap-2 px-5 pt-3" style={{ paddingBottom: insets.bottom + 16 }}>

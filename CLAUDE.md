@@ -46,6 +46,8 @@ Nunca escolha stack de memória. No início de cada projeto (e ao adicionar qual
 | Áudio | `react-native-audio-api` | exige *development build* |
 | Testes | `jest-expo` | |
 | Online (salas, tempo real) | **Firebase JS SDK 12** — Realtime Database + Auth anônimo | roda no Expo Go; `initializeAuth` com `inMemoryPersistence`; regras versionadas em `database.rules.json` |
+| Atualizações sem reinstalar | **expo-updates** (EAS Update) com `runtimeVersion: { policy: 'fingerprint' }` e canal por perfil do `eas.json` | aviso + botão no app (`checkAutomatically: NEVER`); mudança nativa exige APK novo |
+| Tamanho do APK | `expo-build-properties` → `android.buildArchs: ["armeabi-v7a", "arm64-v8a"]` | tira o código de emulador (x86): ~190 → ~105 MB |
 | Voz entre jogadores | **react-native-webrtc 124** + `@config-plugins/react-native-webrtc` + `react-native-incall-manager` | P2P com sinalização no Firebase; exige *development build*; alternativas pagas por minuto: LiveKit, Agora |
 | Web (se o projeto for web) | Tailwind CSS 4 + React — **validar na hora** | |
 
@@ -114,6 +116,12 @@ Nenhuma tela "padrão" ou rudimentar. Toda UI segue:
   do contexto): um buffer de 16 kHz num contexto de 48 kHz toca 3× mais rápido. Converta o PCM para
   `context.sampleRate` antes de `createBuffer` (`atContextRate` no Mimic). Na web o navegador converte sozinho, então
   o teste no navegador **não** pega esse erro — confira a taxa em teste unitário.
+- EAS Update com política `fingerprint`: antes de `eas update`, confira que o fingerprint local
+  (`npx expo-updates fingerprint:generate --platform android`) é o mesmo `runtimeVersion` do APK (`eas build:view`);
+  se mudou algo nativo, a atualização não chega a ninguém — gere APK novo. Na web `expo-updates` fica desligado
+  (`Updates.isEnabled` falso): para capturar o aviso, force o estado temporariamente e não commite.
+- APK baixado pelo Chrome do Android para no aviso "arquivo perigoso" até tocar em **Baixar mesmo assim**; parece
+  completo, mas o arquivo não aparece. Explique isso ao mandar o link.
 - WebRTC no celular: sem `InCallManager.start({ media: 'video' })` a voz sai no alto-falante de ligação do Android;
   chame `InCallManager.stop()` ao sair da voz para o áudio do jogo voltar ao normal. O plugin do WebRTC adiciona
   `CAMERA` e `SYSTEM_ALERT_WINDOW`: bloqueie em `android.blockedPermissions` se o app não usa. Os tipos do

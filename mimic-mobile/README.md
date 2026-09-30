@@ -218,6 +218,8 @@ rode o script. Título, pack e duração vão para `assets/sounds/manifest.json`
   guia do Expo para o SDK 57 (roda no app e na web, sem código nativo). Comparado em set/2026: Supabase (grátis,
   mas o projeto pausa após 1 semana sem uso) e servidor próprio (Colyseus/Cloudflare, exige hospedar). O plano
   grátis do Firebase aguenta 100 conexões simultâneas sem cartão.
+- **expo-updates 57** (EAS Update, canal `preview`) para atualizar o app com um toque, e **expo-build-properties 57**
+  para gerar o APK só com os processadores de celular.
 - **react-native-webrtc 124.0.8** + **@config-plugins/react-native-webrtc 15.0.2** (plugin oficial da Expo para o
   SDK 56+) para o chat de voz, e **react-native-incall-manager 4.3.0** para a voz sair no alto-falante (sem ele, o
   Android usa o alto-falante de ligação) e o áudio voltar ao normal na hora dos sons. Exigem *development build* (o
@@ -265,6 +267,25 @@ npx expo start                                             # depois, com o APK d
 ```
 
 Com Android Studio/SDK instalado localmente: `npm run android` (`expo run:android`).
+
+O APK leva só o código dos processadores de celular (`armeabi-v7a` e `arm64-v8a`, via `expo-build-properties`):
+~105 MB em vez de ~190 MB com os de emulador.
+
+### Atualizar sem reinstalar (EAS Update)
+
+Mudanças no JavaScript e nos sons chegam **sem baixar APK**: a tela inicial mostra **"Nova versão disponível →
+Atualizar"**, um toque baixa só o que mudou e reinicia o jogo. O rodapé mostra a versão e, depois de atualizar,
+"atualizada em dd/mm às hh:mm".
+
+```bash
+npx eas-cli@latest update --channel preview --message "o que mudou"   # publica para quem tem o APK "preview"
+```
+
+- O app **não baixa sozinho** (`checkAutomatically: NEVER`): procura ao abrir e ao voltar para ele (no máximo a
+  cada 10 min) e só baixa quando o jogador toca em Atualizar (`src/updates/`).
+- `runtimeVersion` usa a política **fingerprint**: uma atualização só chega aos APKs com o **mesmo código nativo**.
+  Biblioteca nativa nova, permissão ou plugin em `app.json` → é preciso gerar e instalar um APK novo.
+- Plano grátis da Expo: 1.000 usuários ativos por mês e 100 GiB de download.
 
 ### Navegador
 
