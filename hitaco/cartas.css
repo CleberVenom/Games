@@ -1,0 +1,135 @@
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+@page { size: A4; margin: 0; }
+
+body { margin: 0; background: #d9dbe4; font-family: Montserrat, system-ui, sans-serif; color: #151a33; }
+
+/* Painel de instruções (só na tela) */
+.painel { max-width: 760px; margin: 0 auto; padding: 24px 16px; }
+.painel h1 { font: 400 40px/1 "Bebas Neue", Impact, sans-serif; letter-spacing: 0.03em; margin: 0 0 12px; }
+.painel li { margin-bottom: 6px; }
+.painel .campo { display: block; font-weight: 700; margin: 16px 0; }
+.painel .campo input { display: block; width: 100%; margin-top: 6px; padding: 10px; font: 500 15px Montserrat, sans-serif; }
+.painel fieldset { border: 1px solid #aab; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.painel .bt {
+  border: 0; border-radius: 999px; padding: 12px 24px; margin-right: 16px; cursor: pointer;
+  font: 700 16px Montserrat, sans-serif; color: #0b1026; background: linear-gradient(90deg, #1fe07a, #ffd23f);
+}
+
+/* Folha A4 */
+.folha {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  margin: 0 auto 24px;
+  background: #fff;
+  overflow: hidden;
+  break-after: page;
+}
+.grade {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 64mm);
+  grid-template-rows: repeat(4, 64mm);
+  justify-content: center;
+  align-content: center;
+}
+.marca { position: absolute; background: #333; }
+.marca.v { width: 0.2mm; margin-left: -0.1mm; }
+.marca.h { height: 0.2mm; margin-top: -0.1mm; }
+
+@media screen {
+  .folha { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); }
+  @media (max-width: 820px) { #folhas { zoom: 0.45; } }
+}
+@media print {
+  body { background: #fff; }
+  .painel { display: none; }
+  .folha { margin: 0; }
+}
+
+/* Carta */
+.carta { position: relative; width: 64mm; height: 64mm; overflow: hidden; }
+.carta.vazia { background: #fff; }
+
+/* Frente: arte do disco com o QR code no selo */
+.frente {
+  background: #0b1026 url("arte/verso.jpg") center / cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3.2mm 0 2.6mm;
+}
+.frente .logo {
+  font: 400 7mm/1 "Bebas Neue", Impact, sans-serif;
+  letter-spacing: 0.06em;
+  color: #ffd23f;
+  text-shadow: 0 0 2mm rgba(255, 210, 63, 0.8), 0.5mm 0.5mm 0 #0b1026;
+}
+.frente .logo span { color: #1fe07a; }
+.frente .qr {
+  width: 30mm;
+  height: 30mm;
+  padding: 2mm;
+  background: #fff;
+  border-radius: 2.5mm;
+  box-shadow: 0 0 0 0.6mm #1fe07a, 0 0 4mm rgba(31, 224, 122, 0.9);
+}
+.frente .qr svg { display: block; width: 100%; height: 100%; }
+.frente .num { font: 700 2.4mm/1 Montserrat, sans-serif; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.08em; }
+
+/* Verso: ano, artista e música sobre a arte do estilo */
+.verso {
+  --cor: #ff5a36;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  padding: 5mm 5mm 3mm;
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.55) 0 30%, rgba(0, 0, 0, 0.2) 70%),
+    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.1) 35%, rgba(0, 0, 0, 0.1) 65%, rgba(0, 0, 0, 0.55)),
+    var(--arte) center / cover;
+}
+.verso::after {
+  content: "";
+  position: absolute;
+  inset: 1.6mm;
+  border: 0.5mm solid var(--cor);
+  border-radius: 2.5mm;
+  box-shadow: 0 0 2mm var(--cor), inset 0 0 2mm var(--cor);
+  pointer-events: none;
+}
+.verso.rock { --arte: url("arte/rock.jpg"); --cor: #ff5a36; }
+.verso.funk { --arte: url("arte/funk.jpg"); --cor: #ff3fd0; }
+.verso.sertanejo { --arte: url("arte/sertanejo.jpg"); --cor: #ffb52e; }
+.verso p { margin: 0; text-shadow: 0 0.4mm 1.5mm rgba(0, 0, 0, 0.95); position: relative; z-index: 1; }
+.verso .artista { font: 800 3.8mm/1.15 Montserrat, sans-serif; text-transform: uppercase; letter-spacing: 0.02em; }
+.verso .artista.t2 { font-size: 3.2mm; }
+.verso .artista.t3 { font-size: 2.8mm; }
+.verso .artista.t4 { font-size: 2.4mm; }
+.verso .ano {
+  font: 400 25mm/0.9 "Bebas Neue", Impact, sans-serif;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 3mm var(--cor), 0 0 1mm var(--cor), 0.6mm 0.8mm 0 rgba(0, 0, 0, 0.7);
+}
+.verso .musica { font: italic 600 4.2mm/1.2 Montserrat, sans-serif; }
+.verso .musica.t2 { font-size: 3.5mm; }
+.verso .musica.t3 { font-size: 3mm; }
+.verso .musica.t4 { font-size: 2.6mm; }
+.verso .rodape { font: 500 2mm/1 Montserrat, sans-serif; color: rgba(255, 255, 255, 0.8); letter-spacing: 0.06em; text-transform: uppercase; position: relative; z-index: 1; }
+
+/* Fichas: círculos de 26 mm */
+.fichas {
+  display: grid;
+  grid-template-columns: repeat(7, 26mm);
+  grid-auto-rows: 26mm;
+  gap: 2mm;
+  justify-content: center;
+  align-content: center;
+}
+.ficha { border-radius: 50%; background: #0b1026 url("arte/ficha.jpg") center / 108% no-repeat; outline: 0.2mm dashed #999; outline-offset: 0.6mm; }

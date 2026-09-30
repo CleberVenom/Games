@@ -1,0 +1,193 @@
+:root {
+  --fundo: #0b1026;
+  --fundo-2: #141b3d;
+  --texto: #f4f6ff;
+  --suave: #aab3d6;
+  --verde: #1fe07a;
+  --amarelo: #ffd23f;
+  --azul: #3b82ff;
+  --rosa: #ff3fa4;
+  --rock: #ff5a36;
+  --funk: #ff3fd0;
+  --sertanejo: #ffb52e;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background:
+    radial-gradient(120% 60% at 50% 0%, #1b2a6b 0%, transparent 60%),
+    radial-gradient(80% 50% at 100% 100%, #0f4d3a 0%, transparent 60%),
+    var(--fundo);
+  background-attachment: fixed;
+  color: var(--texto);
+  font: 500 16px/1.5 Montserrat, system-ui, sans-serif;
+}
+
+.topo { text-align: center; padding: max(16px, env(safe-area-inset-top)) 16px 0; }
+
+.marca {
+  margin: 0;
+  font: 400 56px/1 "Bebas Neue", Impact, sans-serif;
+  letter-spacing: 0.04em;
+  color: var(--amarelo);
+  text-shadow: 0 0 18px rgba(255, 210, 63, 0.55), 3px 3px 0 var(--verde);
+}
+.marca span { color: var(--verde); text-shadow: 0 0 18px rgba(31, 224, 122, 0.6), 3px 3px 0 var(--azul); }
+
+main { max-width: 520px; margin: 0 auto; padding: 8px 16px max(24px, env(safe-area-inset-bottom)); }
+
+.tela { display: none; flex-direction: column; align-items: center; gap: 16px; }
+.tela.ativa { display: flex; }
+
+.capa {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.lema { margin: 0; text-align: center; color: var(--suave); }
+
+.bt {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font: 700 16px/1.2 Montserrat, sans-serif;
+  color: var(--fundo);
+  background: var(--texto);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.bt:active { transform: scale(0.97); }
+.bt.grande {
+  width: 100%;
+  padding: 18px 22px;
+  font-size: 20px;
+  background: linear-gradient(90deg, var(--verde), var(--amarelo));
+  box-shadow: 0 0 24px rgba(31, 224, 122, 0.35);
+}
+
+.link {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 8px;
+  font: 700 15px Montserrat, sans-serif;
+  color: var(--amarelo);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.numero { width: 100%; text-align: center; color: var(--suave); font-size: 14px; }
+.numero .linha { display: flex; gap: 8px; justify-content: center; margin-top: 6px; }
+.numero input {
+  width: 110px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: var(--fundo-2);
+  color: var(--texto);
+  font: 700 18px Montserrat, sans-serif;
+  text-align: center;
+}
+
+.regras {
+  width: 100%;
+  background: rgba(20, 27, 61, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 4px 18px;
+}
+.regras summary { font: 400 26px/2 "Bebas Neue", sans-serif; letter-spacing: 0.04em; cursor: pointer; color: var(--verde); }
+.regras h3 { font: 400 22px/1.2 "Bebas Neue", sans-serif; letter-spacing: 0.04em; color: var(--amarelo); margin: 16px 0 4px; }
+.regras p, .regras li { font-size: 15px; }
+.regras ul, .regras ol { padding-left: 20px; margin: 0; }
+.regras li { margin-bottom: 6px; }
+
+/* Leitor */
+.camera {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+}
+.camera video { width: 100%; height: 100%; object-fit: cover; }
+.mira {
+  position: absolute;
+  inset: 18%;
+  border: 3px solid var(--verde);
+  border-radius: 18px;
+  box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.35), 0 0 24px var(--verde);
+}
+.msg { margin: 0; text-align: center; color: var(--suave); min-height: 3em; }
+
+/* Tocador: um disco de vinil que gira */
+.disco {
+  appearance: none;
+  border: 0;
+  margin-top: 12px;
+  width: min(72vw, 300px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background:
+    radial-gradient(circle, transparent 33%, rgba(255, 255, 255, 0.05) 33.5%, transparent 34%),
+    repeating-radial-gradient(circle, #111 0 2px, #1c1c1c 2px 4px),
+    #111;
+  box-shadow: 0 0 0 4px rgba(31, 224, 122, 0.8), 0 0 40px rgba(31, 224, 122, 0.45), 0 0 90px rgba(59, 130, 255, 0.35);
+  touch-action: manipulation;
+}
+.selo {
+  width: 36%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(var(--verde), var(--amarelo), var(--azul), var(--verde));
+  color: var(--fundo);
+  font-size: 34px;
+}
+.tocando .disco { animation: gira 2.4s linear infinite; }
+@keyframes gira { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .tocando .disco { animation: none; } }
+
+.barra { width: 100%; height: 8px; border-radius: 99px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+#progresso { width: 0; height: 100%; background: linear-gradient(90deg, var(--verde), var(--amarelo)); transition: width 0.25s linear; }
+
+.acoes { display: flex; gap: 10px; width: 100%; }
+.acoes .bt:not(.grande) { flex: 0 0 auto; }
+
+/* Resposta revelada: mesma cara da carta impressa */
+.resposta {
+  width: min(80vw, 320px);
+  aspect-ratio: 1;
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55)), var(--arte) center / cover;
+  box-shadow: 0 0 0 3px var(--cor), 0 0 30px var(--cor);
+}
+.resposta[hidden] { display: none; }
+.resposta[data-estilo="rock"] { --arte: url("arte/rock.jpg"); --cor: var(--rock); }
+.resposta[data-estilo="funk"] { --arte: url("arte/funk.jpg"); --cor: var(--funk); }
+.resposta[data-estilo="sertanejo"] { --arte: url("arte/sertanejo.jpg"); --cor: var(--sertanejo); }
+.resposta p { margin: 0; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); }
+.r-artista { font: 800 18px/1.2 Montserrat, sans-serif; text-transform: uppercase; }
+.r-ano { font: 400 96px/1 "Bebas Neue", sans-serif; color: #fff; text-shadow: 0 0 20px var(--cor), 0 4px 0 rgba(0, 0, 0, 0.6) !important; }
+.r-musica { font: italic 600 17px/1.25 Montserrat, sans-serif; }
+.resposta .link { font-size: 12px; color: #fff; padding: 0; }
