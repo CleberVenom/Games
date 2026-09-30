@@ -118,7 +118,8 @@ Nenhuma tela "padrão" ou rudimentar. Toda UI segue:
   o teste no navegador **não** pega esse erro — confira a taxa em teste unitário.
 - EAS Update com política `fingerprint`: antes de `eas update`, confira que o fingerprint local
   (`npx expo-updates fingerprint:generate --platform android`) é o mesmo `runtimeVersion` do APK (`eas build:view`);
-  se mudou algo nativo, a atualização não chega a ninguém — gere APK novo. Na web `expo-updates` fica desligado
+  se mudou algo nativo, a atualização não chega a ninguém — gere APK novo. Com `--non-interactive`, o `eas update`
+  exige `--environment preview` (ou production). Na web `expo-updates` fica desligado
   (`Updates.isEnabled` falso): para capturar o aviso, force o estado temporariamente e não commite.
 - APK baixado pelo Chrome do Android para no aviso "arquivo perigoso" até tocar em **Baixar mesmo assim**; parece
   completo, mas o arquivo não aparece. Explique isso ao mandar o link.

@@ -278,7 +278,7 @@ Atualizar"**, um toque baixa só o que mudou e reinicia o jogo. O rodapé mostra
 "atualizada em dd/mm às hh:mm".
 
 ```bash
-npx eas-cli@latest update --channel preview --message "o que mudou"   # publica para quem tem o APK "preview"
+npx eas-cli@latest update --channel preview --environment preview --message "o que mudou"   # quem tem o APK "preview"
 ```
 
 - O app **não baixa sozinho** (`checkAutomatically: NEVER`): procura ao abrir e ao voltar para ele (no máximo a
