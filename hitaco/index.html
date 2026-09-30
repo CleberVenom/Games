@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1026">
+  <title>Hitaço</title>
+  <link rel="icon" href="arte/icone.png">
+  <link rel="apple-touch-icon" href="arte/icone.png">
+  <link rel="stylesheet" href="fontes/fontes.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="topo">
+    <h1 class="marca">Hita<span>ç</span>o</h1>
+  </header>
+
+  <main>
+    <!-- Início -->
+    <section id="inicio" class="tela ativa">
+      <img class="capa" src="arte/capa.jpg" alt="">
+      <p class="lema">O jogo da linha do tempo com hits do Brasil: rock nacional, funk das antigas e sertanejo raiz.</p>
+      <button id="bt-escanear" class="bt grande" type="button">Escanear carta</button>
+      <form id="form-numero" class="numero">
+        <label for="in-numero">Câmera não funcionou? Digite o nº da carta:</label>
+        <div class="linha">
+          <input id="in-numero" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="nº">
+          <button class="bt" type="submit">Tocar</button>
+        </div>
+      </form>
+
+      <details class="regras">
+        <summary>Como jogar</summary>
+        <h3>Objetivo</h3>
+        <p>Ser o primeiro a montar uma linha do tempo com <b>10 cartas</b> na ordem certa dos anos.</p>
+        <h3>Preparação</h3>
+        <ul>
+          <li>Joguem sozinhos ou em equipes. Cada um recebe 1 carta com o <b>lado do ano para cima</b>: é o começo da sua linha do tempo.</li>
+          <li>Cada um recebe 2 fichas Hitaço (opcional, deixa o jogo mais estratégico).</li>
+          <li>Escolham o <b>DJ</b>, que usa este app (dá para revezar). Quem é DJ não deve usar relógio inteligente, que pode mostrar o nome da música.</li>
+        </ul>
+        <h3>A rodada</h3>
+        <ol>
+          <li>O DJ escaneia a carta do topo do monte (lado do QR code) e a música começa a tocar.</li>
+          <li>O jogador à esquerda do DJ coloca a carta, com o QR para cima, na sua linha do tempo: antes, depois ou entre as cartas que já tem.</li>
+          <li>Vire a carta. Se estiver no lugar certo, o jogador fica com ela. Se não, ela vai para o descarte.</li>
+        </ol>
+        <h3>Fichas Hitaço</h3>
+        <ul>
+          <li><b>Ganhar:</b> acerte o nome da música e o artista e ganhe 1 ficha (mesmo que erre a posição). Máximo de 5 fichas.</li>
+          <li><b>Pular:</b> na sua vez, gaste 1 ficha para pular a música e pegar outra carta.</li>
+          <li><b>Roubar:</b> na vez de outro jogador, se achar que ele errou, grite <b>“HITAÇO!”</b> e ponha sua ficha na linha do tempo dele, no lugar que você acha certo. Se você acertar, rouba a carta. Se ele tinha acertado, você perde a ficha. Quem gritou primeiro coloca a ficha primeiro.</li>
+          <li><b>Comprar:</b> troque 3 fichas por 1 carta colocada direto na sua linha do tempo, sem adivinhar. Isso deve ser feito antes de ouvir a música.</li>
+        </ul>
+        <h3>Fim</h3>
+        <p>Vence quem completar 10 cartas na sua linha do tempo.</p>
+        <h3>Variações</h3>
+        <ul>
+          <li><b>Profissional:</b> para ficar com a carta (ou roubar), também precisa dizer artista e música. Todos começam com 5 fichas e não ganham fichas novas.</li>
+          <li><b>Expert:</b> precisa dizer artista, música e o ano exato. Todos começam com 3 fichas e não ganham fichas novas.</li>
+          <li><b>Cooperativo:</b> todos jogam como uma equipe só, com 5 fichas e 1 carta inicial. Cada erro custa 1 ficha: juntem 10 cartas antes de as fichas acabarem.</li>
+          <li><b>Mais difícil:</b> menos fichas ou mais cartas para completar a linha do tempo.</li>
+        </ul>
+      </details>
+
+      <a class="link" href="cartas.html">Imprimir cartas e fichas</a>
+    </section>
+
+    <!-- Leitor de QR -->
+    <section id="scanner" class="tela">
+      <div class="camera">
+        <video id="video" playsinline muted></video>
+        <div class="mira"></div>
+      </div>
+      <p id="scanner-msg" class="msg">Aponte a câmera para o QR code da carta.</p>
+      <button id="bt-voltar" class="bt" type="button">Voltar</button>
+    </section>
+
+    <!-- Tocador -->
+    <section id="player" class="tela">
+      <button id="bt-tocar" class="disco" type="button" aria-label="Tocar ou pausar">
+        <span class="selo"><span id="icone">▶</span></span>
+      </button>
+      <div class="barra"><div id="progresso"></div></div>
+      <p id="status" class="msg" aria-live="polite"></p>
+      <div class="acoes">
+        <button id="bt-inicio" class="bt" type="button">Do início</button>
+        <button id="bt-proxima" class="bt grande" type="button">Próxima carta</button>
+      </div>
+      <button id="bt-revelar" class="link" type="button">Revelar resposta</button>
+      <div id="resposta" class="resposta" hidden>
+        <p id="r-artista" class="r-artista"></p>
+        <p id="r-ano" class="r-ano"></p>
+        <p id="r-musica" class="r-musica"></p>
+        <a id="r-deezer" class="link" target="_blank" rel="noopener">Ouvir a música inteira no Deezer</a>
+      </div>
+    </section>
+  </main>
+
+  <audio id="audio" preload="auto"></audio>
+  <script src="musicas.js"></script>
+  <script src="vendor/jsQR.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

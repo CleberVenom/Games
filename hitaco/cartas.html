@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hitaço: cartas para imprimir</title>
+  <link rel="icon" href="arte/icone.png">
+  <link rel="stylesheet" href="fontes/fontes.css">
+  <link rel="stylesheet" href="cartas.css">
+</head>
+<body>
+  <div class="painel">
+    <h1>Hitaço: cartas para imprimir</h1>
+    <ol>
+      <li>Imprima em papel A4, <b>frente e verso virando na borda longa</b>, com escala <b>100%</b> (tamanho real), margens <b>nenhuma</b> e <b>gráficos de fundo</b> ligados.</li>
+      <li>Use papel grosso (180 g ou mais) ou cole as folhas em papel-cartão antes de cortar.</li>
+      <li>Corte seguindo as marcas nas bordas: cada carta tem 6,4 × 6,4 cm. A folha de fichas é só de um lado.</li>
+    </ol>
+    <label class="campo">Endereço do app (vai dentro do QR code)
+      <input id="base" type="url" spellcheck="false">
+    </label>
+    <fieldset>
+      <legend>O que imprimir</legend>
+      <label><input type="checkbox" name="estilo" value="rock" checked> Rock nacional</label>
+      <label><input type="checkbox" name="estilo" value="funk" checked> Funk</label>
+      <label><input type="checkbox" name="estilo" value="sertanejo" checked> Sertanejo</label>
+      <label><input type="checkbox" id="fichas" checked> Folha de fichas</label>
+    </fieldset>
+    <p id="resumo"></p>
+    <button class="bt" type="button" onclick="print()">Imprimir / salvar PDF</button>
+    <a href="index.html">Voltar ao app</a>
+  </div>
+  <div id="folhas"></div>
+  <script src="musicas.js"></script>
+  <script src="vendor/qrcode.js"></script>
+  <script src="cartas.js"></script>
+</body>
+</html>
