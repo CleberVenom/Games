@@ -6,7 +6,7 @@ const PADRAO = 'https://clebervenom.github.io/Games/hitaco/';
 const COLUNAS = 3;
 const LINHAS = 4;
 const CARTA = 64; // mm
-const ESTILOS = { rock: 'Rock nacional', funk: 'Funk', sertanejo: 'Sertanejo' };
+const ESTILOS = { rock: 'Rock nacional', funk: 'Funk', sertanejo: 'Sertanejo raiz', universitario: 'Sertanejo universitário' };
 const FICHAS_POR_FOLHA = 70;
 
 const $ = (id) => document.getElementById(id);

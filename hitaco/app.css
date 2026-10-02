@@ -10,6 +10,7 @@
   --rock: #ff5a36;
   --funk: #ff3fd0;
   --sertanejo: #ffb52e;
+  --universitario: #3ea0ff;
 }
 
 * { box-sizing: border-box; }
@@ -186,6 +187,7 @@ main { max-width: 520px; margin: 0 auto; padding: 8px 16px max(24px, env(safe-ar
 .resposta[data-estilo="rock"] { --arte: url("arte/rock.jpg"); --cor: var(--rock); }
 .resposta[data-estilo="funk"] { --arte: url("arte/funk.jpg"); --cor: var(--funk); }
 .resposta[data-estilo="sertanejo"] { --arte: url("arte/sertanejo.jpg"); --cor: var(--sertanejo); }
+.resposta[data-estilo="universitario"] { --arte: url("arte/universitario.jpg"); --cor: var(--universitario); }
 .resposta p { margin: 0; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); }
 .r-artista { font: 800 18px/1.2 Montserrat, sans-serif; text-transform: uppercase; }
 .r-ano { font: 400 96px/1 "Bebas Neue", sans-serif; color: #fff; text-shadow: 0 0 20px var(--cor), 0 4px 0 rgba(0, 0, 0, 0.6) !important; }

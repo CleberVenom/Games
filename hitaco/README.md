@@ -1,7 +1,7 @@
 # 🎵 Hitaço
 
-Versão caseira do jogo **Hitster** (Jumbo), só com músicas brasileiras: rock nacional, funk das antigas
-e sertanejo raiz. As regras são as mesmas do
+Versão caseira do jogo **Hitster** (Jumbo), só com músicas brasileiras: rock nacional, funk das antigas,
+sertanejo raiz e sertanejo universitário. As regras são as mesmas do
 [manual do Hitster Original](https://hitstergame.com/pt-br/pages/como-jogar-hitster-original): cada carta
 tem um QR code de um lado e o **ano**, o **artista** e a **música** do outro. O DJ escaneia a carta, a música
 toca e o jogador tenta encaixá-la na sua linha do tempo. Ganha quem juntar 10 cartas.
@@ -13,7 +13,8 @@ toca e o jogador tenta encaixá-la na sua linha do tempo. Ganha quem juntar 10 c
 
 | Arquivo | Para que serve |
 |---|---|
-| [`Hitaco-cartas.pdf`](Hitaco-cartas.pdf) | **Pronto para imprimir**: 184 cartas (frente e verso) + 70 fichas. |
+| [`Hitaco-cartas.pdf`](Hitaco-cartas.pdf) | **Pronto para imprimir**: as 286 cartas (frente e verso) + 70 fichas. |
+| [`Hitaco-cartas-universitario.pdf`](Hitaco-cartas-universitario.pdf) | Só as 102 cartas do **sertanejo universitário** (nº 185 a 286), para quem já imprimiu as 184 primeiras. |
 | [`index.html`](index.html) | App do DJ (celular): lê o QR code e toca a prévia de 30 s sem mostrar o nome da música. Tem as regras. |
 | [`Hitaco-instrucoes.pdf`](Hitaco-instrucoes.pdf) | **8 cartas de instrução** (A6, 4 por folha A4): jogadores, a carta, preparação, rodada, onde pôr a carta, fichas e fim de jogo. |
 | [`instrucoes/`](instrucoes/) | As mesmas 8 cartas de instrução como imagens soltas, para mandar pelo celular. |
@@ -23,7 +24,7 @@ toca e o jogador tenta encaixá-la na sua linha do tempo. Ganha quem juntar 10 c
 | [`arte/`](arte/) | Ilustrações das cartas, geradas com a IA de imagens do **Canva** (os originais estão no design “Hitaço – artes das cartas” da conta do Canva). |
 | [`scripts/deezer.mjs`](scripts/deezer.mjs) | Preenche/confere o ID do Deezer de cada música. |
 
-## As músicas (184 cartas)
+## As músicas (286 cartas)
 
 - **Rock nacional (137):** Legião Urbana, Capital Inicial, Paralamas do Sucesso, Charlie Brown Jr., Pitty,
   CPM 22, NX Zero e mais: Titãs, Barão Vermelho, Cazuza, Engenheiros do Hawaii, Ira!, Ultraje a Rigor, RPM,
@@ -36,10 +37,17 @@ toca e o jogador tenta encaixá-la na sua linha do tempo. Ganha quem juntar 10 c
   Milionário & José Rico, Teodoro & Sampaio, Renato Teixeira, Trio Parada Dura, Chitãozinho & Xororó,
   Chrystian & Ralf, Leandro & Leonardo, Zezé Di Camargo & Luciano, João Paulo & Daniel, Gian & Giovani e
   Rick & Renner.
+- **Sertanejo universitário (102):** Jorge & Mateus (22), Gusttavo Lima (7), Marília Mendonça (8),
+  Henrique & Juliano (7), Luan Santana (8), Zé Neto & Cristiano (10), Maiara & Maraisa (4),
+  Bruno & Marrone (9), Israel & Rodolffo (6), Victor & Léo (5), César Menotti & Fabiano (5),
+  Fernando & Sorocaba (4), Murilo Huff, Anitta, Guilherme & Benuto, Clayton & Romário, Yasmin Santos (1 cada)
+  e Lauana Prado (2). Nas parcerias, a carta leva **só o artista dono do single**, sem os convidados
+  (por exemplo, “Dois Enganados” é do Murilo Huff, com participação da Marília Mendonça).
 
-Os anos vão de 1946 a 2014. O ano da carta é o do **primeiro lançamento** da música pelo artista da carta.
+Os anos vão de 1946 a 2026. O ano da carta é o do **primeiro lançamento** da música pelo artista da carta.
 Cada ano foi conferido com o ISRC da gravação e o MusicBrainz e, quando as fontes discordavam, com
-pesquisa. Músicas com ano duvidoso ficaram de fora. Algumas faixas só existem no Deezer em versão ao
+pesquisa. Quando as fontes continuaram discordando (principalmente no sertanejo universitário), a carta usa o
+**primeiro (mais antigo) ano encontrado**; por isso alguns anos podem diferir em 1 ano do lançamento comercial. Algumas faixas só existem no Deezer em versão ao
 vivo ou regravada (CPM 22, NX Zero e parte de Charlie Brown Jr., Paralamas e Biquini Cavadão), então a
 prévia toca essa versão, mas o ano da carta continua sendo o do lançamento original.
 
@@ -62,7 +70,7 @@ O leitor de QR code usa a câmera, e o navegador só libera a câmera em sites `
 ## Adicionar músicas
 
 1. Em `musicas.js`, acrescente uma linha `{"n":185,"ano":1999,"artista":"…","musica":"…","estilo":"rock"}`
-   (use o próximo número livre; estilo `rock`, `funk` ou `sertanejo`).
+   (use o próximo número livre; estilo `rock`, `funk`, `sertanejo` (raiz) ou `universitario`).
 2. Rode `node scripts/deezer.mjs` (Node 18+). Ele acha a faixa no Deezer, grava o `deezer` e avisa se
    alguma música ficou sem prévia. Confira a faixa escolhida no que ele imprimir.
 3. Abra `cartas.html` no navegador e imprima só as folhas novas (ou salve um PDF novo).
