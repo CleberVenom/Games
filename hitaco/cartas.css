@@ -107,6 +107,7 @@ body { margin: 0; background: #d9dbe4; font-family: Montserrat, system-ui, sans-
 .verso.rock { --arte: url("arte/rock.jpg"); --cor: #ff5a36; }
 .verso.funk { --arte: url("arte/funk.jpg"); --cor: #ff3fd0; }
 .verso.sertanejo { --arte: url("arte/sertanejo.jpg"); --cor: #ffb52e; }
+.verso.universitario { --arte: url("arte/universitario.jpg"); --cor: #3ea0ff; }
 .verso p { margin: 0; text-shadow: 0 0.4mm 1.5mm rgba(0, 0, 0, 0.95); position: relative; z-index: 1; }
 .verso .artista { font: 800 3.8mm/1.15 Montserrat, sans-serif; text-transform: uppercase; letter-spacing: 0.02em; }
 .verso .artista.t2 { font-size: 3.2mm; }
