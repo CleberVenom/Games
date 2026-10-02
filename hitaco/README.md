@@ -15,6 +15,9 @@ toca e o jogador tenta encaixá-la na sua linha do tempo. Ganha quem juntar 10 c
 |---|---|
 | [`Hitaco-cartas.pdf`](Hitaco-cartas.pdf) | **Pronto para imprimir**: 184 cartas (frente e verso) + 70 fichas. |
 | [`index.html`](index.html) | App do DJ (celular): lê o QR code e toca a prévia de 30 s sem mostrar o nome da música. Tem as regras. |
+| [`Hitaco-instrucoes.pdf`](Hitaco-instrucoes.pdf) | **8 cartas de instrução** (A6, 4 por folha A4): jogadores, a carta, preparação, rodada, onde pôr a carta, fichas e fim de jogo. |
+| [`instrucoes/`](instrucoes/) | As mesmas 8 cartas de instrução como imagens soltas, para mandar pelo celular. |
+| [`instrucoes.html`](instrucoes.html) | Página que gera as cartas de instrução para imprimir. |
 | [`cartas.html`](cartas.html) | Gera as folhas para impressão (dá para escolher estilos e o endereço do app no QR code). |
 | [`musicas.js`](musicas.js) | A lista de músicas (uma carta por música). |
 | [`arte/`](arte/) | Ilustrações das cartas, geradas com a IA de imagens do **Canva** (os originais estão no design “Hitaço – artes das cartas” da conta do Canva). |
