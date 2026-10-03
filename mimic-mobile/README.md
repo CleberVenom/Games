@@ -76,13 +76,14 @@ Como no Mimic Party, a partida sorteia só os sons dos **packs marcados** na tel
 
 | Origem | O que é | Onde fica |
 |---|---|---|
-| **Oficial** | Animais · Vozes · Memes & zoeira · Máquinas & efeitos · Games & 8-bit · Casa & cotidiano · Natureza & clima (75 sons CC0) | `assets/sounds/` |
+| **Oficial** | Animais & natureza · Vozes & zoeira · Efeitos & games (75 sons CC0) | `assets/sounds/` |
 | **Pessoal** | Seus packs de uso privado (memes BR/gringos, anime…) empacotados no app | `packs-pessoais/` — veja o [README](packs-pessoais/README.md) |
 | **Meu pack** | Criados no próprio celular, no editor: grave pelo microfone ou importe MP3/WAV/M4A/OGG | só no aparelho |
 
 O **editor de packs** (botão "Criar pack" ou o lápis de um pack seu) tem nome, ícone e lista de sons com
 ouvir, renomear e remover. Cada som passa pelo mesmo tratamento dos oficiais (`src/dsp/clip.ts`): silêncio
-cortado, volume igualado e **de 2 a 5 s** (mais curto que 2 s é recusado, com aviso). O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
+cortado, volume igualado e **de 2 a 15 s** (mais curto que 2 s é recusado, com aviso; acima de 15 s fica o trecho
+mais forte). O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
 lista de packs no AsyncStorage (`src/store/library.ts`).
 
 ### Modo online (com amigos)
@@ -139,7 +140,7 @@ mais antiga sai pela esquerda (≈2,2 s na tela), tanto com o som original tocan
 apresentação online (`src/audio/loudness.ts` + `useVisualizer`). Na gravação, a **silhueta do som original** (o
 volume dele no mesmo instante, medido como o analisador mede ao vivo) rola junto, atrás das barras da voz, e o
 jogador tenta acompanhar a altura dela.
-Todo som tem de **2 a 5 s** (os mais curtos ficam fora do catálogo), para a gravação nunca ser curta demais.
+Todo som tem de **2 a 15 s** (os mais curtos ficam fora do catálogo), para a gravação nunca ser curta demais.
 A rodada avança quando todos jogaram; os sons dos packs escolhidos não se repetem até o baralho acabar.
 
 A máquina de estados é pura e testada: `src/game/match.ts` + `src/game/__tests__/match.test.ts`.
@@ -182,17 +183,16 @@ microfone ───► AnalyserNode                                 (ramo mudo: 
 
 ### Sons de referência
 
-75 sons em 7 packs (todos com 2 a 5 s):
+75 sons em 3 packs (os oficiais têm de 2 a 5 s; o limite do jogo é 15 s, para os sons importados):
 
 | Pack | Sons |
 |---|---|
-| **Animais** (14) | cachorro, gato, galo, vaca, porco, ovelha, galinha, corvo, leão, cavalo, burro, cabra, lobo, baleia |
-| **Vozes** (10) | risada maligna, ronco, bebê, arroto, risada de criança, tosse, palmas, bocejo, soluço, gargarejo |
-| **Memes & zoeira** (11) | trombone triste, scratch de DJ, buzina de torcida, caminhão do gás, celular antigo, dun dun duuun, "fire in the hole", rufar de tambores, vaia, internet discada, parabéns pra você |
-| **Máquinas & efeitos** (13) | buzina, sirene, apito de juiz, apito de trem, boing, despertador, lasers, vuvuzela, motosserra, sino de igreja, fogos, moto, pneu cantando |
-| **Games & 8-bit** (11) | "Ready… set… go!", "Round 1… Fight!", "3, 2, 1… Go!", "Choose your character!", "You lose… Game over!", risada do chefão, explosão, moedinhas, power-up, fase completa, pulos |
-| **Casa & cotidiano** (9) | batida na porta, porta rangendo, escova de dentes, chaleira, micro-ondas, campainha, zíper, liquidificador, celular vibrando |
-| **Natureza & clima** (7) | ondas, goteira, trovão, arara, coruja, cigarra, mosca |
+| **Animais & natureza** (21) | cachorro, gato, galo, vaca, porco, ovelha, galinha, corvo, leão, cavalo, burro, cabra, lobo, baleia · ondas, goteira, trovão, arara, coruja, cigarra, mosca |
+| **Vozes & zoeira** (21) | risada maligna, ronco, bebê, arroto, risada de criança, tosse, palmas, bocejo, soluço, gargarejo · trombone triste, scratch de DJ, buzina de torcida, caminhão do gás, celular antigo, dun dun duuun, "fire in the hole", rufar de tambores, vaia, internet discada, parabéns pra você |
+| **Efeitos & games** (33) | buzina, sirene, apito de juiz, apito de trem, boing, despertador, lasers, vuvuzela, motosserra, sino de igreja, fogos, moto, pneu cantando · batida na porta, porta rangendo, escova de dentes, chaleira, micro-ondas, campainha, zíper, liquidificador, celular vibrando · "Ready… set… go!", "Round 1… Fight!", "3, 2, 1… Go!", "Choose your character!", "You lose… Game over!", risada do chefão, explosão, moedinhas, power-up, fase completa, pulos |
+
+Os 7 packs da primeira versão foram juntados em 3 (out/2026). Os ids internos `animais`, `vozes` e `maquinas` foram
+mantidos para a seleção salva no celular continuar valendo.
 
 Ficaram de fora, por terem menos de 2 s mesmo sem silêncio: espirro, "ba dum tss" e "flawless victory".
 Excluídos depois da 2ª rodada de testes (out/2026), por não terem agradado: águia, pato, grito de queda, grilos,

@@ -8,7 +8,7 @@ Saída:
 
 Todas as gravações são CC0 ou domínio público: vêm de repositórios no GitHub, em commits fixos, ou
 de prévias de sons CC0 do Freesound. Os sons marcados como "sintetizado" são gerados aqui mesmo
-(código original deste projeto, CC0). Cada som fica com 2 a 5 s: a gravação da imitação dura o
+(código original deste projeto, CC0). Cada som fica com 2 a 15 s: a gravação da imitação dura o
 mesmo que o som, então os que ficarem mais curtos que 2 s são descartados (vale para os pessoais).
 
 Packs pessoais (packs-pessoais/<pack>/pack.json + áudios, uso privado — veja packs-pessoais/README.md)
@@ -73,7 +73,7 @@ FREESOUND = {
 
 # Regra do jogo: a gravação dura o mesmo que o som, então sons curtos demais ficam de fora.
 MIN_S = 2.0
-MAX_S = 5.0
+MAX_S = 15.0
 
 
 def fsd(sound_id: int, name: str, author: str) -> str:
@@ -131,18 +131,18 @@ SOUNDS = [
     dict(id="yawn", pack="vozes", title="Bocejo", **fs(125419), max=3.5),
     dict(id="hiccup", pack="vozes", title="Soluço", **fs(776025), max=3.5),
     dict(id="gargle", pack="vozes", title="Gargarejo", **fs(784056), max=3.5),
-    # Memes e zoeira
-    dict(id="sad-trombone", pack="memes", title="Trombone triste", synth="sad_trombone", credit="Sintetizado (melodia tradicional)", license="CC0"),
-    dict(id="record-scratch", pack="memes", title="Scratch de DJ", src=("sonicpi", "etc/samples/vinyl_rewind.flac"), credit=fsd(162493, "vinyl rewind", "TasmanianPower") + ", via Sonic Pi", license="CC0"),
-    dict(id="air-horn", pack="memes", title="Buzina de torcida", synth="air_horn", credit="Sintetizado", license="CC0"),
-    dict(id="gas-truck", pack="memes", title="Caminhão do gás", synth="gas_truck", credit="Sintetizado — Für Elise, de Beethoven (obra em domínio público)", license="CC0"),
-    dict(id="old-phone", pack="memes", title="Toque de celular antigo", synth="old_phone", credit="Sintetizado — Gran Vals, de Francisco Tárrega (obra em domínio público)", license="CC0"),
-    dict(id="dun-dun-dun", pack="memes", title="Dun dun duuun", synth="dun_dun_dun", credit="Sintetizado", license="CC0"),
-    dict(id="fire-in-the-hole", pack="memes", title="“Fire in the hole!”", parts=[((("lav", f"{MALE}/war_fire_in_the_hole.ogg")), 0.15, 2.0), (("lav", f"{RETRO_DIR}/Explosions/wav/Explosion7.wav"), 0, 1.8)], credit=f"{KENNEY} + explosão de {RETRO}", license="CC0", max=MAX_S),
-    dict(id="drumroll", pack="memes", title="Rufar de tambores", **fs(49306)),
-    dict(id="boo", pack="memes", title="Vaia", **fs(752707)),
-    dict(id="dial-up", pack="memes", title="Internet discada", **fs(658932), max=3.5),
-    dict(id="happy-birthday", pack="memes", title="Parabéns pra você", synth="happy_birthday", credit="Sintetizado — melodia de Happy Birthday (domínio público)", license="CC0"),
+    # Memes e zoeira (pack Vozes & zoeira)
+    dict(id="sad-trombone", pack="vozes", title="Trombone triste", synth="sad_trombone", credit="Sintetizado (melodia tradicional)", license="CC0"),
+    dict(id="record-scratch", pack="vozes", title="Scratch de DJ", src=("sonicpi", "etc/samples/vinyl_rewind.flac"), credit=fsd(162493, "vinyl rewind", "TasmanianPower") + ", via Sonic Pi", license="CC0"),
+    dict(id="air-horn", pack="vozes", title="Buzina de torcida", synth="air_horn", credit="Sintetizado", license="CC0"),
+    dict(id="gas-truck", pack="vozes", title="Caminhão do gás", synth="gas_truck", credit="Sintetizado — Für Elise, de Beethoven (obra em domínio público)", license="CC0"),
+    dict(id="old-phone", pack="vozes", title="Toque de celular antigo", synth="old_phone", credit="Sintetizado — Gran Vals, de Francisco Tárrega (obra em domínio público)", license="CC0"),
+    dict(id="dun-dun-dun", pack="vozes", title="Dun dun duuun", synth="dun_dun_dun", credit="Sintetizado", license="CC0"),
+    dict(id="fire-in-the-hole", pack="vozes", title="“Fire in the hole!”", parts=[((("lav", f"{MALE}/war_fire_in_the_hole.ogg")), 0.15, 2.0), (("lav", f"{RETRO_DIR}/Explosions/wav/Explosion7.wav"), 0, 1.8)], credit=f"{KENNEY} + explosão de {RETRO}", license="CC0", max=MAX_S),
+    dict(id="drumroll", pack="vozes", title="Rufar de tambores", **fs(49306)),
+    dict(id="boo", pack="vozes", title="Vaia", **fs(752707)),
+    dict(id="dial-up", pack="vozes", title="Internet discada", **fs(658932), max=3.5),
+    dict(id="happy-birthday", pack="vozes", title="Parabéns pra você", synth="happy_birthday", credit="Sintetizado — melodia de Happy Birthday (domínio público)", license="CC0"),
     # Máquinas e efeitos
     dict(id="car-horn", pack="maquinas", title="Buzina de carro", **esc("2-54086-A-43.wav", 54086, "horn", "guitarguy1985")),
     dict(id="siren", pack="maquinas", title="Sirene de polícia", **esc("2-70938-A-42.wav", 70938, "police2", "guitarguy1985")),
@@ -157,36 +157,36 @@ SOUNDS = [
     dict(id="fireworks", pack="maquinas", title="Fogos de artifício", **esc("2-117616-A-48.wav", 117616, "fireworks exploding 1", "soundmary"), max=3.5),
     dict(id="motorcycle", pack="maquinas", title="Moto acelerando", **fs(202809), max=3.5),
     dict(id="tire-screech", pack="maquinas", title="Pneu cantando", **lav(f"{RETRO_DIR}/Vehicles/wav/Skid2.wav", RETRO)),
-    # Games e 8-bit
-    dict(id="ready-set-go", pack="games", title="“Ready… set… go!”", parts=[(("lav", f"{MALE}/ready.ogg"), 0.4, 2.0), (("lav", f"{MALE}/set.ogg"), 0.4, 2.0), (("lav", f"{MALE}/go.ogg"), 0, 2.0)], credit=KENNEY, license="CC0", max=MAX_S),
-    dict(id="round-fight", pack="games", title="“Round 1… Fight!”", parts=[(("lav", f"{FIGHTER}/round_1.ogg"), 0.45, 2.0), (("lav", f"{FIGHTER}/fight.ogg"), 0, 2.0)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
-    dict(id="countdown", pack="games", title="“3, 2, 1… Go!”", parts=[(("lav", f"{MALE}/3.ogg"), 0.35, 2.0), (("lav", f"{MALE}/2.ogg"), 0.35, 2.0), (("lav", f"{MALE}/1.ogg"), 0.35, 2.0), (("lav", f"{MALE}/go.ogg"), 0, 2.0)], credit=KENNEY, license="CC0", max=MAX_S),
-    dict(id="choose-character", pack="games", title="“Player 1… Choose your character!”", parts=[(("lav", f"{FIGHTER}/player_1.ogg"), 0.35, 2.0), (("lav", f"{FIGHTER}/choose_your_character.ogg"), 0, 2.5)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
-    dict(id="game-over", pack="games", title="“You lose… Game over!”", parts=[(("lav", f"{FIGHTER}/you_lose.ogg"), 0.35, 2.0), (("lav", f"{FIGHTER}/game_over.ogg"), 0, 2.5)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
-    dict(id="boss-laugh", pack="games", title="Risada do chefão", **lav(f"{RETRO_DIR}/Vocal/wav/Laugh1.wav", RETRO)),
-    dict(id="explosion", pack="games", title="Explosão", **lav(f"{RETRO_DIR}/Explosions/wav/Explosion7.wav", RETRO)),
-    dict(id="coins", pack="games", title="Moedinhas e vida extra", synth="coins", credit="Sintetizado (8-bit)", license="CC0"),
-    dict(id="power-up", pack="games", title="Power-up", synth="power_up", credit="Sintetizado (8-bit)", license="CC0"),
-    dict(id="level-complete", pack="games", title="Fase completa", synth="level_complete", credit="Sintetizado (8-bit)", license="CC0"),
-    dict(id="jumps", pack="games", title="Pulo, pulo, pulo, pulo", synth="jumps", credit="Sintetizado (8-bit)", license="CC0"),
-    # Casa e cotidiano
-    dict(id="door-knock", pack="casa", title="Batida na porta", **esc("2-134915-A-30.wav", 134915, "Knocking 2", "barrygusey")),
-    dict(id="door-creak", pack="casa", title="Porta rangendo", **esc("1-51805-D-33.wav", 51805, "door hinge squeak creak o,c", "kyles"), max=3.5),
-    dict(id="brushing-teeth", pack="casa", title="Escovando os dentes", **esc("1-68628-A-27.wav", 68628, "brushing teeth with noise in background", "bwav")),
-    dict(id="kettle", pack="casa", title="Chaleira apitando", **fs(59572)),
-    dict(id="microwave", pack="casa", title="Micro-ondas apitando", **fs(638160)),
-    dict(id="doorbell", pack="casa", title="Campainha (dim-dom)", **fs(709948)),
-    dict(id="zipper", pack="casa", title="Zíper", **fs(15417)),
-    dict(id="blender", pack="casa", title="Liquidificador", **fs(781071)),
-    dict(id="phone-vibrate", pack="casa", title="Celular vibrando", **fs(384487)),
-    # Natureza e clima
-    dict(id="sea-waves", pack="natureza", title="Ondas do mar", **esc("2-125966-A-11.wav", 125966, "Waves in sea", "Ryding"), max=3.5),
-    dict(id="dripping", pack="natureza", title="Goteira", **esc("2-124564-A-15.wav", 124564, "water-drip-rhythm", "alienistcog")),
-    dict(id="thunder", pack="natureza", title="Trovão", **fs(436790), max=3.5),
-    dict(id="macaw", pack="natureza", title="Arara gritando", **fs(504988), max=3.5),
-    dict(id="owl", pack="natureza", title="Coruja", **fs(465697), max=3.5),
-    dict(id="cicada", pack="natureza", title="Cigarra", **fs(562605)),
-    dict(id="fly", pack="natureza", title="Mosca zumbindo", **esc("5-195517-A-7.wav", 195517, "Foley Small Fly", "jamesrodavidson")),
+    # Games e 8-bit (pack Efeitos & games)
+    dict(id="ready-set-go", pack="maquinas", title="“Ready… set… go!”", parts=[(("lav", f"{MALE}/ready.ogg"), 0.4, 2.0), (("lav", f"{MALE}/set.ogg"), 0.4, 2.0), (("lav", f"{MALE}/go.ogg"), 0, 2.0)], credit=KENNEY, license="CC0", max=MAX_S),
+    dict(id="round-fight", pack="maquinas", title="“Round 1… Fight!”", parts=[(("lav", f"{FIGHTER}/round_1.ogg"), 0.45, 2.0), (("lav", f"{FIGHTER}/fight.ogg"), 0, 2.0)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
+    dict(id="countdown", pack="maquinas", title="“3, 2, 1… Go!”", parts=[(("lav", f"{MALE}/3.ogg"), 0.35, 2.0), (("lav", f"{MALE}/2.ogg"), 0.35, 2.0), (("lav", f"{MALE}/1.ogg"), 0.35, 2.0), (("lav", f"{MALE}/go.ogg"), 0, 2.0)], credit=KENNEY, license="CC0", max=MAX_S),
+    dict(id="choose-character", pack="maquinas", title="“Player 1… Choose your character!”", parts=[(("lav", f"{FIGHTER}/player_1.ogg"), 0.35, 2.0), (("lav", f"{FIGHTER}/choose_your_character.ogg"), 0, 2.5)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
+    dict(id="game-over", pack="maquinas", title="“You lose… Game over!”", parts=[(("lav", f"{FIGHTER}/you_lose.ogg"), 0.35, 2.0), (("lav", f"{FIGHTER}/game_over.ogg"), 0, 2.5)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
+    dict(id="boss-laugh", pack="maquinas", title="Risada do chefão", **lav(f"{RETRO_DIR}/Vocal/wav/Laugh1.wav", RETRO)),
+    dict(id="explosion", pack="maquinas", title="Explosão", **lav(f"{RETRO_DIR}/Explosions/wav/Explosion7.wav", RETRO)),
+    dict(id="coins", pack="maquinas", title="Moedinhas e vida extra", synth="coins", credit="Sintetizado (8-bit)", license="CC0"),
+    dict(id="power-up", pack="maquinas", title="Power-up", synth="power_up", credit="Sintetizado (8-bit)", license="CC0"),
+    dict(id="level-complete", pack="maquinas", title="Fase completa", synth="level_complete", credit="Sintetizado (8-bit)", license="CC0"),
+    dict(id="jumps", pack="maquinas", title="Pulo, pulo, pulo, pulo", synth="jumps", credit="Sintetizado (8-bit)", license="CC0"),
+    # Casa e cotidiano (pack Efeitos & games)
+    dict(id="door-knock", pack="maquinas", title="Batida na porta", **esc("2-134915-A-30.wav", 134915, "Knocking 2", "barrygusey")),
+    dict(id="door-creak", pack="maquinas", title="Porta rangendo", **esc("1-51805-D-33.wav", 51805, "door hinge squeak creak o,c", "kyles"), max=3.5),
+    dict(id="brushing-teeth", pack="maquinas", title="Escovando os dentes", **esc("1-68628-A-27.wav", 68628, "brushing teeth with noise in background", "bwav")),
+    dict(id="kettle", pack="maquinas", title="Chaleira apitando", **fs(59572)),
+    dict(id="microwave", pack="maquinas", title="Micro-ondas apitando", **fs(638160)),
+    dict(id="doorbell", pack="maquinas", title="Campainha (dim-dom)", **fs(709948)),
+    dict(id="zipper", pack="maquinas", title="Zíper", **fs(15417)),
+    dict(id="blender", pack="maquinas", title="Liquidificador", **fs(781071)),
+    dict(id="phone-vibrate", pack="maquinas", title="Celular vibrando", **fs(384487)),
+    # Natureza e clima (pack Animais & natureza)
+    dict(id="sea-waves", pack="animais", title="Ondas do mar", **esc("2-125966-A-11.wav", 125966, "Waves in sea", "Ryding"), max=3.5),
+    dict(id="dripping", pack="animais", title="Goteira", **esc("2-124564-A-15.wav", 124564, "water-drip-rhythm", "alienistcog")),
+    dict(id="thunder", pack="animais", title="Trovão", **fs(436790), max=3.5),
+    dict(id="macaw", pack="animais", title="Arara gritando", **fs(504988), max=3.5),
+    dict(id="owl", pack="animais", title="Coruja", **fs(465697), max=3.5),
+    dict(id="cicada", pack="animais", title="Cigarra", **fs(562605)),
+    dict(id="fly", pack="animais", title="Mosca zumbindo", **esc("5-195517-A-7.wav", 195517, "Foley Small Fly", "jamesrodavidson")),
 ]
 
 # ---------------------------------------------------------------- fontes

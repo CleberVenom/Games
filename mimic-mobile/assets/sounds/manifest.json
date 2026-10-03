@@ -122,57 +122,57 @@
   "sad-trombone": {
     "durationMs": 2375,
     "title": "Trombone triste",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "record-scratch": {
     "durationMs": 2574,
     "title": "Scratch de DJ",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "air-horn": {
     "durationMs": 2175,
     "title": "Buzina de torcida",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "gas-truck": {
     "durationMs": 2484,
     "title": "Caminhão do gás",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "old-phone": {
     "durationMs": 2883,
     "title": "Toque de celular antigo",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "dun-dun-dun": {
     "durationMs": 2175,
     "title": "Dun dun duuun",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "fire-in-the-hole": {
     "durationMs": 3372,
     "title": "“Fire in the hole!”",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "drumroll": {
     "durationMs": 2634,
     "title": "Rufar de tambores",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "boo": {
     "durationMs": 2065,
     "title": "Vaia",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "dial-up": {
     "durationMs": 3602,
     "title": "Internet discada",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "happy-birthday": {
     "durationMs": 2744,
     "title": "Parabéns pra você",
-    "pack": "memes"
+    "pack": "vozes"
   },
   "car-horn": {
     "durationMs": 2654,
@@ -242,136 +242,136 @@
   "ready-set-go": {
     "durationMs": 2644,
     "title": "“Ready… set… go!”",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "round-fight": {
     "durationMs": 2524,
     "title": "“Round 1… Fight!”",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "countdown": {
     "durationMs": 3662,
     "title": "“3, 2, 1… Go!”",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "choose-character": {
     "durationMs": 3532,
     "title": "“Player 1… Choose your character!”",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "game-over": {
     "durationMs": 3293,
     "title": "“You lose… Game over!”",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "boss-laugh": {
     "durationMs": 2405,
     "title": "Risada do chefão",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "explosion": {
     "durationMs": 3103,
     "title": "Explosão",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "coins": {
     "durationMs": 2035,
     "title": "Moedinhas e vida extra",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "power-up": {
     "durationMs": 2205,
     "title": "Power-up",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "level-complete": {
     "durationMs": 2025,
     "title": "Fase completa",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "jumps": {
     "durationMs": 2584,
     "title": "Pulo, pulo, pulo, pulo",
-    "pack": "games"
+    "pack": "maquinas"
   },
   "door-knock": {
     "durationMs": 2325,
     "title": "Batida na porta",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "door-creak": {
     "durationMs": 3602,
     "title": "Porta rangendo",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "brushing-teeth": {
     "durationMs": 2854,
     "title": "Escovando os dentes",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "kettle": {
     "durationMs": 3103,
     "title": "Chaleira apitando",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "microwave": {
     "durationMs": 3103,
     "title": "Micro-ondas apitando",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "doorbell": {
     "durationMs": 2424,
     "title": "Campainha (dim-dom)",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "zipper": {
     "durationMs": 2804,
     "title": "Zíper",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "blender": {
     "durationMs": 3103,
     "title": "Liquidificador",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "phone-vibrate": {
     "durationMs": 2694,
     "title": "Celular vibrando",
-    "pack": "casa"
+    "pack": "maquinas"
   },
   "sea-waves": {
     "durationMs": 3552,
     "title": "Ondas do mar",
-    "pack": "natureza"
+    "pack": "animais"
   },
   "dripping": {
     "durationMs": 3103,
     "title": "Goteira",
-    "pack": "natureza"
+    "pack": "animais"
   },
   "thunder": {
     "durationMs": 3592,
     "title": "Trovão",
-    "pack": "natureza"
+    "pack": "animais"
   },
   "macaw": {
     "durationMs": 3602,
     "title": "Arara gritando",
-    "pack": "natureza"
+    "pack": "animais"
   },
   "owl": {
     "durationMs": 3602,
     "title": "Coruja",
-    "pack": "natureza"
+    "pack": "animais"
   },
   "cicada": {
     "durationMs": 3103,
     "title": "Cigarra",
-    "pack": "natureza"
+    "pack": "animais"
   },
   "fly": {
     "durationMs": 3073,
     "title": "Mosca zumbindo",
-    "pack": "natureza"
+    "pack": "animais"
   }
 }

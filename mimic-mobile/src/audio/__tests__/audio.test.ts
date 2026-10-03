@@ -10,10 +10,10 @@ describe('catálogo de sons', () => {
     expect(Object.keys(manifest).sort()).toEqual(ids);
   });
 
-  it('usa ids únicos e sons de 2 a 5 s (a gravação dura o mesmo que o som)', () => {
+  it('usa ids únicos e sons de 2 a 15 s (a gravação dura o mesmo que o som)', () => {
     expect(new Set(SOUNDS.map((s) => s.id)).size).toBe(SOUNDS.length);
     for (const s of SOUNDS) {
-      expect([s.id, s.durationMs >= 2000 && s.durationMs <= 5000]).toEqual([s.id, true]);
+      expect([s.id, s.durationMs >= 2000 && s.durationMs <= 15000]).toEqual([s.id, true]);
     }
   });
 });

@@ -1,7 +1,10 @@
 import manifest from '../../assets/sounds/manifest.json';
 
-/** Packs oficiais: sons livres (CC0/domínio público) que vêm com o app. */
-export const OFFICIAL_PACK_IDS = ['animais', 'vozes', 'memes', 'maquinas', 'games', 'casa', 'natureza'] as const;
+/**
+ * Packs oficiais: sons livres (CC0/domínio público) que vêm com o app. Desde out/2026 são 3 (Animais & natureza,
+ * Vozes & zoeira, Efeitos & games); os ids antigos foram mantidos para a seleção salva no celular continuar valendo.
+ */
+export const OFFICIAL_PACK_IDS = ['animais', 'vozes', 'maquinas'] as const;
 export type OfficialPackId = (typeof OFFICIAL_PACK_IDS)[number];
 
 export interface ReferenceSound {

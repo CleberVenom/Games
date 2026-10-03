@@ -2,8 +2,8 @@ import { resample } from './resample';
 
 /** Taxa dos sons de referência (a mesma dos sons oficiais gerados por scripts/build-sounds.py). */
 export const CLIP_RATE = 22050;
-/** Duração máxima de um som criado no app. */
-export const MAX_CLIP_SECONDS = 5;
+/** Duração máxima de um som criado ou importado no app. */
+export const MAX_CLIP_SECONDS = 15;
 /** Duração mínima de um som (depois de cortar o silêncio): a gravação da imitação dura o mesmo que ele. */
 export const MIN_CLIP_SECONDS = 2;
 const HOP = 220; // ~10 ms
@@ -21,8 +21,8 @@ function envelopeDb(x: Float32Array): Float64Array {
 
 /**
  * Prepara um som gravado ou importado para virar referência (mesmo tratamento dos sons oficiais):
- * mono a 22,05 kHz, recorte do trecho com som (até 30 dB abaixo do pico; se passar de 5 s, fica a
- * janela de 5 s com mais energia), volume RMS em −18 dBFS com pico ≤ −1 dBFS e fades curtos.
+ * mono a 22,05 kHz, recorte do trecho com som (até 30 dB abaixo do pico; se passar de 15 s, fica a
+ * janela de 15 s com mais energia), volume RMS em −18 dBFS com pico ≤ −1 dBFS e fades curtos.
  * Devolve `null` se não houver som.
  */
 export function prepareClip(samples: Float32Array, sampleRate: number): Float32Array | null {

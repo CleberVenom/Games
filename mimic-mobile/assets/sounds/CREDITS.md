@@ -7,7 +7,7 @@ repositórios [ESC-50](https://github.com/karolpiczak/ESC-50) (só os clipes mar
 [VCSL](https://github.com/sgossner/VCSL), [learntoread](https://github.com/Courtside-live01/learntoread) e
 [CC0-Public-Domain-Sounds](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds) (Kenney, The Motion
 Monkey, Ben Burnes), além de prévias de sons CC0 do [Freesound](https://freesound.org).
-Processamento: mono, recorte do evento principal (2 a 5 s), volume normalizado e WAV
+Processamento: mono, recorte do evento principal (2 a 15 s), volume normalizado e WAV
 16 bits/22,05 kHz.
 
 | Arquivo | Origem | Licença |

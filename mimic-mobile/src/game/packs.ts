@@ -14,13 +14,13 @@ export interface Pack {
 }
 
 const OFFICIAL: Record<OfficialPackId, Omit<Pack, 'id' | 'source' | 'sounds'>> = {
-  animais: { title: 'Animais', description: 'Latidos, miados, zurros e uivos', icon: 'paw' },
-  vozes: { title: 'Vozes', description: 'Risadas, arrotos, roncos e outros sons de gente', icon: 'happy' },
-  memes: { title: 'Memes & zoeira', description: 'Trombone triste, caminhão do gás, internet discada…', icon: 'flame' },
-  maquinas: { title: 'Máquinas & efeitos', description: 'Buzinas, sirenes, motores e ferramentas', icon: 'flash' },
-  games: { title: 'Games & 8-bit', description: 'Narrador de luta, moedinhas, power-up e fliperama', icon: 'game-controller' },
-  casa: { title: 'Casa & cotidiano', description: 'Panela de pressão, campainha, zíper e liquidificador', icon: 'home' },
-  natureza: { title: 'Natureza & clima', description: 'Chuva, trovão, arara, bugio e cigarra', icon: 'leaf' },
+  animais: { title: 'Animais & natureza', description: 'Latidos, rugidos, uivos, arara, trovão e ondas', icon: 'paw' },
+  vozes: { title: 'Vozes & zoeira', description: 'Risadas, arrotos, trombone triste, caminhão do gás…', icon: 'happy' },
+  maquinas: {
+    title: 'Efeitos & games',
+    description: 'Sirenes, motores, campainha, moedinhas e narrador de luta',
+    icon: 'game-controller',
+  },
 };
 
 export const OFFICIAL_PACKS: readonly Pack[] = OFFICIAL_PACK_IDS.map((id) => ({

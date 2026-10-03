@@ -225,16 +225,15 @@ Com 6 jogadores, são 6 rodadas.
 - [ ] Tocar no **círculo colorido** (avatar) e ver a cor mudar.
 - [ ] Remover um jogador (ícone de lixeira — só aparece com 3 ou mais jogadores).
 - [ ] Conferir a linha acima do botão: com 2 jogadores diz **"5 rodadas"**; com 6, **"6 rodadas"**.
-- [ ] Na seção **Packs de sons** há **7 packs oficiais** (Animais, Vozes, Memes & zoeira, Máquinas & efeitos,
-      Games & 8-bit, Casa & cotidiano, Natureza & clima), com **97 sons** no total. Desmarcar e marcar packs e
-      ver o total de sons mudar.
+- [ ] Na seção **Packs de sons** há **3 packs oficiais** (Animais & natureza, Vozes & zoeira, Efeitos & games),
+      com **75 sons** no total. Desmarcar e marcar packs e ver o total de sons mudar.
 - [ ] Desmarcar **todos** os packs: o botão fica apagado com o texto **"Escolha pelo menos um pack de sons"**.
 
 ### Criar o seu próprio pack
 
 - [ ] Tocar em **Criar pack (gravar ou importar sons)**.
 - [ ] Dar um nome e escolher um ícone.
-- [ ] Tocar em **Gravar**, fazer um som (de 2 a 5 segundos) e tocar em **Parar e salvar o som**.
+- [ ] Tocar em **Gravar**, fazer um som (de 2 a 15 segundos) e tocar em **Parar e salvar o som**.
 - [ ] Gravar um som **bem curto** (menos de 2 s): aparece o aviso **"Som muito curto"** e ele não entra.
 - [ ] Tocar em **Importar áudio** e escolher um MP3/WAV/M4A do aparelho (ex.: um áudio do WhatsApp salvo).
 - [ ] Ouvir, renomear e remover um som da lista.
