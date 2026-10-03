@@ -1,4 +1,5 @@
-import { createMatch, isLastTurn, Match, MatchEvent, recordingWindowMs, reduce, REPLAYS_PER_TURN, roundsFor, standings } from '../match';
+import { createMatch, isLastTurn, Match, MatchEvent, recordingWindowMs, reduce, REPLAYS_PER_TURN, ROUNDS, standings } from '../match';
+import { AVATAR_IDS } from '../types';
 import { MODIFIERS, ModifierId, pointsFor } from '../modifiers';
 import { SOUNDS } from '../sounds';
 
@@ -181,9 +182,11 @@ describe('roleta', () => {
 });
 
 describe('rodadas e fim de partida', () => {
-  it('são 5 rodadas com até 5 jogadores e uma por jogador acima disso', () => {
-    expect([2, 3, 4, 5, 6, 10].map(roundsFor)).toEqual([5, 5, 5, 5, 6, 10]);
+  it('são 5 rodadas para qualquer número de jogadores', () => {
+    expect(ROUNDS).toBe(5);
     expect(createMatch(setup, POOL, seeded()).totalRounds).toBe(5);
+    const ten = Array.from({ length: 10 }, (_, i) => ({ name: `J${i + 1}`, avatar: AVATAR_IDS[i] }));
+    expect(createMatch(ten, POOL, seeded()).totalRounds).toBe(5);
   });
 
   it('a última vez da última rodada não gira a roleta: termina no pódio', () => {

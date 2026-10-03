@@ -16,7 +16,7 @@ import { LogoMark } from '../components/LogoMark';
 import { PackPicker } from '../components/PackPicker';
 import { PressableScale } from '../components/PressableScale';
 import { UpdateBanner } from '../components/UpdateBanner';
-import { REPLAYS_PER_TURN, roundsFor } from '../game/match';
+import { REPLAYS_PER_TURN, ROUNDS } from '../game/match';
 import { poolFrom } from '../game/packs';
 import { AvatarId, MAX_PLAYERS, MIN_PLAYERS } from '../game/types';
 import { allPacks, useLibrary } from '../store/library';
@@ -237,7 +237,7 @@ export default function LobbyScreen() {
           <Text className="text-center font-ui text-xs text-mist-400">
             {pool.length === 0
               ? 'Escolha pelo menos um pack de sons'
-              : `${players.length} jogadores · ${roundsFor(players.length)} rodadas · ${pool.length} sons`}
+              : `${players.length} jogadores · ${ROUNDS} rodadas · ${pool.length} sons`}
           </Text>
           <GradientButton
             label={checkingMic ? 'Verificando o microfone…' : 'Começar partida'}

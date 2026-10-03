@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Platform, Share, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { roundsFor } from '../../game/match';
+import { ROUNDS } from '../../game/match';
 import { poolFrom } from '../../game/packs';
 import { MAX_ROOM_PLAYERS, MIN_PLAYERS } from '../../game/types';
 import type { RoomPlayer } from '../../online/room';
@@ -169,7 +169,7 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
               ? 'Chame pelo menos mais 1 amigo para começar'
               : pool.length === 0
                 ? 'Escolha pelo menos um pack de sons'
-                : `${online} jogadores · ${roundsFor(ids.length)} rodadas · ${pool.length} sons`}
+                : `${online} jogadores · ${ROUNDS} rodadas · ${pool.length} sons`}
             {mine > 0 && online >= MIN_PLAYERS && pool.length > 0 && '\nSeus packs vão para os celulares de todos ao começar'}
           </Text>
           <GradientButton

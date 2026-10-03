@@ -4,18 +4,14 @@ import { Phase, Player, PlayerSetup, TurnScore } from './types';
 /** Repetições da referência permitidas por turno, além da execução automática. */
 export const REPLAYS_PER_TURN = 1;
 
-/** Mínimo de rodadas por partida; com 5 jogadores ou mais, uma rodada por jogador. */
-export const MIN_ROUNDS = 5;
-
-export function roundsFor(players: number): number {
-  return Math.max(MIN_ROUNDS, players);
-}
+/** Rodadas por partida, com qualquer número de jogadores (cada um joga uma vez por rodada). */
+export const ROUNDS = 5;
 
 export interface Match {
   players: Player[];
   /** Começa em 1 e avança quando todos os jogadores jogaram. */
   round: number;
-  /** Rodadas da partida: `roundsFor(jogadores)`. */
+  /** Rodadas da partida: `ROUNDS`. */
   totalRounds: number;
   /** Sons sorteáveis (dos packs escolhidos). */
   pool: string[];
@@ -85,7 +81,7 @@ export function createMatch(setup: readonly PlayerSetup[], pool: readonly string
       best: null,
     })),
     round: 1,
-    totalRounds: roundsFor(setup.length),
+    totalRounds: ROUNDS,
     pool: [...pool],
     current: 0,
     phase: 'handoff',

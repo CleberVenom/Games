@@ -68,8 +68,8 @@ As 9 casas têm a mesma chance. A regra fica em `src/game/modifiers.ts` e na má
 
 ### Partida, rodadas e pódio
 
-A partida tem **5 rodadas** com até 5 jogadores e **uma rodada por jogador** acima disso (6 jogadores → 6
-rodadas; 10 jogadores → 10 rodadas). No mesmo celular cabem **até 10 jogadores**, como nas salas online. O cabeçalho mostra "Rodada X de N". Na última vez da última rodada não há roleta: o botão vira
+A partida tem **5 rodadas**, com qualquer número de jogadores (cada um joga uma vez por rodada; `ROUNDS` em
+`src/game/match.ts`, vale também nas salas online). No mesmo celular cabem **até 10 jogadores**, como nas salas online. O cabeçalho mostra "Rodada X de N". Na última vez da última rodada não há roleta: o botão vira
 **Ver o pódio** — 1º, 2º e 3º em degraus animados, demais colocados em lista, melhor imitação de cada um e
 empates dividindo a posição. **Jogar de novo** repete jogadores e packs com o placar zerado.
 

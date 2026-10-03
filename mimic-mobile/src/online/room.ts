@@ -1,4 +1,4 @@
-import { roundsFor, shuffle } from '../game/match';
+import { ROUNDS, shuffle } from '../game/match';
 import { ModifierId, MODIFIERS } from '../game/modifiers';
 import { avatarOf } from '../avatars/avatars';
 import { AvatarId, MAX_ROOM_PLAYERS, PlayerColor, TurnScore } from '../game/types';
@@ -127,7 +127,7 @@ export function firstRound(soundId: string, now: number): RoomRound {
   };
 }
 
-/** Começa a partida: rodadas pelo número de jogadores (mínimo 5) e baralho com os sons dos packs. */
+/** Começa a partida: `ROUNDS` rodadas, placar zerado e baralho com os sons dos packs. */
 export function startGame(
   meta: RoomMeta,
   players: Record<string, RoomPlayer>,
@@ -143,7 +143,7 @@ export function startGame(
   const { shared: _previous, ...base } = meta;
   const packs = Object.keys(shared).length > 0 ? { shared: { ...shared } } : {};
   return {
-    meta: { ...base, ...packs, status: 'playing', totalRounds: roundsFor(Object.keys(players).length), pool: [...pool], deck },
+    meta: { ...base, ...packs, status: 'playing', totalRounds: ROUNDS, pool: [...pool], deck },
     round: firstRound(soundId, now),
     players: reset,
   };

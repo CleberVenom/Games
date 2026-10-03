@@ -216,7 +216,7 @@ Depois do teste, se quiser, apague o token na mesma página da Expo — ele deix
 ## Parte 4 — Roteiro de teste (marque o que funcionou)
 
 Uma partida com **2 jogadores** tem **5 rodadas** (cada jogador joga uma vez por rodada = 10 vezes no total).
-Com 6 jogadores, são 6 rodadas; com 10, são 10.
+Com 6 ou com 10 jogadores, continuam sendo 5 rodadas (e 30 ou 50 vezes no total).
 
 ### Tela inicial (jogadores e packs)
 
@@ -227,7 +227,7 @@ Com 6 jogadores, são 6 rodadas; com 10, são 10.
 - [ ] Os mascotes dos **outros jogadores aparecem apagados, com cadeado e o nome de quem pegou**, e não dá para escolhê-los.
 - [ ] Trocar o mascote libera o antigo para os outros.
 - [ ] Remover um jogador (ícone de lixeira — só aparece com 3 ou mais jogadores).
-- [ ] Conferir a linha acima do botão: com 2 jogadores diz **"5 rodadas"**; com 6, **"6 rodadas"**; com 10, **"10 rodadas"**.
+- [ ] Conferir a linha acima do botão: diz **"5 rodadas"** com qualquer número de jogadores (2, 6 ou 10).
 - [ ] Na seção **Packs de sons** há **3 packs oficiais** (Animais & natureza, Vozes & zoeira, Efeitos & games),
       com **75 sons** no total. Desmarcar e marcar packs e ver o total de sons mudar.
 - [ ] Desmarcar **todos** os packs: o botão fica apagado com o texto **"Escolha pelo menos um pack de sons"**.
