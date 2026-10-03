@@ -1,4 +1,4 @@
-import { AVATAR_IDS, MAX_ROOM_PLAYERS, PLAYER_COLORS } from '../../game/types';
+import { AVATAR_IDS, MAX_PLAYERS, MAX_ROOM_PLAYERS, PLAYER_COLORS } from '../../game/types';
 import { palette } from '../../theme/palette';
 import { AVATAR_ART } from '../art';
 import { AVATAR_LIST, AVATARS, avatarOf, freeAvatars, isAvatarId, randomFreeAvatar } from '../avatars';
@@ -17,8 +17,8 @@ function contrast(a: string, b: string): number {
 }
 
 describe('mascotes', () => {
-  it('sobram pelo menos 5 mascotes quando a sala está cheia (o último a escolher ainda tem opção)', () => {
-    expect(AVATAR_IDS.length - MAX_ROOM_PLAYERS).toBeGreaterThanOrEqual(5);
+  it('sobram pelo menos 5 mascotes quando a sala ou o celular estão cheios (o último a escolher ainda tem opção)', () => {
+    expect(AVATAR_IDS.length - Math.max(MAX_ROOM_PLAYERS, MAX_PLAYERS)).toBeGreaterThanOrEqual(5);
   });
 
   it('todo mascote tem desenho SVG, nome e cor', () => {

@@ -26,8 +26,8 @@ export const AVATAR_IDS = [
 export type AvatarId = (typeof AVATAR_IDS)[number];
 
 export const MIN_PLAYERS = 2;
-/** Máximo no modo local (um celular passando a vez). */
-export const MAX_PLAYERS = 6;
+/** Máximo no modo local (um celular passando a vez). Há mais mascotes que jogadores (veja `MAX_ROOM_PLAYERS`). */
+export const MAX_PLAYERS = 10;
 /** Máximo numa sala online. Há mais mascotes que jogadores, para o último a escolher ainda ter opção. */
 export const MAX_ROOM_PLAYERS = 10;
 

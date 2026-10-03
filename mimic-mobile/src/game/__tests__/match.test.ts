@@ -182,7 +182,7 @@ describe('roleta', () => {
 
 describe('rodadas e fim de partida', () => {
   it('são 5 rodadas com até 5 jogadores e uma por jogador acima disso', () => {
-    expect([2, 3, 4, 5, 6].map(roundsFor)).toEqual([5, 5, 5, 5, 6]);
+    expect([2, 3, 4, 5, 6, 10].map(roundsFor)).toEqual([5, 5, 5, 5, 6, 10]);
     expect(createMatch(setup, POOL, seeded()).totalRounds).toBe(5);
   });
 
