@@ -345,6 +345,9 @@ export default function PackEditorScreen() {
                       maxLength={40}
                       selectionColor={palette.fuchsia[400]}
                       className="h-7 font-label text-sm text-mist-50 web:outline-none"
+                      // No Android o TextInput ganha o padding do tema do sistema, que num campo de 28 px sobra
+                      // menos que a linha de texto e corta a parte de cima das letras.
+                      style={{ paddingVertical: 0, includeFontPadding: false, textAlignVertical: 'center' }}
                     />
                     <Text className="font-body text-xs text-mist-500">{seconds(s.durationMs)}</Text>
                   </View>
