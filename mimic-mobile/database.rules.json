@@ -1,5 +1,27 @@
 {
   "rules": {
+    "sharedPacks": {
+      "$code": {
+        ".read": "auth != null",
+        "meta": {
+          ".write": "auth != null && !data.exists() && newData.child('owner').val() === auth.uid",
+          ".validate": "newData.child('packId').isString() && newData.child('title').isString() && newData.child('title').val().length <= 40"
+        },
+        "sounds": {
+          ".write": "auth != null && root.child('sharedPacks').child($code).child('meta/owner').val() === auth.uid"
+        },
+        "audio": {
+          "$sound": {
+            ".write": "auth != null && root.child('sharedPacks').child($code).child('meta/owner').val() === auth.uid",
+            ".validate": "newData.isString() && newData.val().length < 1400000"
+          }
+        },
+        "done": {
+          ".write": "auth != null && root.child('sharedPacks').child($code).child('meta/owner').val() === auth.uid",
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
     "rooms": {
       "$code": {
         ".read": "auth != null",

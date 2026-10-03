@@ -1,3 +1,5 @@
+import { fromBase64, toBase64 } from '../online/clipCodec';
+
 /** Áudio dos sons criados no app, versão web: um WAV por som no IndexedDB do navegador. */
 
 const DB_NAME = 'mimic-mobile';
@@ -37,4 +39,16 @@ export async function audioSource(id: string): Promise<ArrayBuffer> {
 
 export async function deleteAudio(id: string): Promise<void> {
   await run('readwrite', (s) => s.delete(id));
+}
+
+/** O WAV de um som em base64, para compartilhar o pack com amigos. */
+export async function readAudioBase64(id: string): Promise<string> {
+  const bytes = await run<Uint8Array | undefined>('readonly', (s) => s.get(id));
+  if (!bytes) throw new Error(`Som não encontrado: ${id}`);
+  return toBase64(bytes);
+}
+
+/** Guarda um som que veio de um pack compartilhado (WAV em base64). */
+export async function saveAudioBase64(id: string, base64: string): Promise<void> {
+  await saveAudio(id, fromBase64(base64));
 }

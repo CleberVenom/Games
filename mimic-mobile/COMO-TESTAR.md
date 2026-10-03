@@ -242,6 +242,20 @@ Com 6 jogadores, são 6 rodadas.
 - [ ] **Fechar e abrir o app** de novo (no navegador: recarregar a página): o pack continua lá.
 - [ ] Jogar uma partida só com o seu pack marcado.
 
+### Compartilhar um pack com amigos (precisa de internet)
+
+- [ ] Abrir o **lápis** de um pack seu: no cartão **Compartilhar com amigos**, tocar em **Compartilhar pack**. Aparece
+      "Enviando 1 de N sons…" e depois o **código de 5 letras**.
+- [ ] **Enviar código** abre o compartilhamento (WhatsApp etc.) com o código e o caminho no app.
+- [ ] No celular do amigo: tela inicial → **Baixar pack de amigo (código)**, digitar o código → **Procurar**: aparece o
+      nome do pack e os sons. Tocar em **Baixar pack** → "Pronto!".
+- [ ] O pack aparece na tela inicial do amigo ("Baixado de um amigo"), já marcado, e toca normalmente no editor e na
+      partida, **mesmo sem internet**.
+- [ ] Código errado mostra **"Código não encontrado"**; procurar de novo um pack que já baixou mostra **"Esse pack já
+      está no seu celular"**.
+- [ ] Mudar o nome ou os sons do pack: o cartão pede para **salvar**; depois de salvar, compartilhar de novo gera um
+      **código novo**.
+
 ### A vez de cada jogador
 
 - [ ] Tocar em **Começar partida**. Aparece **"Passe o celular para [nome]"** → tocar em **Estou pronto**.
@@ -296,6 +310,9 @@ Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi
       celulares (com o ponto verde de online).
 - [ ] Código errado mostra **"Sala não encontrada"**.
 - [ ] O anfitrião escolhe os packs e toca em **Começar partida** (só libera com 2 ou mais pessoas).
+- [ ] **Packs do anfitrião**: o anfitrião marca um pack criado por ele e começa. O botão mostra "Enviando seus
+      packs…" (só na primeira vez ou se o pack mudou) e os convidados veem **"Baixando os sons da partida"** antes da
+      primeira imitação com som desse pack. Depois, o pack fica nos packs de cada convidado.
 - [ ] Cada um toca em **Ouvir o som**, imita e vê **"Imitação enviada!"** com quem ainda falta.
 - [ ] Quando todos enviam, começa a **apresentação** em todos os celulares: nome do jogador, a imitação dele
       tocando e a nota.
@@ -346,12 +363,15 @@ Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi
 
 ## Parte 6 — O que ainda não foi testado (e por quê)
 
-Tudo foi validado no computador: 51 testes automáticos, o jogo inteiro no navegador com microfone simulado e a
+Tudo foi validado no computador: 79 testes automáticos, o jogo inteiro no navegador com microfone simulado e a
 montagem do app de Android. O que **ainda não** foi possível testar daqui:
 
 - **Um celular Android de verdade** (desempenho, microfone, vibração e alto-falante reais).
 - **Vozes humanas de verdade**: a nota foi calibrada com gravações e sons de teste. A "régua" pode precisar de
   ajuste depois que o grupo jogar (é um ajuste simples no código).
+- **Packs compartilhados no Firebase de verdade**: o envio, o download por código e o download automático na sala
+  foram testados no emulador do Firebase (com internet lenta e com envio interrompido), não com celulares reais nem
+  com packs grandes (dezenas de sons de 15 s) pelo 4G.
 - **iPhone**: exige conta paga de desenvolvedor da Apple, por isso ficou fora deste teste.
 - **Packs pessoais** (pasta `packs-pessoais/`): o mecanismo está pronto, mas a pasta está vazia até você colocar
   os seus sons.

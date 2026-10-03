@@ -29,6 +29,28 @@ chato).
    ```json
    {
      "rules": {
+       "sharedPacks": {
+         "$code": {
+           ".read": "auth != null",
+           "meta": {
+             ".write": "auth != null && !data.exists() && newData.child('owner').val() === auth.uid",
+             ".validate": "newData.child('packId').isString() && newData.child('title').isString() && newData.child('title').val().length <= 40"
+           },
+           "sounds": {
+             ".write": "auth != null && root.child('sharedPacks').child($code).child('meta/owner').val() === auth.uid"
+           },
+           "audio": {
+             "$sound": {
+               ".write": "auth != null && root.child('sharedPacks').child($code).child('meta/owner').val() === auth.uid",
+               ".validate": "newData.isString() && newData.val().length < 1400000"
+             }
+           },
+           "done": {
+             ".write": "auth != null && root.child('sharedPacks').child($code).child('meta/owner').val() === auth.uid",
+             ".validate": "newData.isBoolean()"
+           }
+         }
+       },
        "rooms": {
          "$code": {
            ".read": "auth != null",
@@ -97,8 +119,8 @@ chato).
    ```
 
    Essas regras são a "segurança" do jogo: só o anfitrião avança a partida, cada jogador só mexe na própria nota,
-   ninguém de fora apaga a sala dos outros e, no chat de voz, o anfitrião pode mutar alguém mas nunca ligar o
-   microfone de outra pessoa.
+   ninguém de fora apaga a sala dos outros, no chat de voz o anfitrião pode mutar alguém mas nunca ligar o
+   microfone de outra pessoa e um pack compartilhado só pode ser enviado (uma vez) por quem gerou o código.
 
 ## 3. Ligar o login anônimo
 
@@ -143,11 +165,11 @@ Cole no chat o bloco copiado no passo 4.5 (um print da tela também serve). Eu c
 
 **Já feito (set/2026):** o app usa o projeto `mimic-mobile-v3ltda`.
 
-## Quando as regras mudarem (ex.: chat de voz, set/2026)
+## Quando as regras mudarem (ex.: chat de voz, set/2026; packs compartilhados, out/2026)
 
 Se eu avisar que as regras mudaram, repita só o passo 2.5: **Realtime Database → Regras**, apague tudo, cole o bloco
-atualizado acima e clique em **Publicar**. Sem isso, as partes novas (como o chat de voz) não funcionam para os
-convidados.
+atualizado acima e clique em **Publicar**. Sem isso, as partes novas (como o chat de voz e o compartilhamento de
+packs) não funcionam.
 
 ---
 
@@ -158,4 +180,9 @@ convidados.
   outros entram em **Jogar online → Entrar numa sala**.
 - Os dados de cada sala são apagados quando o anfitrião sai. O plano gratuito aguenta bem um grupo de amigos: cada
   imitação ocupa uns 80 KB.
+- **Packs compartilhados** (`sharedPacks/{código}`) ficam guardados para os amigos baixarem quando quiserem: cada som
+  ocupa de ~80 KB (1,4 s) a ~880 KB (15 s). O plano gratuito tem 1 GB de espaço e 10 GB de download por mês. Cada vez
+  que um pack muda e é compartilhado de novo, o código antigo continua lá; para liberar espaço, apague os códigos
+  velhos em **Realtime Database → Dados → sharedPacks** (o app não consegue apagar, porque o login anônimo muda a
+  cada abertura).
 - Quer acompanhar? No console do Firebase, **Realtime Database → Dados** mostra as salas abertas em tempo real.

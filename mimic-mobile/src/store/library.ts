@@ -5,6 +5,7 @@ import { deleteAudio } from '../audio/customAudio';
 import { PERSONAL_PACKS } from '../audio/personalPacks';
 import { OFFICIAL_PACKS, Pack } from '../game/packs';
 import type { ReferenceSound } from '../game/sounds';
+import type { PackShare } from '../online/packShare';
 
 export interface CustomSound {
   id: string;
@@ -18,6 +19,10 @@ export interface CustomPack {
   title: string;
   icon: string;
   sounds: CustomSound[];
+  /** Último compartilhamento com amigos (código e sons enviados). */
+  share?: PackShare;
+  /** Código de onde o pack foi baixado, quando veio de um amigo. */
+  from?: string;
 }
 
 const KEY = 'mimic.library.v1';
@@ -35,7 +40,7 @@ export function customToPack(p: CustomPack): Pack {
   return {
     id: p.id,
     title: p.title,
-    description: `${p.sounds.length} ${p.sounds.length === 1 ? 'som criado' : 'sons criados'} no app`,
+    description: p.from ? 'Baixado de um amigo' : 'Criado no app',
     icon: p.icon,
     source: 'custom',
     sounds: p.sounds.map((s) => ({ id: s.id, title: s.title, pack: p.id, durationMs: s.durationMs })),
@@ -77,6 +82,12 @@ interface Library {
 /** Packs oficiais da primeira versão, de quando o armazenamento ainda não guardava `known`. */
 const LEGACY_OFFICIAL = ['animais', 'vozes', 'memes', 'maquinas'];
 
+/** Áudios que nenhum outro pack usa (um som baixado de um amigo pode estar em dois packs). */
+function unusedAudio(ids: string[], others: readonly CustomPack[]): string[] {
+  const used = new Set(others.flatMap((p) => p.sounds.map((s) => s.id)));
+  return ids.filter((id) => !used.has(id));
+}
+
 function persist(custom: CustomPack[], selected: string[]) {
   const known = OFFICIAL_PACKS.map((p) => p.id);
   AsyncStorage.setItem(KEY, JSON.stringify({ custom, selected, known })).catch(() => {});
@@ -117,7 +128,9 @@ export const useLibrary = create<Library>((set, get) => ({
     const { custom, selected } = get();
     const previous = custom.find((p) => p.id === pack.id);
     const kept = new Set(pack.sounds.map((s) => s.id));
-    await Promise.all((previous?.sounds ?? []).filter((s) => !kept.has(s.id)).map((s) => deleteAudio(s.id)));
+    const removed = (previous?.sounds ?? []).filter((s) => !kept.has(s.id)).map((s) => s.id);
+    const others = custom.filter((p) => p.id !== pack.id);
+    await Promise.all(unusedAudio(removed, others).map(deleteAudio));
     const nextCustom = previous ? custom.map((p) => (p.id === pack.id ? pack : p)) : [...custom, pack];
     const nextSelected = previous || selected.includes(pack.id) ? selected : [...selected, pack.id];
     set({ custom: nextCustom, selected: nextSelected });
@@ -128,8 +141,8 @@ export const useLibrary = create<Library>((set, get) => ({
     const { custom, selected } = get();
     const pack = custom.find((p) => p.id === packId);
     if (!pack) return;
-    await Promise.all(pack.sounds.map((s) => deleteAudio(s.id)));
     const nextCustom = custom.filter((p) => p.id !== packId);
+    await Promise.all(unusedAudio(pack.sounds.map((s) => s.id), nextCustom).map(deleteAudio));
     const nextSelected = selected.filter((id) => id !== packId);
     set({ custom: nextCustom, selected: nextSelected });
     persist(nextCustom, nextSelected);

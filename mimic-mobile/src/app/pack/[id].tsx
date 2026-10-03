@@ -16,6 +16,7 @@ import { Gradient } from '../../components/Gradient';
 import { hapticImpact } from '../../components/haptics';
 import { Icon, IconName } from '../../components/Icon';
 import { PressableScale } from '../../components/PressableScale';
+import { ShareCard } from '../../components/ShareCard';
 import { CLIP_RATE, encodeWav, MAX_CLIP_SECONDS, MIN_CLIP_SECONDS, prepareClip, secondsText } from '../../dsp/clip';
 import { CustomSound, newId, useLibrary } from '../../store/library';
 import { glow, gradients, palette, withAlpha } from '../../theme/tokens';
@@ -182,7 +183,15 @@ export default function PackEditorScreen() {
   }
 
   async function save() {
-    await savePack({ id: packId, title: title.trim() || 'Meu pack', icon, sounds });
+    // O código de compartilhamento vale para os sons de quando foi gerado: mudou o pack, compartilha de novo.
+    await savePack({
+      id: packId,
+      title: title.trim() || 'Meu pack',
+      icon,
+      sounds,
+      from: existing?.from,
+      share: dirty ? undefined : existing?.share,
+    });
     created.current = [];
     router.back();
   }
@@ -271,6 +280,8 @@ export default function PackEditorScreen() {
               </View>
             </View>
           </View>
+
+          {existing && <ShareCard pack={existing} dirty={dirty} />}
 
           <View className="gap-3">
             <View className="flex-row items-center justify-between px-1">

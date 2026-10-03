@@ -5,6 +5,7 @@ import { roundsFor } from '../../game/match';
 import { poolFrom } from '../../game/packs';
 import { MAX_ROOM_PLAYERS, MIN_PLAYERS } from '../../game/types';
 import type { RoomPlayer } from '../../online/room';
+import { useRoomPacks } from '../../online/roomPacks';
 import { micOpen, mutedByOther } from '../../online/voice';
 import { allPacks, useLibrary } from '../../store/library';
 import { useVoice, useVoiceAllowed, voiceActions } from '../../store/voice';
@@ -40,9 +41,13 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
   const isHost = me === host;
   const selected = new Set(useLibrary((s) => s.selected));
   const toggle = useLibrary((s) => s.toggle);
-  // Online só valem os packs que vêm no app (oficiais e pessoais): os criados no celular não existem nos outros.
-  const packs = allPacks([]);
+  const custom = useLibrary((s) => s.custom);
+  // Os packs criados (ou baixados) neste celular sobem ao começar e os convidados baixam sozinhos.
+  const packs = allPacks(custom);
   const pool = poolFrom(packs, selected);
+  const mine = custom.filter((p) => selected.has(p.id)).length;
+  const sending = useRoomPacks((s) => s.sending);
+  const sent = useRoomPacks((s) => `${Math.min(s.done + 1, s.total)}/${s.total}`);
   const online = ids.filter((uid) => players[uid]?.online).length;
   const voice = useVoiceAllowed();
   const mics = useVoice((s) => s.mics);
@@ -132,16 +137,17 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
             </View>
             <Text className="font-label text-sm text-mist-400">{pool.length} sons</Text>
           </View>
-          <PackPicker packs={packs} selected={selected} onToggle={toggle} allowCreate={false} />
+          <PackPicker packs={packs} selected={selected} onToggle={toggle} editable={false} />
           <Text className="px-1 text-center font-ui text-xs text-mist-400">
             {online < MIN_PLAYERS
               ? 'Chame pelo menos mais 1 amigo para começar'
               : pool.length === 0
                 ? 'Escolha pelo menos um pack de sons'
                 : `${online} jogadores · ${roundsFor(ids.length)} rodadas · ${pool.length} sons`}
+            {mine > 0 && online >= MIN_PLAYERS && pool.length > 0 && '\nSeus packs vão para os celulares de todos ao começar'}
           </Text>
           <GradientButton
-            label={starting ? 'Começando…' : 'Começar partida'}
+            label={sending ? `Enviando seus packs… ${sent}` : starting ? 'Começando…' : 'Começar partida'}
             icon="play"
             onPress={() => onStart(pool)}
             disabled={starting || online < MIN_PLAYERS || pool.length === 0}

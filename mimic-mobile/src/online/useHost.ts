@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 
-import { findSound } from '../store/library';
+import { findSound, useLibrary } from '../store/library';
 import { useOnline } from '../store/online';
 import { clearRound, hostUpdate } from './api';
+import { shareRoomPacks } from './roomPacks';
 import {
   addRoundPoints,
   nextPresenter,
@@ -77,16 +78,20 @@ export function useHostDriver() {
 
 /** Ações do anfitrião (botões): começar, girar a roleta, próxima rodada, pódio e voltar ao lobby. */
 export const hostActions = {
-  start(pool: string[]) {
+  async start(pool: string[]) {
     const { session, meta, players } = useOnline.getState();
-    if (!session || !meta) return Promise.resolve();
-    const next = startGame(meta, players, pool, Date.now());
+    if (!session || !meta) return;
+    // Packs do anfitrião na partida: sobem para o Firebase (se mudaram) e os convidados baixam pelo código.
+    const inPool = new Set(pool);
+    const mine = useLibrary.getState().custom.filter((p) => p.sounds.some((s) => inPool.has(s.id)));
+    const shared = await shareRoomPacks(mine);
+    const next = startGame(meta, players, pool, Date.now(), Math.random, shared);
     const changes: Record<string, unknown> = { meta: next.meta, round: next.round };
     for (const id of Object.keys(players)) {
       changes[`players/${id}/score`] = 0;
       changes[`players/${id}/best`] = null;
     }
-    return hostUpdate(session.code, changes);
+    await hostUpdate(session.code, changes);
   },
   spin() {
     const { session, round } = useOnline.getState();

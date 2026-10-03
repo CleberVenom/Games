@@ -20,12 +20,12 @@ interface Props {
   packs: Pack[];
   selected: ReadonlySet<string>;
   onToggle: (packId: string) => void;
-  /** Mostra o botão "Criar pack" (no online só valem packs que todos os celulares têm). */
-  allowCreate?: boolean;
+  /** Mostra os botões de criar, baixar e editar packs (escondidos na sala online, que não sai da tela). */
+  editable?: boolean;
 }
 
 /** Grade de packs de sons: toque para marcar/desmarcar; packs criados no app têm botão de editar. */
-export function PackPicker({ packs, selected, onToggle, allowCreate = true }: Props) {
+export function PackPicker({ packs, selected, onToggle, editable = true }: Props) {
   const [width, setWidth] = useState(0);
   const tile = width > 0 ? (width - GAP) / 2 : 0;
 
@@ -34,23 +34,47 @@ export function PackPicker({ packs, selected, onToggle, allowCreate = true }: Pr
       <View className="flex-row flex-wrap" style={{ gap: GAP }} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
         {tile > 0 &&
           packs.map((p) => (
-            <PackTile key={p.id} pack={p} width={tile} on={selected.has(p.id)} onPress={() => onToggle(p.id)} />
+            <PackTile
+              key={p.id}
+              pack={p}
+              width={tile}
+              on={selected.has(p.id)}
+              onPress={() => onToggle(p.id)}
+              editable={editable && p.source === 'custom'}
+            />
           ))}
       </View>
-      {allowCreate && (
-        <PressableScale
-          onPress={() => router.push('/pack/new')}
-          accessibilityRole="button"
-          className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-pink-400/40 bg-pink-500/5">
-          <Icon name="add" size={20} color={palette.pink[300]} />
-          <Text className="font-label text-sm text-pink-300">Criar pack (gravar ou importar sons)</Text>
-        </PressableScale>
+      {editable && (
+        <>
+          <PressableScale
+            onPress={() => router.push('/pack/new')}
+            accessibilityRole="button"
+            className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-pink-400/40 bg-pink-500/5">
+            <Icon name="add" size={20} color={palette.pink[300]} />
+            <Text className="font-label text-sm text-pink-300">Criar pack (gravar ou importar sons)</Text>
+          </PressableScale>
+          <PressableScale
+            onPress={() => router.push('/pack/baixar')}
+            accessibilityRole="button"
+            className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-cyan-400/40 bg-cyan-500/5">
+            <Icon name="cloud-download" size={20} color={palette.cyan[300]} />
+            <Text className="font-label text-sm text-cyan-300">Baixar pack de amigo (código)</Text>
+          </PressableScale>
+        </>
       )}
     </View>
   );
 }
 
-function PackTile({ pack, width, on, onPress }: { pack: Pack; width: number; on: boolean; onPress: () => void }) {
+interface TileProps {
+  pack: Pack;
+  width: number;
+  on: boolean;
+  onPress: () => void;
+  editable: boolean;
+}
+
+function PackTile({ pack, width, on, onPress, editable }: TileProps) {
   const badge = SOURCE_BADGE[pack.source];
   return (
     <PressableScale
@@ -74,7 +98,7 @@ function PackTile({ pack, width, on, onPress }: { pack: Pack; width: number; on:
           className="h-11 w-11 items-center justify-center overflow-hidden rounded-2xl">
           <Icon name={pack.icon as IconName} size={22} color={on ? palette.mist[50] : palette.mist[400]} />
         </Gradient>
-        {pack.source === 'custom' ? (
+        {editable ? (
           <PressableScale
             onPress={() => router.push({ pathname: '/pack/[id]', params: { id: pack.id } })}
             accessibilityRole="button"
@@ -104,7 +128,7 @@ function PackTile({ pack, width, on, onPress }: { pack: Pack; width: number; on:
             {badge.label}
           </Text>
         </View>
-        {pack.source === 'custom' && (
+        {editable && (
           <Icon
             name={on ? 'checkmark-circle' : 'ellipse-outline'}
             size={20}

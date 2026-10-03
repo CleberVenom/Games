@@ -36,6 +36,8 @@ export interface RoomMeta {
   pool: string[];
   /** Próximos sons, já embaralhados. */
   deck: string[];
+  /** Packs do anfitrião usados na partida (id do pack → código de compartilhamento), que os outros baixam. */
+  shared?: Record<string, string>;
 }
 
 export interface RoomRound {
@@ -129,12 +131,16 @@ export function startGame(
   pool: readonly string[],
   now: number,
   rng: () => number = Math.random,
+  shared: Record<string, string> = {},
 ): { meta: RoomMeta; round: RoomRound; players: Record<string, RoomPlayer> } {
   if (pool.length === 0) throw new Error('Escolha pelo menos um pack com sons.');
   const [soundId, ...deck] = shuffle(pool, rng);
   const reset = Object.fromEntries(Object.entries(players).map(([uid, p]) => [uid, { ...p, score: 0 }]));
+  // O Realtime Database não aceita `undefined`: sem packs do anfitrião, o campo fica de fora.
+  const { shared: _previous, ...base } = meta;
+  const packs = Object.keys(shared).length > 0 ? { shared: { ...shared } } : {};
   return {
-    meta: { ...meta, status: 'playing', totalRounds: roundsFor(Object.keys(players).length), pool: [...pool], deck },
+    meta: { ...base, ...packs, status: 'playing', totalRounds: roundsFor(Object.keys(players).length), pool: [...pool], deck },
     round: firstRound(soundId, now),
     players: reset,
   };

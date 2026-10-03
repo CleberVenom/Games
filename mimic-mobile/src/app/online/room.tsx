@@ -10,13 +10,16 @@ import { ImitateView } from '../../components/online/ImitateView';
 import { PlayerStatus, PlayerStrip } from '../../components/online/PlayerStrip';
 import { PresentView } from '../../components/online/PresentView';
 import { RoomLobby } from '../../components/online/RoomLobby';
+import { RoomPacksCard } from '../../components/online/RoomPacksCard';
 import { RoundResults } from '../../components/online/RoundResults';
 import { VoiceButton } from '../../components/online/VoiceButton';
 import { Podium } from '../../components/Podium';
 import { PressableScale } from '../../components/PressableScale';
 import { WheelOverlay } from '../../components/WheelOverlay';
 import { isLastRound, playerOrder } from '../../online/room';
+import { useRoomPackSync, useRoomPacksReady } from '../../online/roomPacks';
 import { hostActions, useHostDriver } from '../../online/useHost';
+import { allPacks, useLibrary } from '../../store/library';
 import { useOnline } from '../../store/online';
 import { useVoice, useVoiceAllowed, useVoiceChat, voiceActions } from '../../store/voice';
 import { palette } from '../../theme/tokens';
@@ -41,6 +44,10 @@ function Room() {
   const [busy, setBusy] = useState(false);
   useHostDriver();
   useVoiceChat();
+  useRoomPackSync();
+  const packsReady = useRoomPacksReady();
+  const soundId = round?.soundId;
+  const hasSound = useLibrary((s) => Boolean(soundId) && allPacks(s.custom).some((p) => p.sounds.some((x) => x.id === soundId)));
   const voiceOn = useVoiceAllowed();
   const mics = useVoice((s) => s.mics);
   const speaking = useVoice((s) => s.speaking);
@@ -82,6 +89,15 @@ function Room() {
       setBusy(false);
     }
   };
+
+  const start = (pool: string[]) =>
+    run(() =>
+      hostActions.start(pool).catch(() => {
+        const message = 'Não deu para enviar seus packs para os convidados. Confira a internet e tente de novo.';
+        if (Platform.OS === 'web') window.alert(message);
+        else Alert.alert('Sem conexão', message);
+      }),
+    );
 
   if (closed || !session) {
     return (
@@ -180,8 +196,10 @@ function Room() {
               ids={ids}
               players={players}
               starting={busy}
-              onStart={(pool) => run(() => hostActions.start(pool))}
+              onStart={start}
             />
+          ) : round.phase === 'imitating' && !hasSound && !packsReady ? (
+            <RoomPacksCard hostName={hostName} />
           ) : round.phase === 'imitating' ? (
             <ImitateView key={round.number} session={session} round={round} players={players} ids={ids} scores={scores} />
           ) : round.phase === 'presenting' ? (

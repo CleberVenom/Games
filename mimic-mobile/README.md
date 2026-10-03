@@ -19,6 +19,7 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | + | Rodadas, pódio, seleção de packs, editor de packs no app e packs pessoais | ✅ |
 | + | 1ª rodada de testes: gravação com o tempo do som (sem parar), silhueta do som original, 97 sons em 7 packs | ✅ |
 | + | **Modo online** com amigos: salas com código, todos imitam juntos, apresentação das imitações com reações e chat de voz | ✅ (projeto Firebase `mimic-mobile-v3ltda`; veja [FIREBASE.md](FIREBASE.md)) |
+| + | **Packs de amigos**: compartilhar um pack por código, baixar o pack de um amigo e packs do anfitrião baixados sozinhos na sala online | ✅ |
 
 ### Como a nota é calculada (Passo 3)
 
@@ -78,13 +79,21 @@ Como no Mimic Party, a partida sorteia só os sons dos **packs marcados** na tel
 |---|---|---|
 | **Oficial** | Animais & natureza · Vozes & zoeira · Efeitos & games (75 sons CC0) | `assets/sounds/` |
 | **Pessoal** | Seus packs de uso privado (memes BR/gringos, anime…) empacotados no app | `packs-pessoais/` — veja o [README](packs-pessoais/README.md) |
-| **Meu pack** | Criados no próprio celular, no editor: grave pelo microfone ou importe MP3/WAV/M4A/OGG | só no aparelho |
+| **Meu pack** | Criados no próprio celular, no editor: grave pelo microfone ou importe MP3/WAV/M4A/OGG — ou baixados de um amigo pelo código | no aparelho (e no Firebase, se compartilhado) |
 
 O **editor de packs** (botão "Criar pack" ou o lápis de um pack seu) tem nome, ícone e lista de sons com
 ouvir, renomear e remover. Cada som passa pelo mesmo tratamento dos oficiais (`src/dsp/clip.ts`): silêncio
 cortado, volume igualado e **de 1,4 a 15 s** (mais curto que 1,4 s é recusado, com aviso; acima de 15 s fica o trecho
 mais forte). O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
 lista de packs no AsyncStorage (`src/store/library.ts`).
+
+**Compartilhar com amigos** (cartão no editor de um pack salvo): o botão "Compartilhar pack" envia os sons para o
+Firebase e mostra um **código de 5 letras** ("Enviar código" manda pelo WhatsApp etc.). O amigo toca em **Baixar pack
+de amigo** na tela inicial, digita o código, vê o nome e os sons e baixa: o pack entra nos packs dele, já marcado, e
+funciona sem internet depois. O código vale para os sons de quando foi gerado: mudou o pack, salve e compartilhe de
+novo (sai um código novo). Baixar o mesmo código de novo atualiza o pack baixado, e um pack baixado nunca sobrescreve
+um pack criado no próprio celular. Por dentro: `src/online/sharedPacks.ts` (envio e download, WAV em base64 em
+`sharedPacks/{código}`), `packShare.ts` (lógica pura, testada) e `src/app/pack/baixar.tsx`.
 
 ### Modo online (com amigos)
 
@@ -99,8 +108,13 @@ packs; os outros entram pelo código (até 10 jogadores, só antes de começar).
 3. **Placar da rodada** e **roleta**: o efeito sorteado vale **para todos** na rodada seguinte.
 4. Na última rodada, **pódio** (com a melhor imitação de cada um); "Jogar de novo" volta ao lobby da mesma sala.
 
-Rodadas: as mesmas da partida local (5, ou uma por jogador acima disso). Só valem os packs que vêm no app (oficiais
-e pessoais) — os criados no celular não existem nos outros aparelhos. Se o anfitrião sair, a sala é encerrada.
+Rodadas: as mesmas da partida local (5, ou uma por jogador acima disso). Se o anfitrião sair, a sala é encerrada.
+
+**Packs do anfitrião na sala**: além dos oficiais e pessoais, o anfitrião pode marcar os packs dele (criados ou
+baixados). Ao tocar em "Começar partida", os que ainda não têm código (ou mudaram) são enviados ("Enviando seus
+packs… 1/12") e os códigos vão na sala (`meta.shared`). Cada convidado baixa sozinho os que não tem
+(`roomPacks.ts`), começando pelo pack do som da rodada; enquanto baixa, vê "Baixando os sons da partida" com o
+andamento e, se a internet falhar, "Tentar de novo". Os packs ficam no celular de cada um para as próximas partidas.
 
 **Chat de voz**: todos se falam na sala antes de começar, no placar da rodada, na roleta e no pódio. Na imitação e
 na apresentação a voz é **desligada em todos os celulares** (e o microfone fica livre para a gravação); quando os sons
