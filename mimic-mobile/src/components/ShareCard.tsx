@@ -14,7 +14,7 @@ import { ProgressBar } from './ProgressBar';
 type Sending = { done: number; total: number } | 'error' | null;
 
 async function sendCode(title: string, code: string) {
-  const message = `Baixe o pack "${title}" no Mimic Mobile: Início → Baixar pack de amigo → código ${code}`;
+  const message = `Baixe o pack "${title}" no Imitashow: Início → Baixar pack de amigo → código ${code}`;
   try {
     await Share.share({ message });
   } catch {

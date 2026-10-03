@@ -1,4 +1,4 @@
-# 🎤 Mimic Mobile
+# 🎤 Imitashow
 
 Party game de imitação por voz, no estilo *Mimic Party*: o celular toca um som curto (latido, buzina,
 efeito de meme…), o jogador tem **uma única chance** de imitar no microfone e recebe uma nota de 0 a 100
@@ -21,6 +21,7 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | + | **Modo online** com amigos: salas com código, todos imitam juntos, apresentação das imitações com reações e chat de voz | ✅ (projeto Firebase `mimic-mobile-v3ltda`; veja [FIREBASE.md](FIREBASE.md)) |
 | + | **Packs de amigos**: compartilhar um pack por código, baixar o pack de um amigo e packs do anfitrião baixados sozinhos na sala online | ✅ |
 | + | **Paleta Carnaval e mascotes**: fundo uva vivo com rosa-choque → laranja; 15 mascotes no lugar das cores dos jogadores, com escolha exclusiva em carrossel (local e online) | ✅ |
+| + | **Nome Imitashow e novo ícone**: o gato no microfone, num palco de stand-up com a plateia de mascotes (ícone adaptativo em camadas, abertura, logo e ícone de 512 px) | ✅ (exige APK novo) |
 
 ### Como a nota é calculada (Passo 3)
 
@@ -191,7 +192,8 @@ src/
   online/       modo online: sala e rodadas (lógica pura), Firebase, imitação pela rede, chat de voz (+ testes)
   theme/        paleta única (Tailwind + gradientes) e utilitários de cor/brilho
   avatars/      os 15 mascotes: desenhos (art.ts, gerado), nomes, cores e a lógica de quem já escolheu o quê (+ testes)
-assets/images/  ícones e splash (gerados por scripts/make-icons.py)
+assets/images/  ícone, camadas do ícone adaptativo, abertura, favicon, logo e ícone de 512 px da Play (gerados por scripts/make-icons.py)
+assets/icon/    as 3 camadas do ícone em SVG (palco, gato + microfone e a cena inteira), fonte editável
 assets/avatars/ os 15 mascotes em SVG (gerados por scripts/make-avatars.py, que também escreve src/avatars/art.ts)
 assets/sounds/  75 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
 ```
@@ -329,6 +331,10 @@ npx eas-cli@latest update --channel preview --environment preview --message "o q
 - `runtimeVersion` usa a política **fingerprint**: uma atualização só chega aos APKs com o **mesmo código nativo**.
   Biblioteca nativa nova, permissão ou plugin em `app.json` → é preciso gerar e instalar um APK novo.
 - Plano grátis da Expo: 1.000 usuários ativos por mês e 100 GiB de download.
+- **Identificador do pacote (`android.package` / `ios.bundleIdentifier`) segue `com.mimicmobile.app`** de propósito: com
+  ele, o APK novo instala por cima do antigo e mantém os packs salvos no celular. Ele **não pode mudar depois do
+  primeiro envio à Google Play**, então decida (ex.: `com.imitashow.app`) antes de publicar. A pasta do projeto e o
+  projeto do Firebase também ainda têm o nome antigo (`mimic-mobile`); isso é interno e ninguém vê.
 
 ### Navegador
 
@@ -338,5 +344,6 @@ npx eas-cli@latest update --channel preview --environment preview --message "o q
 
 ```bash
 pip install numpy imageio-ffmpeg && python3 scripts/build-sounds.py   # sons (baixa as fontes do GitHub)
-pip install pillow && python3 scripts/make-icons.py                   # ícones e splash
+pip install pillow && python3 scripts/make-icons.py                   # ícone, abertura e logo (precisa do Playwright; veja o cabeçalho do script)
+python3 scripts/make-avatars.py                                       # os 15 mascotes (src/avatars/art.ts e assets/avatars/*.svg)
 ```

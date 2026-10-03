@@ -92,7 +92,7 @@ export function ImitateView({ session, round, players, ids, scores }: Props) {
       <View className="gap-3 rounded-3xl border border-coral-400/30 bg-coral-400/10 p-5">
         <Text className="font-heading text-base text-mist-50">Este celular não tem o som da rodada</Text>
         <Text className="font-body text-sm leading-5 text-mist-200">
-          Atualize o Mimic Mobile para a mesma versão do anfitrião. Você volta a jogar na próxima rodada.
+          Atualize o Imitashow para a mesma versão do anfitrião. Você volta a jogar na próxima rodada.
         </Text>
       </View>
     );

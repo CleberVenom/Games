@@ -1,4 +1,4 @@
-# Como testar o Mimic Mobile — guia passo a passo (para quem nunca programou)
+# Como testar o Imitashow — guia passo a passo (para quem nunca programou)
 
 Este guia leva você do zero até o jogo rodando, sem pular nenhum clique. Há dois jeitos de testar:
 
@@ -33,7 +33,7 @@ As Partes 1 e 2 são iguais para os dois jeitos.
 1. Abra o navegador e entre em **https://github.com/CleberVenom/Games** (entre na sua conta do GitHub se pedir).
 2. Acima da lista de arquivos há um botão com o nome de um "ramo" (*branch*), com um ícone de galho. Clique nele.
 3. Na caixinha de busca que abre, digite `eloquent` e clique em **`claude/eloquent-clarke-joi9qe`**.
-   Esse ramo é a versão de teste do Mimic Mobile.
+   Esse ramo é a versão de teste do Imitashow.
 4. Clique no botão verde **`<> Code`** e depois em **Download ZIP**. O arquivo vai para a pasta *Downloads*.
 5. Crie uma pasta com nome curto direto no disco, por exemplo **`C:\jogos`**.
    (Nomes de pasta muito compridos causam erro na instalação no Windows — por isso a pasta curta.)
@@ -100,7 +100,7 @@ Isso é feito **uma vez só**. Nas próximas vezes, pule direto para a Parte 2 o
 
 2. Aguarde. Na primeira vez leva **até 1 minuto** para "montar" o jogo. O navegador abre sozinho no endereço
    **http://localhost:8081**. Se não abrir, abra o **Chrome** e digite esse endereço.
-3. Aparece a tela inicial do **Mimic Mobile**.
+3. Aparece a tela inicial do **Imitashow**.
 4. Ao tocar em **Começar partida**, o navegador pergunta se o site pode usar o **microfone** → clique em
    **Permitir**. (O som fica no seu computador; nada é enviado para a internet.)
 5. Siga o **roteiro de teste da Parte 4**.
@@ -188,7 +188,7 @@ instala esse APK no celular.
    **Permitir desta fonte** → volte.
 4. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes** →
    **Instalar mesmo assim** (é normal: o app não está na Play Store).
-5. Abra o **Mimic Mobile**. Quando ele pedir o **microfone**, toque em **Durante o uso do app** (ou **Permitir**).
+5. Abra o **Imitashow**. Quando ele pedir o **microfone**, toque em **Durante o uso do app** (ou **Permitir**).
 6. Siga o **roteiro de teste da Parte 4**.
 
 **Versões novas, depois deste APK:** não precisa baixar APK. Ao abrir o jogo, aparece na tela inicial **"Nova
@@ -358,7 +358,7 @@ Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi
 | O som de referência não sai no celular | Aumente o **volume de mídia** (não o do toque) e confira se o celular não está no silencioso. |
 | A nota é sempre 0 | O microfone não está captando: fale mais perto e mais alto; no computador, confira o microfone escolhido nas configurações de som do Windows. |
 | O build da Expo terminou com **"Build failed"** | Abra o link do build, copie o link e me mande — eu vejo o erro. |
-| O APK não instala ("app não instalado") | Desinstale uma versão antiga do Mimic Mobile, se houver, e tente de novo. |
+| O APK não instala ("app não instalado") | Desinstale uma versão antiga do Imitashow (antes chamado Mimic Mobile), se houver, e tente de novo. |
 | O download do APK "termina", mas o arquivo não aparece | No Chrome, abra **⋮ → Downloads** e toque em **Baixar mesmo assim** no aviso de arquivo perigoso. Confira se há uns 500 MB livres e use o Wi-Fi. |
 | Não aparece o aviso "Nova versão disponível" | Feche o jogo de verdade (tire da lista de apps recentes) e abra de novo, com internet. Ele procura ao abrir, no máximo a cada 10 minutos. |
 | Tocou em **Atualizar** e apareceu "Não deu para baixar" | Confira a internet e toque em **Tentar de novo**. |

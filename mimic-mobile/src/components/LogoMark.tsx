@@ -1,48 +1,31 @@
 import { useEffect } from 'react';
-import { View } from 'react-native';
-import Animated, {
-  Easing,
-  SharedValue,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import { Image } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 
-import { glow, gradients, palette } from '../theme/tokens';
-import { Gradient } from './Gradient';
+import { glow, gradients } from '../theme/tokens';
 
-const BARS = [14, 26, 38, 24, 12];
+const SIZE = 104;
+/** Mesma proporção dos cantos de logo.png (scripts/make-icons.py). */
+const RADIUS = SIZE * 0.22;
 
-/** Marca do app: ondas sonoras em gradiente neon, balançando devagar. */
+/** Marca do app: o gato no microfone (a mesma arte do ícone), balançando devagar como num show. */
 export function LogoMark() {
   const t = useSharedValue(0);
   useEffect(() => {
-    t.value = withRepeat(withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.sin) }), -1, true);
+    t.value = withRepeat(withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.sin) }), -1, true);
   }, [t]);
-
-  return (
-    <View style={{ borderRadius: 28, boxShadow: glow(gradients.primary[0], 44, 0.55, 14) }}>
-      <Gradient
-        colors={gradients.primary}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        className="h-20 w-20 flex-row items-center justify-center gap-1 overflow-hidden rounded-[28px]">
-        {BARS.map((h, i) => (
-          <LogoBar key={i} height={h} index={i} t={t} />
-        ))}
-      </Gradient>
-    </View>
-  );
-}
-
-function LogoBar({ height, index, t }: { height: number; index: number; t: SharedValue<number> }) {
   const animated = useAnimatedStyle(() => ({
-    transform: [{ scaleY: 0.6 + 0.4 * Math.abs(Math.sin((t.value + index * 0.2) * Math.PI)) }],
+    transform: [{ scale: 1 + 0.03 * t.value }, { rotate: `${-1.5 + 3 * t.value}deg` }],
   }));
+
   return (
     <Animated.View
-      style={[{ width: 5, height, borderRadius: 3, backgroundColor: palette.mist[50] }, animated]}
-    />
+      style={[{ width: SIZE, height: SIZE, borderRadius: RADIUS, boxShadow: glow(gradients.primary[0], 44, 0.55, 14) }, animated]}>
+      <Image
+        source={require('../../assets/images/logo.png')}
+        accessibilityLabel="Imitashow"
+        style={{ width: SIZE, height: SIZE }}
+      />
+    </Animated.View>
   );
 }

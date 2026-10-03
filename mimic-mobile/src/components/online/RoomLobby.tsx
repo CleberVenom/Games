@@ -31,7 +31,7 @@ interface Props {
 }
 
 async function invite(code: string) {
-  const message = `Bora jogar Mimic Mobile? Abra o app, toque em "Jogar online" e entre na sala ${code}.`;
+  const message = `Bora jogar Imitashow? Abra o app, toque em "Jogar online" e entre na sala ${code}.`;
   try {
     await Share.share({ message });
   } catch {

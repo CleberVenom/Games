@@ -1,20 +1,20 @@
 {
   "expo": {
-    "name": "Mimic Mobile",
+    "name": "Imitashow",
     "slug": "cleber-santarosa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mimicmobile",
+    "scheme": "imitashow",
     "userInterfaceStyle": "dark",
-    "backgroundColor": "#0A0C1D",
+    "backgroundColor": "#2E093C",
     "ios": {
       "bundleIdentifier": "com.mimicmobile.app"
     },
     "android": {
       "package": "com.mimicmobile.app",
       "adaptiveIcon": {
-        "backgroundColor": "#0A0C1D",
+        "backgroundColor": "#2E093C",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -35,9 +35,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0A0C1D",
+          "backgroundColor": "#2E093C",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 96
+          "imageWidth": 168
         }
       ],
       "expo-font",
@@ -49,15 +49,15 @@
           "androidPermissions": [
             "android.permission.RECORD_AUDIO"
           ],
-          "iosMicrophonePermission": "O Mimic Mobile usa o microfone para gravar as suas imitações e para o chat de voz com os amigos nas salas online."
+          "iosMicrophonePermission": "O Imitashow usa o microfone para gravar as suas imitações e para o chat de voz com os amigos nas salas online."
         }
       ],
       "expo-asset",
       [
         "@config-plugins/react-native-webrtc",
         {
-          "microphonePermission": "O Mimic Mobile usa o microfone para gravar as suas imitações e para o chat de voz com os amigos nas salas online.",
-          "cameraPermission": "O Mimic Mobile não usa a câmera."
+          "microphonePermission": "O Imitashow usa o microfone para gravar as suas imitações e para o chat de voz com os amigos nas salas online.",
+          "cameraPermission": "O Imitashow não usa a câmera."
         }
       ],
       [

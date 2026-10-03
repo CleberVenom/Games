@@ -104,7 +104,7 @@ export default function LobbyScreen() {
           <View className="items-center gap-5">
             <LogoMark />
             <View className="items-center gap-2">
-              <Text className="font-display text-4xl tracking-tight text-mist-50">Mimic Mobile</Text>
+              <Text className="font-display text-4xl tracking-tight text-mist-50">Imitashow</Text>
               <Text className="max-w-[300px] text-center font-body text-base leading-6 text-mist-400">
                 Ouça o som, imite com a sua voz e deixe a matemática dar a nota.
               </Text>
