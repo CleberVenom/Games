@@ -82,7 +82,7 @@ Como no Mimic Party, a partida sorteia só os sons dos **packs marcados** na tel
 
 O **editor de packs** (botão "Criar pack" ou o lápis de um pack seu) tem nome, ícone e lista de sons com
 ouvir, renomear e remover. Cada som passa pelo mesmo tratamento dos oficiais (`src/dsp/clip.ts`): silêncio
-cortado, volume igualado e **de 2 a 15 s** (mais curto que 2 s é recusado, com aviso; acima de 15 s fica o trecho
+cortado, volume igualado e **de 1,4 a 15 s** (mais curto que 1,4 s é recusado, com aviso; acima de 15 s fica o trecho
 mais forte). O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
 lista de packs no AsyncStorage (`src/store/library.ts`).
 
@@ -140,7 +140,7 @@ mais antiga sai pela esquerda (≈2,2 s na tela), tanto com o som original tocan
 apresentação online (`src/audio/loudness.ts` + `useVisualizer`). Na gravação, a **silhueta do som original** (o
 volume dele no mesmo instante, medido como o analisador mede ao vivo) rola junto, atrás das barras da voz, e o
 jogador tenta acompanhar a altura dela.
-Todo som tem de **2 a 15 s** (os mais curtos ficam fora do catálogo), para a gravação nunca ser curta demais.
+Todo som tem de **1,4 a 15 s** (os mais curtos ficam fora do catálogo), para a gravação nunca ser curta demais.
 A rodada avança quando todos jogaram; os sons dos packs escolhidos não se repetem até o baralho acabar.
 
 A máquina de estados é pura e testada: `src/game/match.ts` + `src/game/__tests__/match.test.ts`.
@@ -183,7 +183,7 @@ microfone ───► AnalyserNode                                 (ramo mudo: 
 
 ### Sons de referência
 
-75 sons em 3 packs (os oficiais têm de 2 a 5 s; o limite do jogo é 15 s, para os sons importados):
+75 sons em 3 packs (os oficiais têm de 2 a 5 s; o jogo aceita de 1,4 a 15 s, para os sons importados):
 
 | Pack | Sons |
 |---|---|
@@ -194,7 +194,8 @@ microfone ───► AnalyserNode                                 (ramo mudo: 
 Os 7 packs da primeira versão foram juntados em 3 (out/2026). Os ids internos `animais`, `vozes` e `maquinas` foram
 mantidos para a seleção salva no celular continuar valendo.
 
-Ficaram de fora, por terem menos de 2 s mesmo sem silêncio: espirro, "ba dum tss" e "flawless victory".
+Ficaram de fora na primeira versão, quando o mínimo era 2 s: espirro, "ba dum tss" e "flawless victory" (o mínimo
+agora é 1,4 s).
 Excluídos depois da 2ª rodada de testes (out/2026), por não terem agradado: águia, pato, grito de queda, grilos,
 apito de desenho, boom dramático, robô, furadeira, descarga, serrote, aspirador, panela de pressão, goles d'água,
 vidro quebrando, tique-taque, lata abrindo, fogueira, papagaio, passarinho, tucano, chuva e bugio. O "Game over" de

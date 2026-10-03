@@ -233,8 +233,8 @@ Com 6 jogadores, são 6 rodadas.
 
 - [ ] Tocar em **Criar pack (gravar ou importar sons)**.
 - [ ] Dar um nome e escolher um ícone.
-- [ ] Tocar em **Gravar**, fazer um som (de 2 a 15 segundos) e tocar em **Parar e salvar o som**.
-- [ ] Gravar um som **bem curto** (menos de 2 s): aparece o aviso **"Som muito curto"** e ele não entra.
+- [ ] Tocar em **Gravar**, fazer um som (de 1,4 a 15 segundos) e tocar em **Parar e salvar o som**.
+- [ ] Gravar um som **bem curto** (menos de 1,4 s): aparece o aviso **"Som muito curto"** e ele não entra.
 - [ ] Tocar em **Importar áudio** e escolher um MP3/WAV/M4A do aparelho (ex.: um áudio do WhatsApp salvo).
 - [ ] Ouvir, renomear e remover um som da lista.
 - [ ] Tocar em **Salvar pack**: ele aparece na tela inicial com o selo **Meu pack**.

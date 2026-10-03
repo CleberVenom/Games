@@ -8,8 +8,8 @@ Saída:
 
 Todas as gravações são CC0 ou domínio público: vêm de repositórios no GitHub, em commits fixos, ou
 de prévias de sons CC0 do Freesound. Os sons marcados como "sintetizado" são gerados aqui mesmo
-(código original deste projeto, CC0). Cada som fica com 2 a 15 s: a gravação da imitação dura o
-mesmo que o som, então os que ficarem mais curtos que 2 s são descartados (vale para os pessoais).
+(código original deste projeto, CC0). Cada som fica com 1,4 a 15 s: a gravação da imitação dura o
+mesmo que o som, então os que ficarem mais curtos que 1,4 s são descartados (vale para os pessoais).
 
 Packs pessoais (packs-pessoais/<pack>/pack.json + áudios, uso privado — veja packs-pessoais/README.md)
 viram assets/sounds/pessoais/<pack>/*.wav e src/audio/personalPacks.ts.
@@ -72,8 +72,13 @@ FREESOUND = {
 }
 
 # Regra do jogo: a gravação dura o mesmo que o som, então sons curtos demais ficam de fora.
-MIN_S = 2.0
+MIN_S = 1.4
 MAX_S = 15.0
+
+
+def secs(value: float) -> str:
+    """Segundos no jeito brasileiro (1,4)."""
+    return f"{value:g}".replace(".", ",")
 
 
 def fsd(sound_id: int, name: str, author: str) -> str:
@@ -475,7 +480,7 @@ def build_personal(include: bool) -> None:
                 x = finish(auto_trim(decode(audio), MAX_S))
                 name = slug(audio.stem)
                 if len(x) / SR < MIN_S:
-                    print(f"pessoal {pack_slug}/{name:24} {len(x) / SR:5.2f} s  FORA (menos de {MIN_S:.0f} s)")
+                    print(f"pessoal {pack_slug}/{name:24} {len(x) / SR:5.2f} s  FORA (menos de {secs(MIN_S)} s)")
                     continue
                 dest = PERSONAL_OUT / pack_slug / f"{name}.wav"
                 dest.parent.mkdir(parents=True, exist_ok=True)
@@ -524,7 +529,7 @@ def main() -> None:
         x = build(spec)
         seconds = len(x) / SR
         if not MIN_S <= seconds <= MAX_S:
-            print(f"{spec['id']:18} {seconds:5.2f} s  FORA (fora de {MIN_S:.0f}–{MAX_S:.0f} s)")
+            print(f"{spec['id']:18} {seconds:5.2f} s  FORA (fora de {secs(MIN_S)}–{secs(MAX_S)} s)")
             continue
         write_wav(OUT / f"{spec['id']}.wav", x)
         manifest[spec["id"]] = {"durationMs": round(seconds * 1000), "title": spec["title"], "pack": spec["pack"]}
@@ -545,7 +550,7 @@ def main() -> None:
         "[VCSL](https://github.com/sgossner/VCSL), [learntoread](https://github.com/Courtside-live01/learntoread) e\n"
         "[CC0-Public-Domain-Sounds](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds) (Kenney, The Motion\n"
         "Monkey, Ben Burnes), além de prévias de sons CC0 do [Freesound](https://freesound.org).\n"
-        f"Processamento: mono, recorte do evento principal ({MIN_S:.0f} a {MAX_S:.0f} s), volume normalizado e WAV\n"
+        f"Processamento: mono, recorte do evento principal ({secs(MIN_S)} a {secs(MAX_S)} s), volume normalizado e WAV\n"
         "16 bits/22,05 kHz.\n\n"
         "| Arquivo | Origem | Licença |\n|---|---|---|\n" + "\n".join(credits) + "\n"
     )

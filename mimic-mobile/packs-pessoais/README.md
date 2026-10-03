@@ -35,7 +35,7 @@ o passo 4 abaixo. Enquanto a pasta não tiver áudios, o pack não aparece no ap
    ```
 
    Cada áudio é tratado como os sons oficiais: o silêncio é cortado, o volume é igualado e o som fica com
-   **2 a 15 segundos** (se passar de 15 s, fica o trecho mais forte). Áudios que ficarem **com menos de 2 s**
+   **1,4 a 15 segundos** (se passar de 15 s, fica o trecho mais forte). Áudios que ficarem **com menos de 1,4 s**
    depois do corte são **descartados** (o script avisa): a gravação da imitação dura o mesmo tempo que o
    som. O resultado vai para `assets/sounds/pessoais/` e a lista para `src/audio/personalPacks.ts`.
 5. Faça commit da pasta do pack, de `assets/sounds/pessoais/` e de `src/audio/personalPacks.ts`. Os packs

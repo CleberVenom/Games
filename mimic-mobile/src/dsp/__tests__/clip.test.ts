@@ -1,4 +1,4 @@
-import { CLIP_RATE, decodeWav, encodeWav, MAX_CLIP_SECONDS, prepareClip } from '../clip';
+import { CLIP_RATE, decodeWav, encodeWav, MAX_CLIP_SECONDS, MIN_CLIP_SECONDS, prepareClip, secondsText } from '../clip';
 
 const SR = 48000;
 const tone = (seconds: number, amp: number) =>
@@ -28,6 +28,13 @@ describe('prepareClip', () => {
     const clip = prepareClip(concat(tone(8, 0.05), tone(4, 0.4), tone(8, 0.05)), SR)!;
     expect(clip.length / CLIP_RATE).toBeLessThanOrEqual(MAX_CLIP_SECONDS + 0.12);
     expect(clip.length / CLIP_RATE).toBeGreaterThan(MAX_CLIP_SECONDS - 0.5);
+  });
+
+  it('aceita sons a partir de 1,4 s', () => {
+    expect(MIN_CLIP_SECONDS).toBe(1.4);
+    expect(secondsText(MIN_CLIP_SECONDS)).toBe('1,4');
+    const clip = prepareClip(concat(silence(0.5), tone(1.5, 0.3), silence(0.5)), SR)!;
+    expect(clip.length / CLIP_RATE).toBeGreaterThanOrEqual(MIN_CLIP_SECONDS);
   });
 
   it('sem som, devolve null', () => {
