@@ -43,8 +43,8 @@ describe('compartilhar packs', () => {
   it('a partida guarda os códigos dos packs do anfitrião para os outros baixarem', () => {
     const meta: RoomMeta = { host: 'h', status: 'lobby', createdAt: 0, totalRounds: 0, pool: [], deck: [] };
     const players: Record<string, RoomPlayer> = {
-      h: { name: 'Ana', color: 'violet', joinedAt: 1, online: true, score: 0 },
-      g: { name: 'Bia', color: 'cyan', joinedAt: 2, online: true, score: 0 },
+      h: { name: 'Ana', avatar: 'fantasma', color: 'violet', joinedAt: 1, online: true, score: 0 },
+      g: { name: 'Bia', avatar: 'tubarao', color: 'cyan', joinedAt: 2, online: true, score: 0 },
     };
     const started = startGame(meta, players, ['a', 'dog-bark'], 0, () => 0, { 'pack-1': 'AAAAA' });
     expect(started.meta.shared).toEqual({ 'pack-1': 'AAAAA' });

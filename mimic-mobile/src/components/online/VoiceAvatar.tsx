@@ -1,13 +1,12 @@
 import { View } from 'react-native';
 
-import type { PlayerColor } from '../../game/types';
+import type { AvatarId } from '../../game/types';
 import { glow, palette } from '../../theme/tokens';
 import { Avatar } from '../Avatar';
 import { Icon } from '../Icon';
 
 interface Props {
-  label: string;
-  color: PlayerColor;
+  avatar: AvatarId;
   size: number;
   active?: boolean;
   /** Anel verde enquanto a pessoa fala no chat de voz. */
@@ -17,7 +16,7 @@ interface Props {
 }
 
 /** Avatar com os sinais do chat de voz: anel de quem está falando e selo de mudo. */
-export function VoiceAvatar({ label, color, size, active, speaking = false, muted = false }: Props) {
+export function VoiceAvatar({ avatar, size, active, speaking = false, muted = false }: Props) {
   const ring = size / 2 + 4;
   return (
     <View style={{ width: size, height: size }}>
@@ -37,7 +36,7 @@ export function VoiceAvatar({ label, color, size, active, speaking = false, mute
           }}
         />
       )}
-      <Avatar label={label} color={color} size={size} active={active} />
+      <Avatar avatar={avatar} size={size} active={active} />
       {muted && (
         <View
           pointerEvents="none"

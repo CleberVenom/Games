@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import {
+  changeAvatar,
   createRoom,
   joinRoom,
   leaveRoom,
@@ -10,6 +11,7 @@ import {
   watchRoom,
   watchScores,
 } from '../online/api';
+import type { AvatarId } from '../game/types';
 import type { RoomMeta, RoomPlayer, RoomRound, RoomScore } from '../online/room';
 
 interface OnlineState {
@@ -25,6 +27,8 @@ interface OnlineState {
   closed: boolean;
   create: (name: string) => Promise<string>;
   join: (code: string, name: string) => Promise<void>;
+  /** Troca o mascote; `false` se outra pessoa pegou esse mascote primeiro. */
+  pickAvatar: (avatar: AvatarId) => Promise<boolean>;
   leave: () => Promise<void>;
 }
 
@@ -83,11 +87,17 @@ export const useOnline = create<OnlineState>((set, get) => {
     join: async (code, name) => {
       enter(await joinRoom(code, name));
     },
+    pickAvatar: async (avatar) => {
+      const { session, players } = get();
+      const mine = session && players[session.uid];
+      return mine ? changeAvatar(session, avatar, mine.avatar) : false;
+    },
     leave: async () => {
-      const { session, meta } = get();
+      const { session, meta, players } = get();
+      const avatar = session ? players[session.uid]?.avatar : undefined;
       stopAll();
       set(EMPTY);
-      if (session && meta) await leaveRoom(session, meta.host === session.uid, meta.status === 'lobby').catch(() => {});
+      if (session && meta) await leaveRoom(session, meta.host === session.uid, meta.status === 'lobby', avatar).catch(() => {});
       else session?.stopPresence();
     },
   };

@@ -222,7 +222,10 @@ Com 6 jogadores, são 6 rodadas.
 
 - [ ] Tocar em **Adicionar jogador** até chegar a **6/6** (o botão some no máximo).
 - [ ] Tocar no nome de um jogador e **trocar o nome**.
-- [ ] Tocar no **círculo colorido** (avatar) e ver a cor mudar.
+- [ ] Cada jogador começa com um **mascote** diferente (sem a inicial do nome). Tocar no mascote abre a folha **"Escolha o mascote"**.
+- [ ] **Deslizar para os lados** no carrossel e tocar em um mascote livre: ele vira o do jogador. Passar direto por um e voltar nele também funciona.
+- [ ] Os mascotes dos **outros jogadores aparecem apagados, com cadeado e o nome de quem pegou**, e não dá para escolhê-los.
+- [ ] Trocar o mascote libera o antigo para os outros.
 - [ ] Remover um jogador (ícone de lixeira — só aparece com 3 ou mais jogadores).
 - [ ] Conferir a linha acima do botão: com 2 jogadores diz **"5 rodadas"**; com 6, **"6 rodadas"**.
 - [ ] Na seção **Packs de sons** há **3 packs oficiais** (Animais & natureza, Vozes & zoeira, Efeitos & games),
@@ -309,6 +312,8 @@ Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi
 - [ ] No outro celular: **Jogar online com amigos → Entrar numa sala**, digitar o código → aparece na lista dos dois
       celulares (com o ponto verde de online).
 - [ ] Código errado mostra **"Sala não encontrada"**.
+- [ ] Cada pessoa entra na sala com um **mascote diferente**. Tocar no seu mascote (com o ícone de trocar) abre o carrossel; os mascotes dos outros aparecem bloqueados com o nome deles.
+- [ ] Em **dois celulares ao mesmo tempo**, tocar no mesmo mascote livre: só um fica com ele e o outro vê **"Alguém acabou de escolher esse"**.
 - [ ] O anfitrião escolhe os packs e toca em **Começar partida** (só libera com 2 ou mais pessoas).
 - [ ] **Packs do anfitrião**: o anfitrião marca um pack criado por ele e começa. O botão mostra "Enviando seus
       packs…" (só na primeira vez ou se o pack mudou) e os convidados veem **"Baixando os sons da partida"** antes da
@@ -363,7 +368,7 @@ Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi
 
 ## Parte 6 — O que ainda não foi testado (e por quê)
 
-Tudo foi validado no computador: 79 testes automáticos, o jogo inteiro no navegador com microfone simulado e a
+Tudo foi validado no computador: 85 testes automáticos, o jogo inteiro no navegador com microfone simulado e a
 montagem do app de Android. O que **ainda não** foi possível testar daqui:
 
 - **Um celular Android de verdade** (desempenho, microfone, vibração e alto-falante reais).

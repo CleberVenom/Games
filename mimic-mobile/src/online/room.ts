@@ -1,6 +1,7 @@
 import { roundsFor, shuffle } from '../game/match';
 import { ModifierId, MODIFIERS } from '../game/modifiers';
-import { MAX_ROOM_PLAYERS, PlayerColor, PLAYER_COLORS, TurnScore } from '../game/types';
+import { avatarOf } from '../avatars/avatars';
+import { AvatarId, MAX_ROOM_PLAYERS, PlayerColor, TurnScore } from '../game/types';
 
 /**
  * Modo online (todos imitam ao mesmo tempo). O anfitrião é a autoridade: só ele avança as fases da sala;
@@ -19,6 +20,9 @@ export const REACTION_EMOJI: Record<Reaction, string> = { laugh: '😂', tomato:
 
 export interface RoomPlayer {
   name: string;
+  /** Mascote. Em salas criadas por versões antigas só existe `color` (ver `withAvatars`). */
+  avatar: AvatarId;
+  /** Cor equivalente ao mascote, gravada só para celulares que ainda não têm os mascotes. */
   color: PlayerColor;
   joinedAt: number;
   online: boolean;
@@ -90,10 +94,9 @@ export function playerOrder(players: Record<string, RoomPlayer>): string[] {
   return Object.keys(players).sort((a, b) => players[a].joinedAt - players[b].joinedAt || a.localeCompare(b));
 }
 
-/** Primeira cor ainda livre na sala (ou a primeira, se todas estiverem em uso). */
-export function freeColor(players: Record<string, RoomPlayer>): PlayerColor {
-  const used = new Set(Object.values(players).map((p) => p.color));
-  return PLAYER_COLORS.find((c) => !used.has(c)) ?? PLAYER_COLORS[0];
+/** Jogadores como vêm do banco: quem não tem mascote (sala de versão antiga) ganha o da própria cor. */
+export function withAvatars(raw: Record<string, Omit<RoomPlayer, 'avatar'> & { avatar?: string }>): Record<string, RoomPlayer> {
+  return Object.fromEntries(Object.entries(raw).map(([uid, p]) => [uid, { ...p, avatar: avatarOf(p) }]));
 }
 
 export type JoinCheck = 'ok' | 'full' | 'started' | 'missing';

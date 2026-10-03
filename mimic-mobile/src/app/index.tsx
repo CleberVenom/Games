@@ -5,7 +5,9 @@ import Animated, { FadeInDown, FadeOut, LinearTransition } from 'react-native-re
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { prepareMic } from '../audio/mic';
+import { randomFreeAvatar } from '../avatars/avatars';
 import { Avatar } from '../components/Avatar';
+import { AvatarSheet } from '../components/AvatarSheet';
 import { Backdrop } from '../components/Backdrop';
 import { GradientButton } from '../components/Buttons';
 import { Gradient } from '../components/Gradient';
@@ -16,7 +18,7 @@ import { PressableScale } from '../components/PressableScale';
 import { UpdateBanner } from '../components/UpdateBanner';
 import { REPLAYS_PER_TURN, roundsFor } from '../game/match';
 import { poolFrom } from '../game/packs';
-import { MAX_PLAYERS, MIN_PLAYERS, PLAYER_COLORS, PlayerColor } from '../game/types';
+import { AvatarId, MAX_PLAYERS, MIN_PLAYERS } from '../game/types';
 import { allPacks, useLibrary } from '../store/library';
 import { useMatch } from '../store/match';
 import { gradients, palette } from '../theme/tokens';
@@ -25,17 +27,7 @@ import { appVersionLabel, installUpdate, useAppUpdate } from '../updates/useAppU
 interface Draft {
   key: number;
   name: string;
-  color: PlayerColor;
-}
-
-/** Próxima cor livre depois de `from`, na ordem da paleta. */
-function nextFreeColor(from: PlayerColor, taken: Set<PlayerColor>): PlayerColor {
-  const start = PLAYER_COLORS.indexOf(from);
-  for (let k = 1; k <= PLAYER_COLORS.length; k++) {
-    const c = PLAYER_COLORS[(start + k) % PLAYER_COLORS.length];
-    if (!taken.has(c)) return c;
-  }
-  return from;
+  avatar: AvatarId;
 }
 
 export default function LobbyScreen() {
@@ -43,24 +35,33 @@ export default function LobbyScreen() {
   const start = useMatch((s) => s.start);
   const update = useAppUpdate();
   const nextKey = useRef(MIN_PLAYERS);
-  const [players, setPlayers] = useState<Draft[]>(() =>
-    PLAYER_COLORS.slice(0, MIN_PLAYERS).map((color, key) => ({ key, name: '', color })),
-  );
+  const [players, setPlayers] = useState<Draft[]>(() => {
+    const taken: AvatarId[] = [];
+    return Array.from({ length: MIN_PLAYERS }, (_, key) => {
+      const avatar = randomFreeAvatar(taken) ?? 'polvo';
+      taken.push(avatar);
+      return { key, name: '', avatar };
+    });
+  });
+  /** Jogador cujo mascote está sendo escolhido (folha aberta). */
+  const [choosing, setChoosing] = useState<number | null>(null);
 
   const add = () =>
     setPlayers((ps) => {
       if (ps.length >= MAX_PLAYERS) return ps;
-      const color = nextFreeColor(PLAYER_COLORS[PLAYER_COLORS.length - 1], new Set(ps.map((p) => p.color)));
-      return [...ps, { key: nextKey.current++, name: '', color }];
+      const avatar = randomFreeAvatar(ps.map((p) => p.avatar)) ?? 'polvo';
+      return [...ps, { key: nextKey.current++, name: '', avatar }];
     });
   const remove = (key: number) => setPlayers((ps) => ps.filter((p) => p.key !== key));
   const rename = (key: number, name: string) =>
     setPlayers((ps) => ps.map((p) => (p.key === key ? { ...p, name } : p)));
-  const recolor = (key: number) =>
-    setPlayers((ps) => {
-      const taken = new Set(ps.filter((p) => p.key !== key).map((p) => p.color));
-      return ps.map((p) => (p.key === key ? { ...p, color: nextFreeColor(p.color, taken) } : p));
-    });
+  const pickAvatar = (key: number, avatar: AvatarId) =>
+    setPlayers((ps) => (ps.some((p) => p.key !== key && p.avatar === avatar) ? ps : ps.map((p) => (p.key === key ? { ...p, avatar } : p))));
+  const chosen = players.find((p) => p.key === choosing);
+  const chosenIndex = players.findIndex((p) => p.key === choosing);
+  const takenBy = Object.fromEntries(
+    players.filter((p) => p.key !== choosing).map((p) => [p.avatar, p.name.trim() || `Jogador ${players.indexOf(p) + 1}`]),
+  );
 
   const custom = useLibrary((s) => s.custom);
   const selectedIds = useLibrary((s) => s.selected);
@@ -86,7 +87,7 @@ export default function LobbyScreen() {
       return;
     }
     start(
-      players.map(({ name, color }) => ({ name, color })),
+      players.map(({ name, avatar }) => ({ name, avatar })),
       pool,
     );
     router.push('/game');
@@ -163,10 +164,13 @@ export default function LobbyScreen() {
                 layout={LinearTransition.duration(200)}>
                 <View className="flex-row items-center gap-3 rounded-2xl border border-white/5 bg-night-800 py-2 pl-2 pr-2">
                   <PressableScale
-                    onPress={() => recolor(p.key)}
+                    onPress={() => setChoosing(p.key)}
                     accessibilityRole="button"
-                    accessibilityLabel={`Trocar a cor do jogador ${i + 1}`}>
-                    <Avatar label={p.name || String(i + 1)} color={p.color} size={44} />
+                    accessibilityLabel={`Escolher o mascote do jogador ${i + 1}`}>
+                    <Avatar avatar={p.avatar} size={44} />
+                    <View className="absolute -bottom-1 -right-1 h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-night-700">
+                      <Icon name="swap-horizontal" size={11} color={palette.mist[200]} />
+                    </View>
                   </PressableScale>
                   <TextInput
                     value={p.name}
@@ -201,7 +205,7 @@ export default function LobbyScreen() {
               </PressableScale>
             )}
 
-            <Text className="px-1 font-body text-xs text-mist-500">Toque no avatar para trocar a cor.</Text>
+            <Text className="px-1 font-body text-xs text-mist-500">Toque no mascote para escolher outro. Cada um tem o seu.</Text>
           </View>
 
           <View className="gap-3">
@@ -243,6 +247,16 @@ export default function LobbyScreen() {
           />
         </View>
       </KeyboardAvoidingView>
+      <AvatarSheet
+        visible={chosen !== undefined}
+        who={chosen ? chosen.name.trim() || `Jogador ${chosenIndex + 1}` : ''}
+        current={chosen?.avatar ?? 'polvo'}
+        takenBy={takenBy}
+        onPick={(avatar) => {
+          if (choosing !== null) pickAvatar(choosing, avatar);
+        }}
+        onClose={() => setChoosing(null)}
+      />
     </View>
   );
 }

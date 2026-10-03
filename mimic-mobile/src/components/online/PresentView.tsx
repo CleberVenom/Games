@@ -8,11 +8,11 @@ import { fetchClip, react, ReactionEntry, Session } from '../../online/api';
 import { CLIP_NET_RATE, decodeClip } from '../../online/clipCodec';
 import { countReactions, PRESENT_INTRO_MS, RoomPlayer, RoomRound, RoomScore } from '../../online/room';
 import { findSound } from '../../store/library';
-import { PLAYER_HEX } from '../../theme/tokens';
 import { BAR_COUNT, Bars } from '../AudioVisualizer';
 import { Avatar } from '../Avatar';
 import { ScoreReveal } from '../ScoreReveal';
 import { FloatingReactions, ReactionBar } from './Reactions';
+import { AVATARS } from '../../avatars/avatars';
 
 type Stage = 'intro' | 'playing' | 'reveal';
 
@@ -56,7 +56,7 @@ export function PresentView({ session, round, players, scores, reactions }: Prop
   }, [session.code, round.number, uid]);
 
   if (!player) return null;
-  const hex = PLAYER_HEX[player.color];
+  const hex = AVATARS[player.avatar].tint;
   const sound = findSound(round.soundId);
   const received = reactions[uid] ?? [];
 
@@ -75,7 +75,7 @@ export function PresentView({ session, round, players, scores, reactions }: Prop
         <View
           className="items-center gap-4 rounded-4xl border border-white/5 bg-night-850/80 px-5 py-6"
           style={{ boxShadow: `0px 0px 60px ${hex}33` }}>
-          <Avatar label={player.name} color={player.color} size={stage === 'reveal' ? 56 : 84} active />
+          <Avatar avatar={player.avatar} size={stage === 'reveal' ? 56 : 84} active />
           <Text
             className="text-center font-display text-4xl"
             style={{ color: hex }}

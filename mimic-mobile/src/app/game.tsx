@@ -27,7 +27,8 @@ import { getModifier, soundEffectOf } from '../game/modifiers';
 import type { Phase } from '../game/types';
 import { findPack, findSound } from '../store/library';
 import { useMatch } from '../store/match';
-import { palette, PLAYER_HEX } from '../theme/tokens';
+import { palette } from '../theme/tokens';
+import { AVATARS } from '../avatars/avatars';
 
 const RECORD_STATE: Record<Phase, RecordState> = {
   handoff: 'locked',
@@ -122,12 +123,12 @@ function Game({ match }: { match: Match }) {
 
         <View className="flex-1 gap-4 px-5 pt-5">
           <View className="flex-row items-center gap-3">
-            <Avatar label={player.name} color={player.color} size={44} active />
+            <Avatar avatar={player.avatar} size={44} active />
             <View className="flex-1">
               <Text className="font-label text-[11px] uppercase tracking-[2px] text-mist-400">Vez de</Text>
               <Text
                 className="font-display text-2xl"
-                style={{ color: PLAYER_HEX[player.color] }}
+                style={{ color: AVATARS[player.avatar].tint }}
                 numberOfLines={1}>
                 {player.name}
               </Text>
@@ -181,7 +182,7 @@ function Game({ match }: { match: Match }) {
           modifier={match.nextModifier}
           heading={
             <>
-              Efeito para a vez de <Text style={{ color: PLAYER_HEX[nextPlayer.color] }}>{nextPlayer.name}</Text>
+              Efeito para a vez de <Text style={{ color: AVATARS[nextPlayer.avatar].tint }}>{nextPlayer.name}</Text>
             </>
           }
           insets={insets}

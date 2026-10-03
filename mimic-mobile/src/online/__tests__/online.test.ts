@@ -4,7 +4,6 @@ import {
   addRoundPoints,
   canJoin,
   countReactions,
-  freeColor,
   isLastRound,
   nextPresenter,
   nextRound,
@@ -19,6 +18,7 @@ import {
   startGame,
   submitDeadlineMs,
   toPresenting,
+  withAvatars,
 } from '../room';
 import { reduceSolo, soloTurn } from '../turn';
 
@@ -29,7 +29,8 @@ const seq = (...values: number[]) => {
 
 const player = (name: string, joinedAt: number, extra: Partial<RoomPlayer> = {}): RoomPlayer => ({
   name,
-  color: 'violet',
+  avatar: 'polvo',
+  color: 'coral',
   joinedAt,
   online: true,
   score: 0,
@@ -63,13 +64,14 @@ describe('sala online', () => {
     expect(canJoin(lobby, room(10), 'x')).toBe('full');
   });
 
-  it('cada jogador novo pega uma cor livre', () => {
-    expect(freeColor({ a: player('Ana', 1, { color: 'violet' }), b: player('Bia', 2, { color: 'cyan' }) })).toBe(
-      'pink',
-    );
-    const room: Record<string, ReturnType<typeof player>> = {};
-    for (let i = 0; i < 10; i++) room[`p${i}`] = player(`P${i}`, i, { color: freeColor(room) });
-    expect(new Set(Object.values(room).map((p) => p.color)).size).toBe(10);
+  it('salas de versões antigas (só com cor) mostram o mascote da cor', () => {
+    const raw = {
+      a: { name: 'Ana', color: 'violet' as const, joinedAt: 1, online: true, score: 0 },
+      b: { name: 'Bia', color: 'cyan' as const, avatar: 'coruja', joinedAt: 2, online: true, score: 0 },
+    };
+    const players = withAvatars(raw);
+    expect(players.a.avatar).toBe('fantasma');
+    expect(players.b.avatar).toBe('coruja');
   });
 
   it('começar: rodadas pelo número de jogadores (mínimo 5), placar zerado, primeiro som do baralho', () => {

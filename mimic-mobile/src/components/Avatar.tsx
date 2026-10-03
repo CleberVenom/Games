@@ -1,33 +1,36 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 
-import type { PlayerColor } from '../game/types';
-import { glow, PLAYER_HEX, withAlpha } from '../theme/tokens';
+import { AVATAR_ART } from '../avatars/art';
+import { AVATARS } from '../avatars/avatars';
+import type { AvatarId } from '../game/types';
+import { glow, withAlpha } from '../theme/tokens';
 
 interface Props {
-  label: string;
-  color: PlayerColor;
+  avatar: AvatarId;
   size?: number;
-  /** Brilho na cor do jogador (jogador da vez). */
+  /** Brilho na cor do mascote (jogador da vez). */
   active?: boolean;
 }
 
-export function Avatar({ label, color, size = 40, active = false }: Props) {
-  const hex = PLAYER_HEX[color];
+/** O mascote do jogador dentro de um anel na cor dele (a forma identifica; a cor é só reforço). */
+export function Avatar({ avatar, size = 40, active = false }: Props) {
+  const { tint, name } = AVATARS[avatar];
+  const inner = Math.round(size * 0.84);
   return (
     <View
+      accessibilityLabel={name}
       className="items-center justify-center"
       style={{
         width: size,
         height: size,
         borderRadius: size / 2,
         borderWidth: 2,
-        borderColor: hex,
-        backgroundColor: withAlpha(hex, 0.16),
-        boxShadow: active ? glow(hex, size / 2, 0.55, 0) : undefined,
+        borderColor: tint,
+        backgroundColor: withAlpha(tint, 0.2),
+        boxShadow: active ? glow(tint, size / 2, 0.55, 0) : undefined,
       }}>
-      <Text className="font-display" style={{ color: hex, fontSize: size * 0.42 }}>
-        {label.trim().charAt(0).toUpperCase()}
-      </Text>
+      <SvgXml xml={AVATAR_ART[avatar]} width={inner} height={inner} />
     </View>
   );
 }

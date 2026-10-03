@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Platform, Share, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -8,8 +9,10 @@ import type { RoomPlayer } from '../../online/room';
 import { useRoomPacks } from '../../online/roomPacks';
 import { micOpen, mutedByOther } from '../../online/voice';
 import { allPacks, useLibrary } from '../../store/library';
+import { useOnline } from '../../store/online';
 import { useVoice, useVoiceAllowed, voiceActions } from '../../store/voice';
 import { palette } from '../../theme/tokens';
+import { AvatarSheet } from '../AvatarSheet';
 import { GradientButton } from '../Buttons';
 import { Icon } from '../Icon';
 import { PackPicker } from '../PackPicker';
@@ -52,6 +55,10 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
   const voice = useVoiceAllowed();
   const mics = useVoice((s) => s.mics);
   const speaking = useVoice((s) => s.speaking);
+  const pickAvatar = useOnline((s) => s.pickAvatar);
+  const [choosing, setChoosing] = useState(false);
+  /** Mascotes dos outros jogadores → nome deles (ficam bloqueados no carrossel). */
+  const takenBy = Object.fromEntries(ids.filter((uid) => uid !== me).map((uid) => [players[uid].avatar, players[uid].name]));
 
   return (
     <View className="gap-6">
@@ -83,6 +90,9 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
           </View>
           <Text className="font-label text-sm text-mist-400">{ids.length}/{MAX_ROOM_PLAYERS}</Text>
         </View>
+        {me in players && (
+          <Text className="-mt-1 px-1 font-body text-xs text-mist-400">Toque no seu mascote para trocar. Cada um tem o seu.</Text>
+        )}
         {ids.map((uid) => {
           const p = players[uid];
           const talking = voice && p.online;
@@ -90,14 +100,30 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
           return (
             <Animated.View key={uid} entering={FadeInDown.duration(250)}>
               <View className="flex-row items-center gap-3 rounded-2xl border border-white/5 bg-night-800 p-2 pr-4">
-                <VoiceAvatar
-                  label={p.name}
-                  color={p.color}
-                  size={44}
-                  active={uid === me}
-                  speaking={talking && Boolean(speaking[uid])}
-                  muted={talking && !open}
-                />
+                {uid === me ? (
+                  <PressableScale
+                    onPress={() => setChoosing(true)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Escolher outro mascote">
+                    <VoiceAvatar
+                      avatar={p.avatar}
+                      size={44}
+                      active
+                      speaking={talking && Boolean(speaking[uid])}
+                      muted={talking && !open}
+                    />
+                    <View className="absolute -bottom-1 -right-1 h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-night-700">
+                      <Icon name="swap-horizontal" size={11} color={palette.mist[200]} />
+                    </View>
+                  </PressableScale>
+                ) : (
+                  <VoiceAvatar
+                    avatar={p.avatar}
+                    size={44}
+                    speaking={talking && Boolean(speaking[uid])}
+                    muted={talking && !open}
+                  />
+                )}
                 <View className="flex-1">
                   <Text className="font-label text-base text-mist-50" numberOfLines={1}>
                     {p.name}
@@ -161,6 +187,14 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
           </Text>
         </View>
       )}
+      <AvatarSheet
+        visible={choosing}
+        who={players[me]?.name ?? ''}
+        current={players[me]?.avatar ?? 'polvo'}
+        takenBy={takenBy}
+        onPick={pickAvatar}
+        onClose={() => setChoosing(false)}
+      />
     </View>
   );
 }

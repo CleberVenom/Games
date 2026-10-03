@@ -12,15 +12,27 @@ import {
   update,
 } from 'firebase/database';
 
-import type { TurnScore } from '../game/types';
+import { AVATARS, randomFreeAvatar } from '../avatars/avatars';
+import type { AvatarId, TurnScore } from '../game/types';
 import { firebase, signIn } from './firebase';
-import { canJoin, freeColor, JoinCheck, Reaction, RoomMeta, RoomPlayer, RoomRound, RoomScore, roomCode } from './room';
+import {
+  canJoin,
+  JoinCheck,
+  Reaction,
+  RoomMeta,
+  RoomPlayer,
+  RoomRound,
+  RoomScore,
+  roomCode,
+  withAvatars,
+} from './room';
 import type { MicState } from './voice';
 
 /**
  * Onde cada coisa fica no Realtime Database (regras em database.rules.json):
  *   rooms/{code}/meta                      anfitrião, status, rodadas, sons
- *   rooms/{code}/players/{uid}             nome, cor, online, placar
+ *   rooms/{code}/players/{uid}             nome, mascote (e a cor equivalente, para versões antigas), online, placar
+ *   rooms/{code}/avatars/{mascote}         uid de quem escolheu o mascote (só um jogador por mascote)
  *   rooms/{code}/round                     rodada atual (só o anfitrião escreve)
  *   rooms/{code}/scores/{rodada}/{uid}     nota de cada um
  *   rooms/{code}/clips/{rodada}/{uid}      imitação (μ-law em base64), baixada na apresentação
@@ -35,6 +47,41 @@ export class RoomError extends Error {
   constructor(public reason: JoinCheck | 'unavailable') {
     super(reason);
   }
+}
+
+/**
+ * Reserva um mascote para o jogador. A transação garante que, se dois tocarem no mesmo ao mesmo tempo,
+ * só um leva; quem perdeu recebe `false` e escolhe outro.
+ */
+async function reserveAvatar(code: string, uid: string, avatar: AvatarId): Promise<boolean> {
+  const result = await runTransaction(roomRef(code, `avatars/${avatar}`), (current) =>
+    current && current !== uid ? undefined : uid,
+  );
+  return result.committed;
+}
+
+/** Quem entra sem escolher ganha um mascote livre sorteado (troca depois, se quiser). */
+async function reserveFreeAvatar(code: string, uid: string, taken: AvatarId[]): Promise<AvatarId> {
+  const tried = [...taken];
+  for (;;) {
+    const avatar = randomFreeAvatar(tried);
+    if (!avatar) throw new RoomError('unavailable');
+    if (await reserveAvatar(code, uid, avatar)) return avatar;
+    tried.push(avatar);
+  }
+}
+
+function newPlayer(name: string, avatar: AvatarId): RoomPlayer {
+  return { name, avatar, color: AVATARS[avatar].color, joinedAt: Date.now(), online: true, score: 0 };
+}
+
+/** Troca o mascote do jogador. Devolve `false` se outra pessoa pegou esse mascote primeiro. */
+export async function changeAvatar(session: Session, next: AvatarId, current: AvatarId): Promise<boolean> {
+  if (next === current) return true;
+  if (!(await reserveAvatar(session.code, session.uid, next))) return false;
+  await update(roomRef(session.code, `players/${session.uid}`), { avatar: next, color: AVATARS[next].color });
+  await remove(roomRef(session.code, `avatars/${current}`)).catch(() => {});
+  return true;
 }
 
 /** Marca o jogador como online enquanto a conexão durar (o servidor marca offline se cair). */
@@ -63,8 +110,8 @@ export async function createRoom(name: string): Promise<Session> {
     const meta: RoomMeta = { host: uid, status: 'lobby', createdAt: Date.now(), totalRounds: 0, pool: [], deck: [] };
     const result = await runTransaction(roomRef(code, 'meta'), (current) => (current ? undefined : meta));
     if (!result.committed) continue;
-    const me: RoomPlayer = { name, color: freeColor({}), joinedAt: Date.now(), online: true, score: 0 };
-    await set(roomRef(code, `players/${uid}`), me);
+    const avatar = await reserveFreeAvatar(code, uid, []);
+    await set(roomRef(code, `players/${uid}`), newPlayer(name, avatar));
     return { code, uid, stopPresence: keepPresence(code, uid) };
   }
   throw new RoomError('unavailable');
@@ -73,27 +120,36 @@ export async function createRoom(name: string): Promise<Session> {
 /** Entra numa sala pelo código (só enquanto ela está no lobby, até 10 jogadores). */
 export async function joinRoom(code: string, name: string): Promise<Session> {
   const uid = await signIn();
-  const [metaSnap, playersSnap] = await Promise.all([get(roomRef(code, 'meta')), get(roomRef(code, 'players'))]);
+  const [metaSnap, playersSnap, avatarsSnap] = await Promise.all([
+    get(roomRef(code, 'meta')),
+    get(roomRef(code, 'players')),
+    get(roomRef(code, 'avatars')),
+  ]);
   const meta = metaSnap.val() as RoomMeta | null;
   const players = (playersSnap.val() ?? {}) as Record<string, RoomPlayer>;
   const check = canJoin(meta, players, uid);
   if (check !== 'ok') throw new RoomError(check);
   if (!players[uid]) {
-    const me: RoomPlayer = { name, color: freeColor(players), joinedAt: Date.now(), online: true, score: 0 };
-    await set(roomRef(code, `players/${uid}`), me);
+    const taken = Object.keys(avatarsSnap.val() ?? {}) as AvatarId[];
+    const avatar = await reserveFreeAvatar(code, uid, taken);
+    await set(roomRef(code, `players/${uid}`), newPlayer(name, avatar));
   }
   return { code, uid, stopPresence: keepPresence(code, uid) };
 }
 
 /** Sai da sala. O anfitrião apaga a sala inteira; os outros saem da lista (no lobby) ou ficam offline. */
-export async function leaveRoom(session: Session, host: boolean, inLobby: boolean): Promise<void> {
+export async function leaveRoom(session: Session, host: boolean, inLobby: boolean, avatar?: AvatarId): Promise<void> {
   session.stopPresence();
   const { code, uid } = session;
   await onDisconnect(roomRef(code, `players/${uid}/online`))
     .cancel()
     .catch(() => {});
   if (host) await remove(roomRef(code));
-  else if (inLobby) await remove(roomRef(code, `players/${uid}`));
+  else if (inLobby) {
+    await remove(roomRef(code, `players/${uid}`));
+    // Libera o mascote para quem entrar depois.
+    if (avatar) await remove(roomRef(code, `avatars/${avatar}`)).catch(() => {});
+  }
   else await set(roomRef(code, `players/${uid}/online`), false);
 }
 
@@ -107,7 +163,7 @@ export interface RoomListeners {
 export function watchRoom(code: string, on: RoomListeners): () => void {
   const offs = [
     onValue(roomRef(code, 'meta'), (s) => on.meta(s.val())),
-    onValue(roomRef(code, 'players'), (s) => on.players(s.val() ?? {})),
+    onValue(roomRef(code, 'players'), (s) => on.players(withAvatars(s.val() ?? {}))),
     onValue(roomRef(code, 'round'), (s) => on.round(roundFrom(s))),
   ];
   return () => offs.forEach((off) => off());

@@ -13,7 +13,7 @@ import Animated, {
 import { Standing, standings } from '../game/match';
 import type { Player } from '../game/types';
 import { findSound } from '../store/library';
-import { glow, palette, PLAYER_HEX, withAlpha } from '../theme/tokens';
+import { glow, palette, withAlpha } from '../theme/tokens';
 import { Avatar } from './Avatar';
 import { Backdrop } from './Backdrop';
 import { GradientButton } from './Buttons';
@@ -21,6 +21,7 @@ import { Gradient } from './Gradient';
 import { hapticResult } from './haptics';
 import { Icon } from './Icon';
 import { PressableScale } from './PressableScale';
+import { AVATARS } from '../avatars/avatars';
 
 /** Altura do degrau por posição (1º mais alto). */
 const STEP_HEIGHT: Record<number, number> = { 1: 150, 2: 112, 3: 84 };
@@ -85,7 +86,7 @@ export function Podium({
               <Animated.View key={s.player.id} entering={FadeInDown.delay(700 + i * 100).duration(300)}>
                 <View className="flex-row items-center gap-3 rounded-2xl border border-white/5 bg-white/5 px-4 py-3">
                   <Text className="w-7 font-heading text-base text-mist-400">{s.place}º</Text>
-                  <Avatar label={s.player.name} color={s.player.color} size={36} />
+                  <Avatar avatar={s.player.avatar} size={36} />
                   <View className="flex-1">
                     <Text className="font-label text-sm text-mist-50" numberOfLines={1}>
                       {s.player.name}
@@ -118,7 +119,7 @@ export function Podium({
 
 function PodiumStep({ standing, delay }: { standing: Standing; delay: number }) {
   const { player, place } = standing;
-  const hex = PLAYER_HEX[player.color];
+  const hex = AVATARS[player.avatar].tint;
   const target = STEP_HEIGHT[place] ?? STEP_HEIGHT[3];
   const height = useSharedValue(0);
   useEffect(() => {
@@ -130,7 +131,7 @@ function PodiumStep({ standing, delay }: { standing: Standing; delay: number }) 
     <View className="flex-1 items-center gap-2" style={{ maxWidth: 116 }}>
       <Animated.View entering={FadeInDown.delay(delay + 300).duration(400)} style={{ alignItems: 'center', gap: 6 }}>
         {place === 1 && <Icon name="trophy" size={26} color={palette.amber[400]} />}
-        <Avatar label={player.name} color={player.color} size={place === 1 ? 64 : 52} active={place === 1} />
+        <Avatar avatar={player.avatar} size={place === 1 ? 64 : 52} active={place === 1} />
         <Text className="font-label text-sm text-mist-50" numberOfLines={1}>
           {player.name}
         </Text>

@@ -20,6 +20,7 @@ calculada localmente (tom + ritmo). Multijogador local, passando o celular (*pas
 | + | 1ª rodada de testes: gravação com o tempo do som (sem parar), silhueta do som original, 97 sons em 7 packs | ✅ |
 | + | **Modo online** com amigos: salas com código, todos imitam juntos, apresentação das imitações com reações e chat de voz | ✅ (projeto Firebase `mimic-mobile-v3ltda`; veja [FIREBASE.md](FIREBASE.md)) |
 | + | **Packs de amigos**: compartilhar um pack por código, baixar o pack de um amigo e packs do anfitrião baixados sozinhos na sala online | ✅ |
+| + | **Paleta Carnaval e mascotes**: fundo uva vivo com rosa-choque → laranja; 15 mascotes no lugar das cores dos jogadores, com escolha exclusiva em carrossel (local e online) | ✅ |
 
 ### Como a nota é calculada (Passo 3)
 
@@ -70,6 +71,24 @@ A partida tem **5 rodadas** com até 5 jogadores e **uma rodada por jogador** ac
 rodadas). O cabeçalho mostra "Rodada X de N". Na última vez da última rodada não há roleta: o botão vira
 **Ver o pódio** — 1º, 2º e 3º em degraus animados, demais colocados em lista, melhor imitação de cada um e
 empates dividindo a posição. **Jogar de novo** repete jogadores e packs com o placar zerado.
+
+### Mascotes dos jogadores
+
+Cada jogador é um **mascote** (15 desenhos originais: polvo de fones, gato cantor, pintinho de festa, sapo rei,
+estegossauro de óculos, tubarão de boné, robô de gravata, fantasma zoeiro, monstrinho de um olho, disfarce de
+bigode, abacaxi de óculos, alien de antena, caveira pirata, coruja nerd e unicórnio festeiro). O que identifica o
+jogador é a **forma e o rosto**, não a cor — por isso funciona também para quem tem daltonismo; o anel colorido é só
+reforço. A inicial do nome não aparece mais.
+
+- **Cada mascote é de um jogador só.** Quem escolhe um deixa o mascote bloqueado (com cadeado e o nome de quem
+  pegou) para os outros. Há 15 mascotes para no máximo 10 jogadores, então o último a escolher sempre tem opção.
+- **Carrossel lateral**: tocar no mascote (na tela inicial ou na sala online) abre uma folha com todos; deslize
+  para os lados e toque para escolher. Rolar não escolhe nada, dá para passar direto e voltar.
+- **Online**, a reserva é uma transação no Firebase (`rooms/{código}/avatars/{mascote}` = uid de quem pegou): se
+  dois tocam no mesmo ao mesmo tempo, só um leva e o outro vê o aviso. Quem entra na sala ganha um mascote livre
+  sorteado. A sala continua gravando a cor equivalente (`color`) para celulares que ainda não têm os mascotes.
+- Desenhos: `scripts/make-avatars.py` (SVG feito à mão em código, sem licença de terceiros). Depois de mexer num,
+  rode `python3 scripts/make-avatars.py`.
 
 ### Packs de sons
 
@@ -171,7 +190,9 @@ src/
   dsp/          FFT, reamostragem, extração de pitch/energia/brilho e a nota (+ testes)
   online/       modo online: sala e rodadas (lógica pura), Firebase, imitação pela rede, chat de voz (+ testes)
   theme/        paleta única (Tailwind + gradientes) e utilitários de cor/brilho
+  avatars/      os 15 mascotes: desenhos (art.ts, gerado), nomes, cores e a lógica de quem já escolheu o quê (+ testes)
 assets/images/  ícones e splash (gerados por scripts/make-icons.py)
+assets/avatars/ os 15 mascotes em SVG (gerados por scripts/make-avatars.py, que também escreve src/avatars/art.ts)
 assets/sounds/  75 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
 ```
 
@@ -250,8 +271,9 @@ rode o script. Título, pack e duração vão para `assets/sounds/manifest.json`
 
 ### Design
 
-Dark mode azul-noturno (`night-950 #0A0C1D`, nunca preto puro), destaques em gradiente violeta → rosa e
-ciano, texto em `mist` (nunca branco puro), cantos de 16–32 px, sombras e brilhos coloridos suaves (`boxShadow`),
+Paleta **Carnaval** (out/2026, escolhida num estudo de colorimetria): fundo uva escuro e vivo (`night-950 #2E093C`,
+nunca preto puro), destaques em gradiente rosa-choque → laranja (`fuchsia` → `tangerine`) com turquesa de contraste,
+texto creme quente em `mist` (nunca branco puro), cantos de 16–32 px, sombras e brilhos coloridos suaves (`boxShadow`),
 botões que encolhem com mola ao toque (e crescem no *hover* do mouse, na web). A paleta fica em
 `src/theme/palette.js` e é a única fonte de cor: o `tailwind.config.js` substitui as cores padrão por ela.
 

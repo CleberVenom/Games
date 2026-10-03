@@ -64,6 +64,12 @@ chato).
                ".validate": "!newData.exists() || (newData.child('name').isString() && newData.child('name').val().length <= 24)"
              }
            },
+           "avatars": {
+             "$avatar": {
+               ".write": "auth != null && ((newData.exists() && newData.val() === auth.uid && (!data.exists() || data.val() === auth.uid) && root.child('rooms').child($code).child('meta/status').val() === 'lobby') || (!newData.exists() && data.val() === auth.uid))",
+               ".validate": "!newData.exists() || (newData.isString() && $avatar.matches(/^[a-z]{3,16}$/))"
+             }
+           },
            "scores": {
              "$round": {
                "$uid": {
@@ -120,7 +126,7 @@ chato).
 
    Essas regras são a "segurança" do jogo: só o anfitrião avança a partida, cada jogador só mexe na própria nota,
    ninguém de fora apaga a sala dos outros, no chat de voz o anfitrião pode mutar alguém mas nunca ligar o
-   microfone de outra pessoa e um pack compartilhado só pode ser enviado (uma vez) por quem gerou o código.
+   microfone de outra pessoa um pack compartilhado só pode ser enviado (uma vez) por quem gerou o código e cada mascote só pode ser escolhido por um jogador da sala (antes de a partida começar).
 
 ## 3. Ligar o login anônimo
 
@@ -165,11 +171,11 @@ Cole no chat o bloco copiado no passo 4.5 (um print da tela também serve). Eu c
 
 **Já feito (set/2026):** o app usa o projeto `mimic-mobile-v3ltda`.
 
-## Quando as regras mudarem (ex.: chat de voz, set/2026; packs compartilhados, out/2026)
+## Quando as regras mudarem (ex.: chat de voz, set/2026; packs compartilhados e mascotes, out/2026)
 
 Se eu avisar que as regras mudaram, repita só o passo 2.5: **Realtime Database → Regras**, apague tudo, cole o bloco
-atualizado acima e clique em **Publicar**. Sem isso, as partes novas (como o chat de voz e o compartilhamento de
-packs) não funcionam.
+atualizado acima e clique em **Publicar**. Sem isso, as partes novas (como o chat de voz, o compartilhamento de
+packs e a escolha de mascotes) não funcionam.
 
 ---
 

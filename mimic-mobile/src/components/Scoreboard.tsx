@@ -1,8 +1,9 @@
 import { ScrollView, Text, View } from 'react-native';
 
 import type { Player } from '../game/types';
-import { PLAYER_HEX, withAlpha } from '../theme/tokens';
+import { withAlpha } from '../theme/tokens';
 import { Avatar } from './Avatar';
+import { AVATARS } from '../avatars/avatars';
 
 /** Placar em faixa horizontal; o jogador da vez fica destacado na cor dele. */
 export function Scoreboard({ players, current }: { players: Player[]; current: number }) {
@@ -14,7 +15,7 @@ export function Scoreboard({ players, current }: { players: Player[]; current: n
       contentContainerClassName="gap-3 px-5">
       {players.map((p, i) => {
         const active = i === current;
-        const hex = PLAYER_HEX[p.color];
+        const hex = AVATARS[p.avatar].tint;
         return (
           <View
             key={p.id}
@@ -23,7 +24,7 @@ export function Scoreboard({ players, current }: { players: Player[]; current: n
               borderColor: active ? withAlpha(hex, 0.6) : 'rgba(255, 255, 255, 0.06)',
               backgroundColor: active ? withAlpha(hex, 0.12) : 'rgba(255, 255, 255, 0.04)',
             }}>
-            <Avatar label={p.name} color={p.color} size={32} active={active} />
+            <Avatar avatar={p.avatar} size={32} active={active} />
             <View>
               <Text className="max-w-[96px] font-label text-xs text-mist-200" numberOfLines={1}>
                 {p.name}

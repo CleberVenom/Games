@@ -80,7 +80,7 @@ export function createMatch(setup: readonly PlayerSetup[], pool: readonly string
     players: setup.map((p, i) => ({
       id: `p${i + 1}`,
       name: p.name.trim() || `Jogador ${i + 1}`,
-      color: p.color,
+      avatar: p.avatar,
       score: 0,
       best: null,
     })),

@@ -35,6 +35,12 @@
             ".validate": "!newData.exists() || (newData.child('name').isString() && newData.child('name').val().length <= 24)"
           }
         },
+        "avatars": {
+          "$avatar": {
+            ".write": "auth != null && ((newData.exists() && newData.val() === auth.uid && (!data.exists() || data.val() === auth.uid) && root.child('rooms').child($code).child('meta/status').val() === 'lobby') || (!newData.exists() && data.val() === auth.uid))",
+            ".validate": "!newData.exists() || (newData.isString() && $avatar.matches(/^[a-z]{3,16}$/))"
+          }
+        },
         "scores": {
           "$round": {
             "$uid": {

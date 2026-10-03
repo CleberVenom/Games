@@ -46,7 +46,7 @@ export function RoundResults({ me, roundNumber, totalRounds, players, scores, re
                   backgroundColor: 'rgba(255, 255, 255, 0.04)',
                 }}>
                 <Text className="w-6 text-center font-heading text-base text-mist-400">{i + 1}º</Text>
-                <Avatar label={p.name} color={p.color} size={40} />
+                <Avatar avatar={p.avatar} size={40} />
                 <View className="flex-1 gap-0.5">
                   <Text className="font-label text-sm text-mist-50" numberOfLines={1}>
                     {p.name}

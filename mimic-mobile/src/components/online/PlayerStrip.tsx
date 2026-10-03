@@ -2,10 +2,11 @@ import { ScrollView, Text, View } from 'react-native';
 
 import type { RoomPlayer } from '../../online/room';
 import { MicState, micOpen } from '../../online/voice';
-import { palette, PLAYER_HEX, withAlpha } from '../../theme/tokens';
+import { palette, withAlpha } from '../../theme/tokens';
 import { Icon } from '../Icon';
 import { PressableScale } from '../PressableScale';
 import { VoiceAvatar } from './VoiceAvatar';
+import { AVATARS } from '../../avatars/avatars';
 
 export type PlayerStatus = 'done' | 'waiting' | 'offline' | 'none';
 
@@ -33,7 +34,7 @@ export function PlayerStrip({ ids, players, me, status, showScore = false, voice
         const p = players[uid];
         if (!p) return null;
         const s = status?.(uid) ?? 'none';
-        const hex = PLAYER_HEX[p.color];
+        const hex = AVATARS[p.avatar].tint;
         const talking = Boolean(voice && p.online);
         const open = micOpen(uid, voice?.mics[uid]);
         const onMute = voice?.onMute;
@@ -47,8 +48,7 @@ export function PlayerStrip({ ids, players, me, status, showScore = false, voice
         const content = (
           <>
             <VoiceAvatar
-              label={p.name}
-              color={p.color}
+              avatar={p.avatar}
               size={32}
               speaking={talking && Boolean(voice?.speaking[uid])}
               muted={talking && !open}

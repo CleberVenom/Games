@@ -56,8 +56,9 @@ Nunca escolha stack de memória. No início de cada projeto (e ao adicionar qual
 Nenhuma tela "padrão" ou rudimentar. Toda UI segue:
 
 - **Paleta moderna e harmoniosa, sem cores puras**: nada de `#000`/`#FFF`/vermelho puro. Fundo escuro
-  grafite ou azul-noturno (dark mode premium é o padrão para jogos); destaques em gradiente (ex.: violeta →
-  rosa, ciano). Uma **única fonte de cores** (`src/theme/palette.js`) usada pelo `tailwind.config.js`
+  grafite, azul-noturno ou uva (dark mode premium é o padrão para jogos; o Mimic Mobile usa uva escuro e vivo,
+  porque azul deixou o jogo "frio"); destaques em gradiente (ex.: rosa-choque → laranja, violeta → rosa) e uma cor
+  fria de contraste. **Jogadores se identificam por forma/desenho (mascotes), nunca só pela cor** (daltonismo). Uma **única fonte de cores** (`src/theme/palette.js`) usada pelo `tailwind.config.js`
   (substituindo `theme.colors`) e pelos componentes.
 - **Bordas arredondadas generosas**: mínimo 16 px em cartões e botões; 24–32 px em cartões principais.
 - **Profundidade**: sombras suaves e brilhos coloridos (`boxShadow`), cartões translúcidos com borda sutil

@@ -1,9 +1,6 @@
-import type { PlayerColor } from '../game/types';
-import { palette, players } from './palette';
+import { palette } from './palette';
 
 export { palette };
-
-export const PLAYER_HEX: Record<PlayerColor, string> = players;
 
 type Stops = readonly [string, string, ...string[]];
 

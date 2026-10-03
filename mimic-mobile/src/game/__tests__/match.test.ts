@@ -5,9 +5,9 @@ import { SOUNDS } from '../sounds';
 const POOL = SOUNDS.map((s) => s.id);
 
 const setup = [
-  { name: 'Ana', color: 'violet' as const },
-  { name: '  ', color: 'cyan' as const },
-  { name: 'Caio', color: 'pink' as const },
+  { name: 'Ana', avatar: 'polvo' as const },
+  { name: '  ', avatar: 'gato' as const },
+  { name: 'Caio', avatar: 'sapo' as const },
 ];
 
 function seeded(seed = 1) {

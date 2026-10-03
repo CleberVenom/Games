@@ -3,13 +3,14 @@ import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 
 import type { Modifier } from '../game/modifiers';
 import type { Player } from '../game/types';
-import { palette, PLAYER_HEX } from '../theme/tokens';
+import { palette } from '../theme/tokens';
 import { Avatar } from './Avatar';
 import { Backdrop } from './Backdrop';
 import { GradientButton } from './Buttons';
 import { Icon, IconName } from './Icon';
 import { ModifierCard } from './ModifierBadge';
 import { PressableScale } from './PressableScale';
+import { AVATARS } from '../avatars/avatars';
 
 interface Props {
   player: Player;
@@ -25,7 +26,7 @@ interface Props {
 
 /** Tela de "passe o celular": o som só toca quando o próximo jogador confirma que está pronto. */
 export function HandoffOverlay({ player, round, insets, modifier, replays, onReady, onExit }: Props) {
-  const hex = PLAYER_HEX[player.color];
+  const hex = AVATARS[player.avatar].tint;
   return (
     <Animated.View entering={FadeIn.duration(250)} exiting={FadeOut.duration(200)} style={StyleSheet.absoluteFill}>
       <Backdrop />
@@ -39,7 +40,7 @@ export function HandoffOverlay({ player, round, insets, modifier, replays, onRea
         </PressableScale>
         <View className="flex-1 items-center justify-center gap-6">
           <Animated.View entering={FadeInDown.duration(400).springify()} style={{ alignItems: 'center', gap: 16 }}>
-            <Avatar label={player.name} color={player.color} size={96} active />
+            <Avatar avatar={player.avatar} size={96} active />
             <View className="items-center gap-1">
               <Text className="font-label text-xs uppercase tracking-[3px] text-mist-400">Rodada {round}</Text>
               <Text className="font-ui text-base text-mist-200">Passe o celular para</Text>

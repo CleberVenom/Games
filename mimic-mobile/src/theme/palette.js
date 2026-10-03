@@ -23,18 +23,23 @@ const palette = {
   coral: { 400: '#FE8D7F' }, // erro
 };
 
-/** Cores dos 10 jogadores (ids antigos mantidos: ficam salvos nas salas online). */
-const players = {
-  coral: '#FE8D7F',
-  orange: '#FFBB77',
-  amber: '#FFE65D',
-  lime: '#BCD20A',
-  mint: '#10FCBD',
-  cyan: '#52DFEA',
-  sky: '#8FB8FE',
-  violet: '#918AFE',
-  orchid: '#CB6ADE',
-  pink: '#FB69AC',
+/** Cor do anel e do fundo de cada mascote (também colore o nome do jogador). */
+const avatarTints = {
+  polvo: '#FE8D7F',
+  gato: '#FFBB77',
+  pintinho: '#FFE65D',
+  sapo: '#BCD20A',
+  estegossauro: '#10FCBD',
+  tubarao: '#52DFEA',
+  robo: '#8FB8FE',
+  fantasma: '#918AFE',
+  monstro: '#CB6ADE',
+  disfarce: '#FB69AC',
+  abacaxi: '#FFC53D',
+  alien: '#8CE36B',
+  caveira: '#EDEAF5',
+  coruja: '#D9AE82',
+  unicornio: '#FFC1E3',
 };
 
-module.exports = { palette, players };
+module.exports = { palette, avatarTints };

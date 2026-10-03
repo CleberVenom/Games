@@ -17,7 +17,7 @@ export const useMatch = create<MatchStore>((set) => ({
   start: (setup, pool) => set({ match: createMatch(setup, pool) }),
   rematch: () =>
     set((s) =>
-      s.match ? { match: createMatch(s.match.players.map(({ name, color }) => ({ name, color })), s.match.pool) } : s,
+      s.match ? { match: createMatch(s.match.players.map(({ name, avatar }) => ({ name, avatar })), s.match.pool) } : s,
     ),
   dispatch: (event) => set((s) => (s.match ? { match: reduce(s.match, event) } : s)),
 }));
