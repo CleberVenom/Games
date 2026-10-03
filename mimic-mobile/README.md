@@ -107,6 +107,13 @@ cortado, volume igualado e **de 1,4 a 15 s** (mais curto que 1,4 s é recusado, 
 mais forte). O áudio fica em `documentos/custom-sounds/` (IndexedDB na web) e a
 lista de packs no AsyncStorage (`src/store/library.ts`).
 
+**Importar vários de uma vez**: o seletor aceita vários arquivos (no Android, toque e segure o primeiro e toque nos
+outros — vale também no Google Drive). Eles entram um por um, com "Importando 3 de 12…" no rodapé; no fim, um resumo
+diz quais ficaram de fora e por quê (curtos, em silêncio, formato não suportado — `src/audio/importReport.ts`). No
+Android o seletor não copia os arquivos na volta (`copyToCacheDirectory: false`): cada um é lido depois, em segundo
+plano, pelo `expo-file-system` (aceita os `content://` do Drive) e decodificado da memória — copiar dezenas de sons do
+Drive de uma vez travaria a tela.
+
 **Compartilhar com amigos** (cartão no editor de um pack salvo): o botão "Compartilhar pack" envia os sons para o
 Firebase e mostra um **código de 5 letras** ("Enviar código" manda pelo WhatsApp etc.). O amigo toca em **Baixar pack
 de amigo** na tela inicial, digita o código, vê o nome e os sons e baixa: o pack entra nos packs dele, já marcado, e

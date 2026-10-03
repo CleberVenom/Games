@@ -24,6 +24,11 @@ export async function deleteAudio(id: string): Promise<void> {
   if (file.exists) file.delete();
 }
 
+/** Bytes de um arquivo escolhido no seletor (inclusive `content://` do Google Drive), lidos em segundo plano. */
+export async function readPickedFile(asset: { uri: string }): Promise<ArrayBuffer> {
+  return new File(asset.uri).arrayBuffer();
+}
+
 /** O WAV de um som em base64, para compartilhar o pack com amigos. */
 export async function readAudioBase64(id: string): Promise<string> {
   return new File(folder(), `${id}.wav`).base64();

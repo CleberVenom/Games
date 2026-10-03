@@ -239,6 +239,11 @@ Com 6 jogadores, são 6 rodadas.
 - [ ] Tocar em **Gravar**, fazer um som (de 1,4 a 15 segundos) e tocar em **Parar e salvar o som**.
 - [ ] Gravar um som **bem curto** (menos de 1,4 s): aparece o aviso **"Som muito curto"** e ele não entra.
 - [ ] Tocar em **Importar áudio** e escolher um MP3/WAV/M4A do aparelho (ex.: um áudio do WhatsApp salvo).
+- [ ] **Vários de uma vez**: tocar em **Importar áudio**, abrir o **Drive** (menu ☰ do seletor), **tocar e segurar** o
+      primeiro som, tocar nos outros e em **Selecionar**. No rodapé aparece **"Importando 1 de N…"** com a barra
+      andando, e os sons vão entrando na lista. Se algum ficar de fora (curto, em silêncio, formato errado), um resumo
+      no fim diz quais.
+- [ ] Sair (**←** → **Descartar**) no meio de uma importação grande: a importação para e o pack não muda.
 - [ ] Ouvir, renomear e remover um som da lista.
 - [ ] Tocar em **Salvar pack**: ele aparece na tela inicial com o selo **Meu pack**.
 - [ ] Tocar no **lápis** do pack para editar; testar também **apagar o pack**.

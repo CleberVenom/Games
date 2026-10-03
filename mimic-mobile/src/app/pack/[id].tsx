@@ -5,8 +5,9 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, Vie
 import Animated, { FadeInDown, FadeOut, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { deleteAudio, saveAudio } from '../../audio/customAudio';
+import { deleteAudio, readPickedFile, saveAudio } from '../../audio/customAudio';
 import { engine } from '../../audio/engine';
+import { ClipProblem, importReport, PROBLEM_NOTICE, SkippedFile } from '../../audio/importReport';
 import { prepareMic, startRecording, stopRecording } from '../../audio/mic';
 import { useVisualizer } from '../../audio/useVisualizerLevels';
 import { BAR_COUNT, Bars } from '../../components/AudioVisualizer';
@@ -15,7 +16,9 @@ import { GradientButton } from '../../components/Buttons';
 import { Gradient } from '../../components/Gradient';
 import { hapticImpact } from '../../components/haptics';
 import { Icon, IconName } from '../../components/Icon';
+import { LiveDot } from '../../components/online/LiveDot';
 import { PressableScale } from '../../components/PressableScale';
+import { ProgressBar } from '../../components/ProgressBar';
 import { ShareCard } from '../../components/ShareCard';
 import { CLIP_RATE, encodeWav, MAX_CLIP_SECONDS, MIN_CLIP_SECONDS, prepareClip, secondsText } from '../../dsp/clip';
 import { CustomSound, newId, useLibrary } from '../../store/library';
@@ -62,8 +65,12 @@ export default function PackEditorScreen() {
   const [sounds, setSounds] = useState<CustomSound[]>(existing?.sounds ?? []);
   const [mode, setMode] = useState<Mode>('idle');
   const [playing, setPlaying] = useState<string | null>(null);
+  /** Andamento da importação de vários arquivos de uma vez. */
+  const [importing, setImporting] = useState<{ done: number; total: number; name: string } | null>(null);
   /** Sons gravados/importados nesta edição (o áudio é apagado se o jogador descartar). */
   const created = useRef<string[]>([]);
+  /** O jogador descartou ou saiu da tela: a importação em andamento para e não deixa áudio solto. */
+  const leaving = useRef(false);
   const stopTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const viz = useVisualizer(mode === 'recording' ? 'recording' : 'idle', BAR_COUNT);
 
@@ -76,39 +83,36 @@ export default function PackEditorScreen() {
 
   useEffect(
     () => () => {
+      leaving.current = true;
       clearTimeout(stopTimer.current);
       engine.stop();
     },
     [],
   );
 
-  async function addClip(samples: Float32Array, rate: number, soundTitle: string) {
+  /** Corta o silêncio, ajusta o volume e guarda o som; devolve o motivo se ele não entrar. */
+  async function addClip(samples: Float32Array, rate: number, soundTitle: string): Promise<ClipProblem | null> {
     const clip = prepareClip(samples, rate);
-    if (!clip) {
-      setMode('idle');
-      notify('Nenhum som encontrado', 'O áudio está em silêncio ou muito baixo. Tente de novo mais perto do microfone.');
-      return;
-    }
-    if (clip.length / CLIP_RATE < MIN_CLIP_SECONDS) {
-      setMode('idle');
-      notify(
-        'Som muito curto',
-        `Depois de cortar o silêncio, o som precisa ter pelo menos ${secondsText(MIN_CLIP_SECONDS)} segundos: a imitação dura o mesmo tempo que ele.`,
-      );
-      return;
-    }
+    if (!clip) return 'silent';
+    if (clip.length / CLIP_RATE < MIN_CLIP_SECONDS) return 'short';
     const soundId = newId('sound');
     await saveAudio(soundId, encodeWav(clip, CLIP_RATE));
+    if (leaving.current) {
+      await deleteAudio(soundId).catch(() => {});
+      return null;
+    }
     created.current.push(soundId);
     setSounds((list) => [...list, { id: soundId, title: soundTitle, durationMs: Math.round((clip.length / CLIP_RATE) * 1000) }]);
-    setMode('idle');
+    return null;
   }
 
   async function finishRecording() {
     clearTimeout(stopTimer.current);
     setMode('processing');
     const rec = await stopRecording();
-    await addClip(rec.samples, rec.sampleRate, `Som ${sounds.length + 1}`);
+    const problem = await addClip(rec.samples, rec.sampleRate, `Som ${sounds.length + 1}`);
+    setMode('idle');
+    if (problem) notify(PROBLEM_NOTICE[problem].title, PROBLEM_NOTICE[problem].message);
   }
 
   async function record() {
@@ -128,24 +132,42 @@ export default function PackEditorScreen() {
     }
   }
 
-  async function importAudio() {
-    const result = await DocumentPicker.getDocumentAsync({ type: 'audio/*', copyToCacheDirectory: true });
-    if (result.canceled) return;
-    const asset = result.assets[0];
-    setMode('processing');
+  async function importFile(asset: DocumentPicker.DocumentPickerAsset): Promise<ClipProblem | null> {
     try {
-      const source = Platform.OS === 'web' && asset.file ? await asset.file.arrayBuffer() : asset.uri;
-      const buffer = await engine.decode(source);
+      const buffer = await engine.decode(await readPickedFile(asset));
       const mono = new Float32Array(buffer.length);
       for (let c = 0; c < buffer.numberOfChannels; c++) {
         const data = buffer.getChannelData(c);
         for (let i = 0; i < mono.length; i++) mono[i] += data[i] / buffer.numberOfChannels;
       }
-      await addClip(mono, buffer.sampleRate, titleFromFile(asset.name));
+      return await addClip(mono, buffer.sampleRate, titleFromFile(asset.name));
     } catch {
-      setMode('idle');
-      notify('Formato não suportado', 'Não foi possível abrir esse arquivo. Use MP3, WAV, M4A ou OGG.');
+      return 'unsupported';
     }
+  }
+
+  async function importAudio() {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: 'audio/*',
+      multiple: true,
+      // No Android cada arquivo é lido depois, em segundo plano: copiar dezenas de sons do Drive na volta do
+      // seletor travaria a tela até o fim.
+      copyToCacheDirectory: Platform.OS !== 'android',
+    });
+    if (result.canceled) return;
+    const files = result.assets;
+    setMode('processing');
+    const skipped: SkippedFile[] = [];
+    for (const [i, asset] of files.entries()) {
+      if (leaving.current) return;
+      setImporting({ done: i, total: files.length, name: asset.name });
+      const problem = await importFile(asset);
+      if (problem) skipped.push({ name: asset.name, problem });
+    }
+    setImporting(null);
+    setMode('idle');
+    const report = importReport(files.length, skipped);
+    if (report) notify(report.title, report.message);
   }
 
   function preview(soundId: string) {
@@ -169,6 +191,7 @@ export default function PackEditorScreen() {
   }
 
   async function discardCreated() {
+    leaving.current = true;
     await Promise.all(created.current.map((x) => deleteAudio(x).catch(() => {})));
     created.current = [];
   }
@@ -205,6 +228,7 @@ export default function PackEditorScreen() {
   }
 
   const busy = mode !== 'idle';
+  const batch = importing && importing.total > 1 ? importing : null;
 
   return (
     <View className="flex-1 bg-night-950">
@@ -296,7 +320,8 @@ export default function PackEditorScreen() {
                 <Icon name="albums" size={30} color={palette.mist[500]} />
                 <Text className="text-center font-label text-sm text-mist-200">Nenhum som ainda</Text>
                 <Text className="text-center font-body text-xs leading-5 text-mist-400">
-                  Grave com o microfone ou importe um áudio (MP3, WAV, M4A, OGG). Cada som fica com{' '}
+                  Grave com o microfone ou importe áudios (MP3, WAV, M4A, OGG): dá para escolher vários de uma vez. Cada
+                  som fica com{' '}
                   {secondsText(MIN_CLIP_SECONDS)} a {MAX_CLIP_SECONDS} s: o silêncio é cortado e o volume é ajustado sozinho.
                 </Text>
               </View>
@@ -358,7 +383,7 @@ export default function PackEditorScreen() {
                   <Text className="font-label text-base text-mist-200">Importar áudio</Text>
                 </PressableScale>
               </View>
-            ) : (
+            ) : batch ? null : (
               <View
                 className="gap-4 rounded-3xl border p-4"
                 style={{
@@ -388,7 +413,29 @@ export default function PackEditorScreen() {
           </View>
         </ScrollView>
 
-        <View className="px-5 pt-3" style={{ paddingBottom: insets.bottom + 16 }}>
+        <View className="gap-3 px-5 pt-3" style={{ paddingBottom: insets.bottom + 16 }}>
+          {/* Fica no rodapé: com dezenas de arquivos a lista cresce e um painel no fim dela sairia da tela. */}
+          {batch && (
+            <Animated.View entering={FadeInDown.duration(200)} exiting={FadeOut.duration(150)}>
+              <View
+                className="gap-3 rounded-3xl border p-4"
+                style={{
+                  borderColor: withAlpha(palette.tangerine[400], 0.35),
+                  backgroundColor: withAlpha(palette.tangerine[400], 0.08),
+                }}>
+                <View className="flex-row items-center gap-2">
+                  <LiveDot color={palette.tangerine[400]} />
+                  <Text className="font-label text-sm text-mist-50">
+                    Importando {batch.done + 1} de {batch.total}…
+                  </Text>
+                  <Text numberOfLines={1} className="min-w-0 flex-1 text-right font-body text-xs text-mist-400">
+                    {batch.name}
+                  </Text>
+                </View>
+                <ProgressBar value={batch.done / batch.total} />
+              </View>
+            </Animated.View>
+          )}
           <GradientButton
             label={sounds.length === 0 ? 'Adicione pelo menos 1 som' : 'Salvar pack'}
             icon="checkmark"

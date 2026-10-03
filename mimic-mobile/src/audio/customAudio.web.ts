@@ -41,6 +41,11 @@ export async function deleteAudio(id: string): Promise<void> {
   await run('readwrite', (s) => s.delete(id));
 }
 
+/** Bytes de um arquivo escolhido no seletor do navegador. */
+export async function readPickedFile(asset: { uri: string; file?: Blob }): Promise<ArrayBuffer> {
+  return asset.file ? asset.file.arrayBuffer() : (await fetch(asset.uri)).arrayBuffer();
+}
+
 /** O WAV de um som em base64, para compartilhar o pack com amigos. */
 export async function readAudioBase64(id: string): Promise<string> {
   const bytes = await run<Uint8Array | undefined>('readonly', (s) => s.get(id));
