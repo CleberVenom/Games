@@ -37,7 +37,7 @@ export function ReactionBar({
           className="h-16 flex-1 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
           <Text style={{ fontSize: 28 }}>{REACTION_EMOJI[r]}</Text>
           {counts[r] > 0 && (
-            <View className="absolute -right-1.5 -top-1.5 min-w-[22px] items-center rounded-full bg-violet-500 px-1.5 py-0.5">
+            <View className="absolute -right-1.5 -top-1.5 min-w-[22px] items-center rounded-full bg-fuchsia-500 px-1.5 py-0.5">
               <Text className="font-heading text-[11px] text-mist-50">{counts[r]}</Text>
             </View>
           )}

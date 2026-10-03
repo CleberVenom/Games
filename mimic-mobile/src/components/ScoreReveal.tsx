@@ -12,7 +12,7 @@ import { KIND_STYLE, MODIFIER_ICON } from './ModifierBadge';
 function verdict(total: number): { label: string; color: string } {
   if (total >= 90) return { label: 'Lendário!', color: palette.mint[400] };
   if (total >= 75) return { label: 'Mandou muito bem', color: palette.cyan[400] };
-  if (total >= 50) return { label: 'Quase lá', color: palette.violet[300] };
+  if (total >= 50) return { label: 'Quase lá', color: palette.fuchsia[300] };
   if (total >= 25) return { label: 'Criativo, no mínimo', color: palette.amber[400] };
   return { label: 'Isso foi um som?', color: palette.coral[400] };
 }

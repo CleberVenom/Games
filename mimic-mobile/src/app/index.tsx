@@ -144,10 +144,10 @@ export default function LobbyScreen() {
 
           <View
             className="gap-3 rounded-4xl border border-white/5 bg-night-850/80 p-5"
-            style={{ boxShadow: '0px 24px 48px rgba(4, 5, 15, 0.55)' }}>
+            style={{ boxShadow: '0px 24px 48px rgba(14, 2, 20, 0.55)' }}>
             <View className="mb-1 flex-row items-center justify-between">
               <View className="flex-row items-center gap-2">
-                <Icon name="people" size={18} color={palette.violet[300]} />
+                <Icon name="people" size={18} color={palette.fuchsia[300]} />
                 <Text className="font-heading text-lg text-mist-50">Jogadores</Text>
               </View>
               <Text className="font-label text-sm text-mist-400">
@@ -173,7 +173,7 @@ export default function LobbyScreen() {
                     onChangeText={(name) => rename(p.key, name)}
                     placeholder={`Jogador ${i + 1}`}
                     placeholderTextColor={palette.mist[500]}
-                    selectionColor={palette.violet[400]}
+                    selectionColor={palette.fuchsia[400]}
                     maxLength={16}
                     returnKeyType="done"
                     className="h-11 min-w-0 flex-1 font-label text-base text-mist-50 web:outline-none"
@@ -195,9 +195,9 @@ export default function LobbyScreen() {
               <PressableScale
                 onPress={add}
                 accessibilityRole="button"
-                className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-violet-400/40 bg-violet-500/5">
-                <Icon name="person-add-outline" size={18} color={palette.violet[300]} />
-                <Text className="font-label text-sm text-violet-300">Adicionar jogador</Text>
+                className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-fuchsia-400/40 bg-fuchsia-500/5">
+                <Icon name="person-add-outline" size={18} color={palette.fuchsia[300]} />
+                <Text className="font-label text-sm text-fuchsia-300">Adicionar jogador</Text>
               </PressableScale>
             )}
 
@@ -207,7 +207,7 @@ export default function LobbyScreen() {
           <View className="gap-3">
             <View className="flex-row items-center justify-between px-1">
               <View className="flex-row items-center gap-2">
-                <Icon name="albums" size={18} color={palette.violet[300]} />
+                <Icon name="albums" size={18} color={palette.fuchsia[300]} />
                 <Text className="font-heading text-lg text-mist-50">Packs de sons</Text>
               </View>
               <Text className="font-label text-sm text-mist-400">

@@ -17,18 +17,18 @@ import { Gradient } from './Gradient';
 export const BAR_COUNT = 32;
 
 const MODE_STOPS: Record<VisualizerMode, readonly string[]> = {
-  idle: [palette.violet[600], palette.violet[400], palette.cyan[500]],
-  reference: [palette.cyan[400], palette.violet[400], palette.cyan[400]],
-  recording: [palette.pink[400], palette.violet[500], palette.pink[400]],
-  analyzing: [palette.violet[400], palette.cyan[300], palette.violet[400]],
+  idle: [palette.fuchsia[600], palette.fuchsia[400], palette.cyan[500]],
+  reference: [palette.cyan[400], palette.fuchsia[400], palette.cyan[400]],
+  recording: [palette.tangerine[400], palette.fuchsia[500], palette.tangerine[400]],
+  analyzing: [palette.fuchsia[400], palette.cyan[300], palette.fuchsia[400]],
 };
 
 const PHASE_UI: Record<Phase, { mode: VisualizerMode; label: string; accent: string; live: boolean }> = {
-  handoff: { mode: 'idle', label: 'Aguardando o jogador', accent: palette.violet[500], live: false },
+  handoff: { mode: 'idle', label: 'Aguardando o jogador', accent: palette.fuchsia[500], live: false },
   listening: { mode: 'reference', label: 'Ouça com atenção', accent: palette.cyan[400], live: true },
-  ready: { mode: 'idle', label: 'Sua vez de imitar', accent: palette.violet[400], live: false },
-  recording: { mode: 'recording', label: 'Gravando', accent: palette.pink[400], live: true },
-  analyzing: { mode: 'analyzing', label: 'Analisando tom e ritmo', accent: palette.violet[400], live: true },
+  ready: { mode: 'idle', label: 'Sua vez de imitar', accent: palette.fuchsia[400], live: false },
+  recording: { mode: 'recording', label: 'Gravando', accent: palette.tangerine[400], live: true },
+  analyzing: { mode: 'analyzing', label: 'Analisando tom e ritmo', accent: palette.fuchsia[400], live: true },
   result: { mode: 'idle', label: 'Imitação avaliada', accent: palette.mint[400], live: false },
   wheel: { mode: 'idle', label: 'Imitação avaliada', accent: palette.mint[400], live: false },
   finished: { mode: 'idle', label: 'Imitação avaliada', accent: palette.mint[400], live: false },
@@ -159,7 +159,7 @@ function Legend() {
         <Text className="font-ui text-xs text-mist-200">Som original</Text>
       </View>
       <View className="flex-row items-center gap-2">
-        <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: palette.pink[400] }} />
+        <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: palette.tangerine[400] }} />
         <Text className="font-ui text-xs text-mist-200">Sua voz</Text>
       </View>
     </View>

@@ -23,7 +23,7 @@ const theme = {
     ...DarkTheme.colors,
     background: palette.night[950],
     card: palette.night[900],
-    primary: palette.violet[500],
+    primary: palette.fuchsia[500],
     text: palette.mist[50],
     border: palette.night[700],
   },

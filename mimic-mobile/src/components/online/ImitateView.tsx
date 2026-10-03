@@ -163,7 +163,7 @@ export function ImitateView({ session, round, players, ids, scores }: Props) {
                     {upload === 'sent' ? (
                       <Icon name="checkmark-circle" size={20} color={palette.mint[400]} />
                     ) : (
-                      <LiveDot color={palette.violet[400]} />
+                      <LiveDot color={palette.fuchsia[400]} />
                     )}
                     <Text className="font-heading text-base text-mist-50">
                       {upload === 'sent' ? 'Imitação enviada!' : 'Enviando a imitação…'}

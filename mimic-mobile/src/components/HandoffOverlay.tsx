@@ -79,7 +79,7 @@ function Rule({ icon, text }: { icon: IconName; text: string }) {
   return (
     <View className="flex-row items-center gap-3">
       <View className="h-8 w-8 items-center justify-center rounded-xl bg-white/5">
-        <Icon name={icon} size={16} color={palette.violet[300]} />
+        <Icon name={icon} size={16} color={palette.fuchsia[300]} />
       </View>
       <Text className="flex-1 font-ui text-sm text-mist-200">{text}</Text>
     </View>

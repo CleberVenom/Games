@@ -53,7 +53,7 @@ function look(view: Exclude<UpdateView, 'none'>, publishedAt: Date | null, progr
 export function UpdateBanner({ view, progress, publishedAt, onUpdate }: Props) {
   if (view === 'none') return null;
   const { icon, title, text, action } = look(view, publishedAt, progress);
-  const accent = view === 'error' ? palette.coral[400] : palette.violet[400];
+  const accent = view === 'error' ? palette.coral[400] : palette.fuchsia[400];
   return (
     <Animated.View entering={FadeInDown.duration(300)}>
       <View

@@ -1,30 +1,19 @@
 import type { PlayerColor } from '../game/types';
-import { palette } from './palette';
+import { palette, players } from './palette';
 
 export { palette };
 
-export const PLAYER_HEX: Record<PlayerColor, string> = {
-  violet: palette.violet[400],
-  cyan: palette.cyan[400],
-  pink: palette.pink[400],
-  mint: palette.mint[400],
-  amber: palette.amber[400],
-  coral: palette.coral[400],
-  sky: palette.sky[400],
-  lime: palette.lime[400],
-  orange: palette.orange[400],
-  orchid: palette.orchid[400],
-};
+export const PLAYER_HEX: Record<PlayerColor, string> = players;
 
 type Stops = readonly [string, string, ...string[]];
 
 export const gradients = {
   /** Botões principais. */
-  primary: [palette.violet[500], palette.pink[500]],
-  /** Som de referência. */
-  listen: [palette.cyan[500], palette.violet[500]],
+  primary: [palette.fuchsia[500], palette.tangerine[500]],
+  /** Som de referência: turquesa → azul (turquesa → rosa/laranja passaria por um cinza "sujo" no meio). */
+  listen: [palette.cyan[500], palette.sky[600]],
   /** Gravação. */
-  record: [palette.pink[400], palette.violet[600]],
+  record: [palette.tangerine[400], palette.fuchsia[600]],
 } as const satisfies Record<string, Stops>;
 
 function toRgb(hex: string): [number, number, number] {

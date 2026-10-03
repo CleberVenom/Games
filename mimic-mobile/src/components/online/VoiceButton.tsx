@@ -131,7 +131,7 @@ function VoiceToast({ text, top }: { text: string; top: number }) {
       <View
         accessibilityLiveRegion="polite"
         className="rounded-2xl border border-white/10 bg-night-800 px-3.5 py-2.5"
-        style={{ boxShadow: '0px 12px 28px rgba(4, 5, 15, 0.6)' }}>
+        style={{ boxShadow: '0px 12px 28px rgba(14, 2, 20, 0.6)' }}>
         <Text className="font-label text-xs text-mist-50">{text}</Text>
       </View>
     </Animated.View>

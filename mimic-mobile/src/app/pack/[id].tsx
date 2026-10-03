@@ -252,7 +252,7 @@ export default function PackEditorScreen() {
                 onChangeText={setTitle}
                 placeholder="Nome do pack (ex.: Memes da firma)"
                 placeholderTextColor={palette.mist[500]}
-                selectionColor={palette.violet[400]}
+                selectionColor={palette.fuchsia[400]}
                 maxLength={28}
                 className="h-11 min-w-0 flex-1 font-label text-base text-mist-50 web:outline-none"
               />
@@ -270,10 +270,10 @@ export default function PackEditorScreen() {
                       accessibilityLabel={`Ícone ${name}`}
                       className="h-11 w-11 items-center justify-center rounded-xl border"
                       style={{
-                        borderColor: on ? withAlpha(palette.violet[400], 0.8) : 'rgba(255, 255, 255, 0.06)',
-                        backgroundColor: on ? withAlpha(palette.violet[500], 0.2) : 'rgba(255, 255, 255, 0.04)',
+                        borderColor: on ? withAlpha(palette.fuchsia[400], 0.8) : 'rgba(255, 255, 255, 0.06)',
+                        backgroundColor: on ? withAlpha(palette.fuchsia[500], 0.2) : 'rgba(255, 255, 255, 0.04)',
                       }}>
-                      <Icon name={name} size={20} color={on ? palette.violet[300] : palette.mist[400]} />
+                      <Icon name={name} size={20} color={on ? palette.fuchsia[300] : palette.mist[400]} />
                     </PressableScale>
                   );
                 })}
@@ -318,7 +318,7 @@ export default function PackEditorScreen() {
                       value={s.title}
                       onChangeText={(t) => setSounds((list) => list.map((x) => (x.id === s.id ? { ...x, title: t } : x)))}
                       maxLength={40}
-                      selectionColor={palette.violet[400]}
+                      selectionColor={palette.fuchsia[400]}
                       className="h-7 font-label text-sm text-mist-50 web:outline-none"
                     />
                     <Text className="font-body text-xs text-mist-500">{seconds(s.durationMs)}</Text>
@@ -340,7 +340,7 @@ export default function PackEditorScreen() {
                   onPress={record}
                   accessibilityRole="button"
                   className="flex-1"
-                  style={{ borderRadius: 20, boxShadow: glow(palette.pink[400], 24, 0.35, 8) }}>
+                  style={{ borderRadius: 20, boxShadow: glow(palette.tangerine[400], 24, 0.35, 8) }}>
                   <Gradient
                     colors={gradients.record}
                     start={{ x: 0, y: 0 }}
@@ -362,8 +362,8 @@ export default function PackEditorScreen() {
               <View
                 className="gap-4 rounded-3xl border p-4"
                 style={{
-                  borderColor: withAlpha(palette.pink[400], 0.35),
-                  backgroundColor: withAlpha(palette.pink[400], 0.08),
+                  borderColor: withAlpha(palette.tangerine[400], 0.35),
+                  backgroundColor: withAlpha(palette.tangerine[400], 0.08),
                 }}>
                 <View className="flex-row items-center justify-between">
                   <Text className="font-label text-sm text-mist-50">
@@ -379,7 +379,7 @@ export default function PackEditorScreen() {
                     onPress={finishRecording}
                     accessibilityRole="button"
                     className="h-12 flex-row items-center justify-center gap-2 rounded-2xl bg-white/10">
-                    <Icon name="stop-circle" size={20} color={palette.pink[300]} />
+                    <Icon name="stop-circle" size={20} color={palette.tangerine[300]} />
                     <Text className="font-label text-sm text-mist-50">Parar e salvar o som</Text>
                   </PressableScale>
                 )}

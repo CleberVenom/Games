@@ -9,7 +9,7 @@ type Stops = readonly [string, string];
 
 export const KIND_STYLE: Record<ModifierKind, { label: string; colors: Stops; accent: string }> = {
   bonus: { label: 'Bônus', colors: [palette.mint[400], palette.cyan[500]], accent: palette.mint[400] },
-  sound: { label: 'Sabotagem de som', colors: [palette.pink[400], palette.violet[600]], accent: palette.pink[400] },
+  sound: { label: 'Sabotagem de som', colors: [palette.tangerine[400], palette.fuchsia[600]], accent: palette.tangerine[400] },
   rule: { label: 'Sabotagem de regra', colors: [palette.amber[400], palette.coral[400]], accent: palette.amber[400] },
   neutral: { label: 'Neutro', colors: [palette.night[500], palette.night[700]], accent: palette.mist[400] },
 };

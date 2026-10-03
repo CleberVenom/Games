@@ -167,7 +167,7 @@ function Segment({ index, progress }: { index: number; progress: SharedValue<num
           borderRadius: 2,
           left: RING / 2 + r * Math.sin(rad) - 1.5,
           top: RING / 2 - r * Math.cos(rad) - 4,
-          backgroundColor: palette.pink[400],
+          backgroundColor: palette.tangerine[400],
           transform: [{ rotate: `${angle}deg` }],
         },
         animated,

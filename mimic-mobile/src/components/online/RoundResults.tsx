@@ -42,7 +42,7 @@ export function RoundResults({ me, roundNumber, totalRounds, players, scores, re
               <View
                 className="flex-row items-center gap-3 rounded-2xl border px-3 py-3"
                 style={{
-                  borderColor: uid === me ? withAlpha(palette.violet[400], 0.45) : 'rgba(255, 255, 255, 0.05)',
+                  borderColor: uid === me ? withAlpha(palette.fuchsia[400], 0.45) : 'rgba(255, 255, 255, 0.05)',
                   backgroundColor: 'rgba(255, 255, 255, 0.04)',
                 }}>
                 <Text className="w-6 text-center font-heading text-base text-mist-400">{i + 1}º</Text>
@@ -75,7 +75,7 @@ export function RoundResults({ me, roundNumber, totalRounds, players, scores, re
           <GradientButton label={action.label} icon={action.icon} onPress={action.onPress} />
         ) : (
           <View className="flex-row items-center justify-center gap-3 py-4">
-            <LiveDot color={palette.violet[400]} />
+            <LiveDot color={palette.fuchsia[400]} />
             <Text className="font-ui text-sm text-mist-400">Aguardando {hostName} seguir…</Text>
           </View>
         )}

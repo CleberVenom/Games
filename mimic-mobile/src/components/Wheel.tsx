@@ -83,7 +83,7 @@ export function Wheel({ target, onStop }: Props) {
           width: SIZE,
           height: SIZE,
           borderRadius: R,
-          boxShadow: glow(palette.violet[500], 60, 0.4, 0),
+          boxShadow: glow(palette.fuchsia[500], 60, 0.4, 0),
         }}>
         <Animated.View style={[{ width: SIZE, height: SIZE }, spin]}>
           <Svg width={SIZE} height={SIZE}>

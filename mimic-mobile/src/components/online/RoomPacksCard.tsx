@@ -19,7 +19,7 @@ export function RoomPacksCard({ hostName }: { hostName: string }) {
     <Animated.View entering={FadeInDown.duration(300)}>
       <View
         className="items-center gap-4 rounded-4xl border border-white/5 bg-night-850/80 px-5 py-8"
-        style={{ boxShadow: '0px 24px 48px rgba(4, 5, 15, 0.55)' }}>
+        style={{ boxShadow: '0px 24px 48px rgba(14, 2, 20, 0.55)' }}>
         <View
           className="h-16 w-16 items-center justify-center rounded-3xl"
           style={{ backgroundColor: withAlpha(color, 0.15) }}>

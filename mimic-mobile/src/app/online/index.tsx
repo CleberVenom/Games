@@ -121,7 +121,7 @@ export default function OnlineEntryScreen() {
                   onChangeText={setName}
                   placeholder="Como os amigos vão te ver"
                   placeholderTextColor={palette.mist[500]}
-                  selectionColor={palette.violet[400]}
+                  selectionColor={palette.fuchsia[400]}
                   maxLength={16}
                   className="h-14 min-w-0 rounded-2xl border border-white/10 bg-night-800 px-4 font-label text-base text-mist-50 web:outline-none"
                 />

@@ -58,7 +58,7 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
       <Animated.View entering={FadeInDown.duration(300)}>
         <View
           className="items-center gap-3 rounded-4xl border border-white/5 bg-night-850/80 px-5 py-6"
-          style={{ boxShadow: '0px 24px 48px rgba(4, 5, 15, 0.55)' }}>
+          style={{ boxShadow: '0px 24px 48px rgba(14, 2, 20, 0.55)' }}>
           <Text className="font-label text-[11px] uppercase tracking-[3px] text-mist-400">Código da sala</Text>
           <Text
             accessibilityLabel={`Código ${code.split('').join(' ')}`}
@@ -78,7 +78,7 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
       <View className="gap-3">
         <View className="flex-row items-center justify-between px-1">
           <View className="flex-row items-center gap-2">
-            <Icon name="people" size={18} color={palette.violet[300]} />
+            <Icon name="people" size={18} color={palette.fuchsia[300]} />
             <Text className="font-heading text-lg text-mist-50">Na sala</Text>
           </View>
           <Text className="font-label text-sm text-mist-400">{ids.length}/{MAX_ROOM_PLAYERS}</Text>
@@ -132,7 +132,7 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
         <View className="gap-3">
           <View className="flex-row items-center justify-between px-1">
             <View className="flex-row items-center gap-2">
-              <Icon name="albums" size={18} color={palette.violet[300]} />
+              <Icon name="albums" size={18} color={palette.fuchsia[300]} />
               <Text className="font-heading text-lg text-mist-50">Packs da partida</Text>
             </View>
             <Text className="font-label text-sm text-mist-400">{pool.length} sons</Text>
@@ -155,7 +155,7 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
         </View>
       ) : (
         <View className="flex-row items-center gap-3 rounded-3xl border border-white/5 bg-white/5 p-5">
-          <LiveDot color={palette.violet[400]} />
+          <LiveDot color={palette.fuchsia[400]} />
           <Text className="flex-1 font-ui text-sm text-mist-200">
             Aguardando {players[host]?.name ?? 'o anfitrião'} escolher os packs e começar…
           </Text>

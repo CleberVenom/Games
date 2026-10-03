@@ -11,7 +11,7 @@ import { PressableScale } from './PressableScale';
 const SOURCE_BADGE: Record<PackSource, { label: string; color: string }> = {
   official: { label: 'Oficial', color: palette.cyan[400] },
   personal: { label: 'Pessoal', color: palette.amber[400] },
-  custom: { label: 'Meu pack', color: palette.pink[400] },
+  custom: { label: 'Meu pack', color: palette.tangerine[400] },
 };
 
 const GAP = 12;
@@ -49,9 +49,9 @@ export function PackPicker({ packs, selected, onToggle, editable = true }: Props
           <PressableScale
             onPress={() => router.push('/pack/new')}
             accessibilityRole="button"
-            className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-pink-400/40 bg-pink-500/5">
-            <Icon name="add" size={20} color={palette.pink[300]} />
-            <Text className="font-label text-sm text-pink-300">Criar pack (gravar ou importar sons)</Text>
+            className="h-14 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-tangerine-400/40 bg-tangerine-500/5">
+            <Icon name="add" size={20} color={palette.tangerine[300]} />
+            <Text className="font-label text-sm text-tangerine-300">Criar pack (gravar ou importar sons)</Text>
           </PressableScale>
           <PressableScale
             onPress={() => router.push('/pack/baixar')}
@@ -86,9 +86,9 @@ function PackTile({ pack, width, on, onPress, editable }: TileProps) {
       className="gap-3 rounded-3xl border p-4"
       style={{
         width,
-        borderColor: on ? withAlpha(palette.violet[400], 0.7) : 'rgba(255, 255, 255, 0.06)',
-        backgroundColor: on ? withAlpha(palette.violet[500], 0.14) : 'rgba(255, 255, 255, 0.03)',
-        boxShadow: on ? glow(palette.violet[500], 24, 0.25, 4) : undefined,
+        borderColor: on ? withAlpha(palette.fuchsia[400], 0.7) : 'rgba(255, 255, 255, 0.06)',
+        backgroundColor: on ? withAlpha(palette.fuchsia[500], 0.14) : 'rgba(255, 255, 255, 0.03)',
+        boxShadow: on ? glow(palette.fuchsia[500], 24, 0.25, 4) : undefined,
       }}>
       <View className="flex-row items-start justify-between">
         <Gradient
@@ -110,7 +110,7 @@ function PackTile({ pack, width, on, onPress, editable }: TileProps) {
           <Icon
             name={on ? 'checkmark-circle' : 'ellipse-outline'}
             size={22}
-            color={on ? palette.violet[300] : palette.mist[500]}
+            color={on ? palette.fuchsia[300] : palette.mist[500]}
           />
         )}
       </View>
@@ -132,7 +132,7 @@ function PackTile({ pack, width, on, onPress, editable }: TileProps) {
           <Icon
             name={on ? 'checkmark-circle' : 'ellipse-outline'}
             size={20}
-            color={on ? palette.violet[300] : palette.mist[500]}
+            color={on ? palette.fuchsia[300] : palette.mist[500]}
           />
         )}
       </View>

@@ -145,7 +145,7 @@ export default function DownloadPackScreen() {
             <Animated.View entering={FadeInDown.duration(300)}>
               <View
                 className="gap-4 rounded-4xl border border-white/5 bg-night-850/80 p-5"
-                style={{ boxShadow: '0px 24px 48px rgba(4, 5, 15, 0.55)' }}>
+                style={{ boxShadow: '0px 24px 48px rgba(14, 2, 20, 0.55)' }}>
                 <View className="flex-row items-center gap-3">
                   <Gradient
                     colors={gradients.primary}
