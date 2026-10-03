@@ -13,6 +13,7 @@ toca e o jogador tenta encaixá-la na sua linha do tempo. Ganha quem juntar 10 c
 
 | Arquivo | Para que serve |
 |---|---|
+| [`Hitaco-todos-os-imprimiveis.pdf`](Hitaco-todos-os-imprimiveis.pdf) | **Tudo em um PDF só** (51 páginas A4): 2 de cartas de instrução, 48 das cartas de música (frente e verso) e 1 de fichas. |
 | [`Hitaco-cartas.pdf`](Hitaco-cartas.pdf) | **Pronto para imprimir**: as 286 cartas (frente e verso) + 70 fichas. |
 | [`Hitaco-cartas-universitario.pdf`](Hitaco-cartas-universitario.pdf) | Só as 102 cartas do **sertanejo universitário** (nº 185 a 286), para quem já imprimiu as 184 primeiras. |
 | [`index.html`](index.html) | App do DJ (celular): lê o QR code e toca a prévia de 30 s sem mostrar o nome da música. Tem as regras. |
