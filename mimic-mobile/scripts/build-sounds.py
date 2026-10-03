@@ -47,15 +47,11 @@ REPOS = {
 # Prévias HQ de sons CC0 do Freesound: id → (caminho da prévia, autor, título original).
 FREESOUND = {
     504988: ("504/504988_1661766", "felix.blume", "Macaw Parrot screaming in a park"),
-    812933: ("812/812933_676927", "zachrau", "Howler monkey howling in the evening jungle"),
-    812932: ("812/812932_676927", "zachrau", "Toucans calling"),
     465697: ("465/465697_9159316", "Breviceps", "Owl Hoot"),
-    498400: ("498/498400_10816113", "16FVolejnikovaA", "Parrot screaming"),
     562605: ("562/562605_12627963", "Viniuau", "Cicada"),
     436790: ("436/436790_3206727", "roboroo", "Thunder Clap"),
     362283: ("362/362283_676927", "zachrau", "Sheep bleating"),
     705300: ("705/705300_1661766", "felix.blume", "Donkey braying loud with distant village atmosphere, close recording"),
-    448208: ("448/448208_6253486", "florianreichelt", "Sound of a Duck"),
     495688: ("495/495688_8923841", "poodaddy69", "Happy Goat"),
     399186: ("399/399186_1032573", "genel", "wolf 2.wav"),
     611721: ("611/611721_13511310", "_justMonke_", "Big Lion Roar"),
@@ -63,7 +59,6 @@ FREESOUND = {
     125419: ("125/125419_2268347", "jyoung20", "Man Yawning.wav"),
     776025: ("776/776025_13922306", "9voltfan", "Hiccups"),
     784056: ("784/784056_15444236", "FriendComIndustries", "gargling"),
-    536520: ("536/536520_8268006", "Jibanshil", "Pressure cooker whistle .m4a"),
     59572: ("59/59572_571436", "3bagbrew", "whistling_kettle2.mp3"),
     638160: ("638/638160_12739873", "martinmih123", "SFX_Int_Mono_MicrowaveBeeping.wav"),
     709948: ("709/709948_3199363", "Squidems", "Doorbell"),
@@ -71,7 +66,6 @@ FREESOUND = {
     781071: ("781/781071_16471339", "Morimorimori42", "Blender (empty) - long blending + short pulses"),
     384487: ("384/384487_208707", "mobaudio", "cell phone vibrate glass_loopable.wav"),
     202809: ("202/202809_285997", "bone666138", "Motorcycle Kickstart and Rev"),
-    492080: ("492/492080_10623057", "mismi003", "powerdrill.wav"),
     49306: ("49/49306_431614", "FOSSA11", "drumroll.wav"),
     752707: ("752/752707_9250976", "Nox_Sound", "Voice_Crowd_Small_Expression_Boo_Stereo"),
     658932: ("658/658932_14147481", "thearchiveguy99", "Dial-up_sound.mp3.flac"),
@@ -105,7 +99,6 @@ KENNEY = '"Voiceover Pack" de Kenney'
 KENNEY_FIGHTER = '"Voiceover Pack: Fighter" de Kenney'
 RETRO = '"Free Retro Arcade Sounds" de The Motion Monkey'
 RETRO_DIR = "MMRetroArcadeSoundsPack1_0_5"
-WHISTLES = "bb - Slide Whistle (Aug 2021)"
 MALE = "kenney_voiceoverpack/Male"
 FIGHTER = "kenney_voiceoverfighter/Audio"
 
@@ -124,11 +117,9 @@ SOUNDS = [
     dict(id="lion-roar", pack="animais", title="Rugido de leão", **fs(611721), max=2.5),
     dict(id="horse-neigh", pack="animais", title="Relincho de cavalo", src=("learn", "animals/clips/horse.mp3"), credit='"Wiehern.ogg" de Hü. (Wikimedia Commons)', license="Domínio público"),
     dict(id="donkey-bray", pack="animais", title="Burro zurrando", **fs(705300)),
-    dict(id="duck-quack", pack="animais", title="Pato grasnando", **fs(448208)),
     dict(id="goat", pack="animais", title="Cabra berrando", **fs(495688), max=2.5),
     dict(id="wolf-howl", pack="animais", title="Lobo uivando", **fs(399186), max=3.5),
     dict(id="whale", pack="animais", title="Canto de baleia", src=("learn", "animals/clips/whale.mp3"), credit='"Humpbackwhale2.ogg" de Spyrogumas (Wikimedia Commons)', license="CC0", max=3.5),
-    dict(id="eagle", pack="animais", title="Grito de águia", src=("learn", "animals/clips/eagle.mp3"), credit='"Bald Eagle Yellowstone National Park.ogg" do National Park Service (Wikimedia Commons)', license="Domínio público"),
     # Vozes
     dict(id="evil-laugh", pack="vozes", title="Risada maligna", **esc("4-167571-A-26.wav", 167571, "evil-laugh", "dlovere")),
     dict(id="snore", pack="vozes", title="Ronco", **esc("3-151557-B-28.wav", 151557, "Snoring", "Erik Pritzens"), max=2.2),
@@ -140,7 +131,6 @@ SOUNDS = [
     dict(id="yawn", pack="vozes", title="Bocejo", **fs(125419), max=3.5),
     dict(id="hiccup", pack="vozes", title="Soluço", **fs(776025), max=3.5),
     dict(id="gargle", pack="vozes", title="Gargarejo", **fs(784056), max=3.5),
-    dict(id="falling-scream", pack="vozes", title="Grito de queda", **lav(f"{RETRO_DIR}/Vocal/wav/Falling4.wav", RETRO)),
     # Memes e zoeira
     dict(id="sad-trombone", pack="memes", title="Trombone triste", synth="sad_trombone", credit="Sintetizado (melodia tradicional)", license="CC0"),
     dict(id="record-scratch", pack="memes", title="Scratch de DJ", src=("sonicpi", "etc/samples/vinyl_rewind.flac"), credit=fsd(162493, "vinyl rewind", "TasmanianPower") + ", via Sonic Pi", license="CC0"),
@@ -149,9 +139,6 @@ SOUNDS = [
     dict(id="old-phone", pack="memes", title="Toque de celular antigo", synth="old_phone", credit="Sintetizado — Gran Vals, de Francisco Tárrega (obra em domínio público)", license="CC0"),
     dict(id="dun-dun-dun", pack="memes", title="Dun dun duuun", synth="dun_dun_dun", credit="Sintetizado", license="CC0"),
     dict(id="fire-in-the-hole", pack="memes", title="“Fire in the hole!”", parts=[((("lav", f"{MALE}/war_fire_in_the_hole.ogg")), 0.15, 2.0), (("lav", f"{RETRO_DIR}/Explosions/wav/Explosion7.wav"), 0, 1.8)], credit=f"{KENNEY} + explosão de {RETRO}", license="CC0", max=MAX_S),
-    dict(id="crickets", pack="memes", title="Grilos (silêncio constrangedor)", **esc("3-134802-A-13.wav", 134802, "barrage of crickets chirping", "ianjuby"), max=2.5),
-    dict(id="dramatic-boom", pack="memes", title="Boom dramático", src=("sonicpi", "etc/samples/misc_cineboom.flac"), credit=fsd(177242, "cineboom", "Northern_Monkey") + ", via Sonic Pi", license="CC0"),
-    dict(id="cartoon-whistle", pack="memes", title="Apito de desenho animado", **lav(f"{WHISTLES}/Bounce Up and Down.wav", '"Slide Whistle" de Ben Burnes')),
     dict(id="drumroll", pack="memes", title="Rufar de tambores", **fs(49306)),
     dict(id="boo", pack="memes", title="Vaia", **fs(752707)),
     dict(id="dial-up", pack="memes", title="Internet discada", **fs(658932), max=3.5),
@@ -163,23 +150,19 @@ SOUNDS = [
     dict(id="train-whistle", pack="maquinas", title="Apito de trem", src=("vcsl", "Aerophones/Edge-blown Aerophones/Train Whistle, Toy/Main_TrainLow_Double-001.wav"), credit="Train Whistle, Toy — VCSL (Versilian Studios)", license="CC0"),
     dict(id="boing", pack="maquinas", title="Boing", src=("vcsl", "Idiophones/Struck Idiophones/Flexatone/flexatone_fast.wav"), credit="Flexatone — VCSL (Versilian Studios)", license="CC0", max=2.2),
     dict(id="alarm-clock", pack="maquinas", title="Despertador", **esc("5-223176-A-37.wav", 223176, "Generic Alarm Clock", "Yoyodaman234")),
-    dict(id="toilet-flush", pack="maquinas", title="Descarga", **esc("5-202020-A-18.wav", 202020, "toilet flush", "ryancacophony"), max=2.5),
-    dict(id="robot", pack="maquinas", title="Robô", src=("sonicpi", "etc/samples/mehackit_robot6.flac"), credit=fsd(415565, "robot", "hullum") + ", via Sonic Pi", license="CC0"),
     dict(id="laser", pack="maquinas", title="Tiros de laser", synth="laser", credit="Sintetizado", license="CC0"),
     dict(id="vuvuzela", pack="maquinas", title="Vuvuzela", synth="vuvuzela", credit="Sintetizado", license="CC0"),
     dict(id="chainsaw", pack="maquinas", title="Motosserra", **esc("3-118972-B-41.wav", 118972, "Chainsaw", "esperri")),
     dict(id="church-bell", pack="maquinas", title="Sino de igreja", **esc("2-56926-A-46.wav", 56926, "sorana bells_sette_casa", "dADDoiT"), max=3.5),
     dict(id="fireworks", pack="maquinas", title="Fogos de artifício", **esc("2-117616-A-48.wav", 117616, "fireworks exploding 1", "soundmary"), max=3.5),
-    dict(id="hand-saw", pack="maquinas", title="Serrote", **esc("1-9887-B-49.wav", 9887, "WoodSaw2", "Pingel")),
     dict(id="motorcycle", pack="maquinas", title="Moto acelerando", **fs(202809), max=3.5),
-    dict(id="drill", pack="maquinas", title="Furadeira", **fs(492080)),
     dict(id="tire-screech", pack="maquinas", title="Pneu cantando", **lav(f"{RETRO_DIR}/Vehicles/wav/Skid2.wav", RETRO)),
     # Games e 8-bit
     dict(id="ready-set-go", pack="games", title="“Ready… set… go!”", parts=[(("lav", f"{MALE}/ready.ogg"), 0.4, 2.0), (("lav", f"{MALE}/set.ogg"), 0.4, 2.0), (("lav", f"{MALE}/go.ogg"), 0, 2.0)], credit=KENNEY, license="CC0", max=MAX_S),
     dict(id="round-fight", pack="games", title="“Round 1… Fight!”", parts=[(("lav", f"{FIGHTER}/round_1.ogg"), 0.45, 2.0), (("lav", f"{FIGHTER}/fight.ogg"), 0, 2.0)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
     dict(id="countdown", pack="games", title="“3, 2, 1… Go!”", parts=[(("lav", f"{MALE}/3.ogg"), 0.35, 2.0), (("lav", f"{MALE}/2.ogg"), 0.35, 2.0), (("lav", f"{MALE}/1.ogg"), 0.35, 2.0), (("lav", f"{MALE}/go.ogg"), 0, 2.0)], credit=KENNEY, license="CC0", max=MAX_S),
     dict(id="choose-character", pack="games", title="“Player 1… Choose your character!”", parts=[(("lav", f"{FIGHTER}/player_1.ogg"), 0.35, 2.0), (("lav", f"{FIGHTER}/choose_your_character.ogg"), 0, 2.5)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
-    dict(id="game-over", pack="games", title="“Game over” de fliperama", **lav(f"{RETRO_DIR}/Speech/wav/GameOver7.wav", RETRO)),
+    dict(id="game-over", pack="games", title="“You lose… Game over!”", parts=[(("lav", f"{FIGHTER}/you_lose.ogg"), 0.35, 2.0), (("lav", f"{FIGHTER}/game_over.ogg"), 0, 2.5)], credit=KENNEY_FIGHTER, license="CC0", max=MAX_S),
     dict(id="boss-laugh", pack="games", title="Risada do chefão", **lav(f"{RETRO_DIR}/Vocal/wav/Laugh1.wav", RETRO)),
     dict(id="explosion", pack="games", title="Explosão", **lav(f"{RETRO_DIR}/Explosions/wav/Explosion7.wav", RETRO)),
     dict(id="coins", pack="games", title="Moedinhas e vida extra", synth="coins", credit="Sintetizado (8-bit)", license="CC0"),
@@ -189,13 +172,7 @@ SOUNDS = [
     # Casa e cotidiano
     dict(id="door-knock", pack="casa", title="Batida na porta", **esc("2-134915-A-30.wav", 134915, "Knocking 2", "barrygusey")),
     dict(id="door-creak", pack="casa", title="Porta rangendo", **esc("1-51805-D-33.wav", 51805, "door hinge squeak creak o,c", "kyles"), max=3.5),
-    dict(id="can-open", pack="casa", title="Lata de refrigerante abrindo", **esc("3-166546-B-34.wav", 166546, "openning can", "Nic3_one")),
-    dict(id="vacuum", pack="casa", title="Aspirador de pó", **esc("3-152020-C-36.wav", 152020, "hoover", "winsx87")),
-    dict(id="clock-tick", pack="casa", title="Tique-taque do relógio", **esc("1-62850-A-38.wav", 62850, "clock_tick_realistic", "life_interconnected"), max=3.5),
-    dict(id="glass-break", pack="casa", title="Vidro quebrando", **esc("2-173559-A-39.wav", 173559, "002", "gevaroy")),
     dict(id="brushing-teeth", pack="casa", title="Escovando os dentes", **esc("1-68628-A-27.wav", 68628, "brushing teeth with noise in background", "bwav")),
-    dict(id="gulps", pack="casa", title="Goles d'água", **esc("1-56270-A-29.wav", 56270, "Water_Drink", "Q.K.")),
-    dict(id="pressure-cooker", pack="casa", title="Panela de pressão", **fs(536520), max=3.5),
     dict(id="kettle", pack="casa", title="Chaleira apitando", **fs(59572)),
     dict(id="microwave", pack="casa", title="Micro-ondas apitando", **fs(638160)),
     dict(id="doorbell", pack="casa", title="Campainha (dim-dom)", **fs(709948)),
@@ -203,17 +180,11 @@ SOUNDS = [
     dict(id="blender", pack="casa", title="Liquidificador", **fs(781071)),
     dict(id="phone-vibrate", pack="casa", title="Celular vibrando", **fs(384487)),
     # Natureza e clima
-    dict(id="rain", pack="natureza", title="Chuva", **esc("2-101676-A-10.wav", 101676, "rain, sm57", "nialldoran")),
     dict(id="sea-waves", pack="natureza", title="Ondas do mar", **esc("2-125966-A-11.wav", 125966, "Waves in sea", "Ryding"), max=3.5),
-    dict(id="campfire", pack="natureza", title="Fogueira estalando", **esc("4-164661-B-12.wav", 164661, "Fire", "Adam_N")),
     dict(id="dripping", pack="natureza", title="Goteira", **esc("2-124564-A-15.wav", 124564, "water-drip-rhythm", "alienistcog")),
     dict(id="thunder", pack="natureza", title="Trovão", **fs(436790), max=3.5),
-    dict(id="songbird", pack="natureza", title="Passarinho cantando", **esc("2-122616-A-14.wav", 122616, "Song thrush (pevchiy drozd)", "urupin"), max=3.5),
     dict(id="macaw", pack="natureza", title="Arara gritando", **fs(504988), max=3.5),
-    dict(id="howler-monkey", pack="natureza", title="Bugio uivando", **fs(812933), max=3.5),
-    dict(id="toucan", pack="natureza", title="Tucano", **fs(812932), max=3.5),
     dict(id="owl", pack="natureza", title="Coruja", **fs(465697), max=3.5),
-    dict(id="parrot", pack="natureza", title="Papagaio", **fs(498400), max=3.5),
     dict(id="cicada", pack="natureza", title="Cigarra", **fs(562605)),
     dict(id="fly", pack="natureza", title="Mosca zumbindo", **esc("5-195517-A-7.wav", 195517, "Foley Small Fly", "jamesrodavidson")),
 ]

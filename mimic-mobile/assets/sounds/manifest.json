@@ -54,11 +54,6 @@
     "title": "Burro zurrando",
     "pack": "animais"
   },
-  "duck-quack": {
-    "durationMs": 2794,
-    "title": "Pato grasnando",
-    "pack": "animais"
-  },
   "goat": {
     "durationMs": 2604,
     "title": "Cabra berrando",
@@ -72,11 +67,6 @@
   "whale": {
     "durationMs": 3602,
     "title": "Canto de baleia",
-    "pack": "animais"
-  },
-  "eagle": {
-    "durationMs": 2434,
-    "title": "Grito de águia",
     "pack": "animais"
   },
   "evil-laugh": {
@@ -129,11 +119,6 @@
     "title": "Gargarejo",
     "pack": "vozes"
   },
-  "falling-scream": {
-    "durationMs": 2434,
-    "title": "Grito de queda",
-    "pack": "vozes"
-  },
   "sad-trombone": {
     "durationMs": 2375,
     "title": "Trombone triste",
@@ -167,21 +152,6 @@
   "fire-in-the-hole": {
     "durationMs": 3372,
     "title": "“Fire in the hole!”",
-    "pack": "memes"
-  },
-  "crickets": {
-    "durationMs": 2604,
-    "title": "Grilos (silêncio constrangedor)",
-    "pack": "memes"
-  },
-  "dramatic-boom": {
-    "durationMs": 3103,
-    "title": "Boom dramático",
-    "pack": "memes"
-  },
-  "cartoon-whistle": {
-    "durationMs": 3103,
-    "title": "Apito de desenho animado",
     "pack": "memes"
   },
   "drumroll": {
@@ -234,16 +204,6 @@
     "title": "Despertador",
     "pack": "maquinas"
   },
-  "toilet-flush": {
-    "durationMs": 2604,
-    "title": "Descarga",
-    "pack": "maquinas"
-  },
-  "robot": {
-    "durationMs": 2434,
-    "title": "Robô",
-    "pack": "maquinas"
-  },
   "laser": {
     "durationMs": 2005,
     "title": "Tiros de laser",
@@ -269,19 +229,9 @@
     "title": "Fogos de artifício",
     "pack": "maquinas"
   },
-  "hand-saw": {
-    "durationMs": 2524,
-    "title": "Serrote",
-    "pack": "maquinas"
-  },
   "motorcycle": {
     "durationMs": 3602,
     "title": "Moto acelerando",
-    "pack": "maquinas"
-  },
-  "drill": {
-    "durationMs": 2345,
-    "title": "Furadeira",
     "pack": "maquinas"
   },
   "tire-screech": {
@@ -310,8 +260,8 @@
     "pack": "games"
   },
   "game-over": {
-    "durationMs": 2484,
-    "title": "“Game over” de fliperama",
+    "durationMs": 3293,
+    "title": "“You lose… Game over!”",
     "pack": "games"
   },
   "boss-laugh": {
@@ -354,39 +304,9 @@
     "title": "Porta rangendo",
     "pack": "casa"
   },
-  "can-open": {
-    "durationMs": 2155,
-    "title": "Lata de refrigerante abrindo",
-    "pack": "casa"
-  },
-  "vacuum": {
-    "durationMs": 3073,
-    "title": "Aspirador de pó",
-    "pack": "casa"
-  },
-  "clock-tick": {
-    "durationMs": 3522,
-    "title": "Tique-taque do relógio",
-    "pack": "casa"
-  },
-  "glass-break": {
-    "durationMs": 2873,
-    "title": "Vidro quebrando",
-    "pack": "casa"
-  },
   "brushing-teeth": {
     "durationMs": 2854,
     "title": "Escovando os dentes",
-    "pack": "casa"
-  },
-  "gulps": {
-    "durationMs": 2863,
-    "title": "Goles d'água",
-    "pack": "casa"
-  },
-  "pressure-cooker": {
-    "durationMs": 3602,
-    "title": "Panela de pressão",
     "pack": "casa"
   },
   "kettle": {
@@ -419,19 +339,9 @@
     "title": "Celular vibrando",
     "pack": "casa"
   },
-  "rain": {
-    "durationMs": 3083,
-    "title": "Chuva",
-    "pack": "natureza"
-  },
   "sea-waves": {
     "durationMs": 3552,
     "title": "Ondas do mar",
-    "pack": "natureza"
-  },
-  "campfire": {
-    "durationMs": 3073,
-    "title": "Fogueira estalando",
     "pack": "natureza"
   },
   "dripping": {
@@ -444,34 +354,14 @@
     "title": "Trovão",
     "pack": "natureza"
   },
-  "songbird": {
-    "durationMs": 3572,
-    "title": "Passarinho cantando",
-    "pack": "natureza"
-  },
   "macaw": {
     "durationMs": 3602,
     "title": "Arara gritando",
     "pack": "natureza"
   },
-  "howler-monkey": {
-    "durationMs": 3602,
-    "title": "Bugio uivando",
-    "pack": "natureza"
-  },
-  "toucan": {
-    "durationMs": 3602,
-    "title": "Tucano",
-    "pack": "natureza"
-  },
   "owl": {
     "durationMs": 3602,
     "title": "Coruja",
-    "pack": "natureza"
-  },
-  "parrot": {
-    "durationMs": 3602,
-    "title": "Papagaio",
     "pack": "natureza"
   },
   "cicada": {

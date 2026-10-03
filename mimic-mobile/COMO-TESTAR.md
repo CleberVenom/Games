@@ -246,12 +246,14 @@ Com 6 jogadores, são 6 rodadas.
 ### A vez de cada jogador
 
 - [ ] Tocar em **Começar partida**. Aparece **"Passe o celular para [nome]"** → tocar em **Estou pronto**.
-- [ ] O som de referência **toca sozinho** e as barrinhas se mexem com o som.
+- [ ] O som de referência **toca sozinho** e as barrinhas **rolam**: entram pela direita e somem pela esquerda
+      enquanto o som toca.
 - [ ] Tocar em **Ouvir de novo (1x)**: toca mais uma vez. Depois disso, não dá para repetir de novo.
-- [ ] Depois que o som toca, o quadro das barrinhas mostra a **silhueta do som original** (contorno azul, fixo) e
-      a legenda **"Som original / Sua voz"**. Embaixo do botão aparece quanto tempo a gravação vai durar.
-- [ ] Tocar no botão grande **Toque para imitar** e imitar o som, tentando **preencher a silhueta** com as
-      barrinhas rosa da sua voz. A gravação dura **exatamente o tempo do som** e termina sozinha: **não há botão
+- [ ] Depois que o som toca, aparece a legenda **"Som original / Sua voz"**. Embaixo do botão aparece quanto tempo
+      a gravação vai durar.
+- [ ] Tocar no botão grande **Toque para imitar** e imitar o som: as barrinhas rosa da sua voz rolam da direita para
+      a esquerda e, atrás delas, a **silhueta do som original** (contorno azul) rola junto — tente acompanhar a
+      altura dela. A gravação dura **exatamente o tempo do som** e termina sozinha: **não há botão
       de parar**, e um anel em volta do botão vai se apagando até o fim do tempo.
 - [ ] Aparece **"Analisando…"** e depois a **nota de 0 a 100**, com as barras **Tom** e **Ritmo**.
 - [ ] Faça uma vez **em silêncio** (sem imitar nada): a nota deve ser **0** ("Isso foi um som?").

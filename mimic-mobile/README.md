@@ -42,8 +42,8 @@ Tudo roda no aparelho, em TypeScript puro (`src/dsp/`), sem bibliotecas nem APIs
 
 Todos os parâmetros ficam em `TUNING` (`src/dsp/score.ts`) para calibrar com jogadores de verdade. Os testes
 cobrem os blocos (FFT, reamostragem, pitch de 110/220/600 Hz, brilho), imitações sintéticas boas e ruins e uma
-regressão com os 97 sons reais: cada som contra ele mesmo dá 100; contra os outros, nenhum passa de 90 e a média
-fica em torno de 29.
+regressão com os 75 sons reais: cada som contra ele mesmo dá 100; contra os outros, nenhum passa de 90 e a média
+fica em torno de 30.
 
 ### Roleta (Passo 4)
 
@@ -76,7 +76,7 @@ Como no Mimic Party, a partida sorteia só os sons dos **packs marcados** na tel
 
 | Origem | O que é | Onde fica |
 |---|---|---|
-| **Oficial** | Animais · Vozes · Memes & zoeira · Máquinas & efeitos · Games & 8-bit · Casa & cotidiano · Natureza & clima (97 sons CC0) | `assets/sounds/` |
+| **Oficial** | Animais · Vozes · Memes & zoeira · Máquinas & efeitos · Games & 8-bit · Casa & cotidiano · Natureza & clima (75 sons CC0) | `assets/sounds/` |
 | **Pessoal** | Seus packs de uso privado (memes BR/gringos, anime…) empacotados no app | `packs-pessoais/` — veja o [README](packs-pessoais/README.md) |
 | **Meu pack** | Criados no próprio celular, no editor: grave pelo microfone ou importe MP3/WAV/M4A/OGG | só no aparelho |
 
@@ -134,9 +134,11 @@ novo 1 vez** ou gravar) → `recording` (**uma chance**, sem repetir e **sem bot
 tempo do som original, com um anel de contagem regressiva) → `analyzing` → `result` (nota de tom, ritmo e
 total) → `wheel` (roleta para o próximo turno) → próximo jogador.
 
-Na hora de imitar (`ready` e `recording`), a **silhueta do som original** fica fixa e translúcida atrás das
-barras: é a média das barras do som, calculada com a mesma FFT do analisador (`referenceProfile` em
-`src/audio/spectrum.ts`). As barras da voz oscilam por cima, e o jogador tenta preencher a silhueta.
+O **gráfico de som rola**: cada barra é o volume num instante; uma barra nova entra pela direita a cada 70 ms e a
+mais antiga sai pela esquerda (≈2,2 s na tela), tanto com o som original tocando quanto na gravação e na
+apresentação online (`src/audio/loudness.ts` + `useVisualizer`). Na gravação, a **silhueta do som original** (o
+volume dele no mesmo instante, medido como o analisador mede ao vivo) rola junto, atrás das barras da voz, e o
+jogador tenta acompanhar a altura dela.
 Todo som tem de **2 a 5 s** (os mais curtos ficam fora do catálogo), para a gravação nunca ser curta demais.
 A rodada avança quando todos jogaram; os sons dos packs escolhidos não se repetem até o baralho acabar.
 
@@ -150,12 +152,12 @@ src/
   components/   UI: botões com gradiente, visualizador de áudio, botão de gravação, placar, nota…
   game/         lógica pura: tipos, catálogo de sons, máquina de estados da partida (+ testes)
   store/        estado da partida (zustand)
-  audio/        motor de áudio, microfone (nativo e web), espectro → barras, fluxo de áudio do turno (+ testes)
+  audio/        motor de áudio, microfone (nativo e web), volume → gráfico rolando, fluxo de áudio do turno (+ testes)
   dsp/          FFT, reamostragem, extração de pitch/energia/brilho e a nota (+ testes)
   online/       modo online: sala e rodadas (lógica pura), Firebase, imitação pela rede, chat de voz (+ testes)
   theme/        paleta única (Tailwind + gradientes) e utilitários de cor/brilho
 assets/images/  ícones e splash (gerados por scripts/make-icons.py)
-assets/sounds/  97 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
+assets/sounds/  75 sons de referência + manifest.json + CREDITS.md (gerados por scripts/build-sounds.py)
 ```
 
 
@@ -163,7 +165,7 @@ assets/sounds/  97 sons de referência + manifest.json + CREDITS.md (gerados por
 
 ```
 referência ──► alto-falante
-     └──────► AnalyserNode (FFT) ──► ganho 0 ──► saída      barras do visualizador
+     └──────► AnalyserNode ──► ganho 0 ──► saída            volume (RMS) → gráfico rolando
 microfone ───► AnalyserNode                                 (ramo mudo: sem microfonia)
      └──────► blocos PCM ──► Recording { samples, sampleRate }   entrada do DSP
 ```
@@ -176,23 +178,27 @@ microfone ───► AnalyserNode                                 (ramo mudo: 
 - `src/audio/useAudioTurn.ts`: liga cada fase do turno ao áudio (tocar, gravar pelo tempo do som, analisar)
   e limpa tudo se o jogador sair no meio.
 - `src/audio/analysis.ts`: analisa a referência já na tela "passe o celular" (com cache) e dá a nota da gravação.
-  Também calcula a silhueta do som original (`prepareProfile`), mostrada atrás das barras na hora de imitar.
+  Também calcula a silhueta do som original no tempo (`prepareEnvelope`), que rola junto com a voz na gravação.
 
 ### Sons de referência
 
-97 sons em 7 packs (todos com 2 a 5 s):
+75 sons em 7 packs (todos com 2 a 5 s):
 
 | Pack | Sons |
 |---|---|
-| **Animais** (16) | cachorro, gato, galo, vaca, porco, ovelha, galinha, corvo, leão, cavalo, burro, pato, cabra, lobo, baleia, águia |
-| **Vozes** (11) | risada maligna, ronco, bebê, arroto, risada de criança, tosse, palmas, bocejo, soluço, gargarejo, grito de queda |
-| **Memes & zoeira** (14) | trombone triste, scratch de DJ, buzina de torcida, caminhão do gás, celular antigo, dun dun duuun, "fire in the hole", grilos, boom dramático, apito de desenho, rufar de tambores, vaia, internet discada, parabéns pra você |
-| **Máquinas & efeitos** (17) | buzina, sirene, apito de juiz, apito de trem, boing, despertador, descarga, robô, lasers, vuvuzela, motosserra, sino de igreja, fogos, serrote, moto, furadeira, pneu cantando |
-| **Games & 8-bit** (11) | "Ready… set… go!", "Round 1… Fight!", "3, 2, 1… Go!", "Choose your character!", "Game over" de fliperama, risada do chefão, explosão, moedinhas, power-up, fase completa, pulos |
-| **Casa & cotidiano** (15) | batida na porta, porta rangendo, lata abrindo, aspirador, tique-taque, vidro quebrando, escova de dentes, goles, panela de pressão, chaleira, micro-ondas, campainha, zíper, liquidificador, celular vibrando |
-| **Natureza & clima** (13) | chuva, ondas, fogueira, goteira, trovão, passarinho, arara, bugio, tucano, coruja, papagaio, cigarra, mosca |
+| **Animais** (14) | cachorro, gato, galo, vaca, porco, ovelha, galinha, corvo, leão, cavalo, burro, cabra, lobo, baleia |
+| **Vozes** (10) | risada maligna, ronco, bebê, arroto, risada de criança, tosse, palmas, bocejo, soluço, gargarejo |
+| **Memes & zoeira** (11) | trombone triste, scratch de DJ, buzina de torcida, caminhão do gás, celular antigo, dun dun duuun, "fire in the hole", rufar de tambores, vaia, internet discada, parabéns pra você |
+| **Máquinas & efeitos** (13) | buzina, sirene, apito de juiz, apito de trem, boing, despertador, lasers, vuvuzela, motosserra, sino de igreja, fogos, moto, pneu cantando |
+| **Games & 8-bit** (11) | "Ready… set… go!", "Round 1… Fight!", "3, 2, 1… Go!", "Choose your character!", "You lose… Game over!", risada do chefão, explosão, moedinhas, power-up, fase completa, pulos |
+| **Casa & cotidiano** (9) | batida na porta, porta rangendo, escova de dentes, chaleira, micro-ondas, campainha, zíper, liquidificador, celular vibrando |
+| **Natureza & clima** (7) | ondas, goteira, trovão, arara, coruja, cigarra, mosca |
 
 Ficaram de fora, por terem menos de 2 s mesmo sem silêncio: espirro, "ba dum tss" e "flawless victory".
+Excluídos depois da 2ª rodada de testes (out/2026), por não terem agradado: águia, pato, grito de queda, grilos,
+apito de desenho, boom dramático, robô, furadeira, descarga, serrote, aspirador, panela de pressão, goles d'água,
+vidro quebrando, tique-taque, lata abrindo, fogueira, papagaio, passarinho, tucano, chuva e bugio. O "Game over" de
+fliperama virou "You lose… Game over!" (narrador do pack de luta da Kenney).
 
 Todos são **CC0 ou domínio público** (origem de cada arquivo em `assets/sounds/CREDITS.md`): gravações dos
 repositórios ESC-50 (só clipes CC0), Sonic Pi, VCSL, learntoread e CC0-Public-Domain-Sounds (packs da
@@ -238,7 +244,7 @@ botões que encolhem com mola ao toque (e crescem no *hover* do mouse, na web). 
 
 | Pacote | Para quê |
 |---|---|
-| `react-native-audio-api` (Software Mansion) | Web Audio nativo (Oboe no Android): `AudioRecorder` com buffers PCM do microfone, `AnalyserNode` (FFT em tempo real para as barras), `decodeAudioData` para os sons de referência, `DelayNode`/`WaveShaperNode` para as sabotagens (eco, distorção) e pedido de permissão do microfone. O *config plugin* (em `app.json`) adiciona só `android.permission.RECORD_AUDIO` — sem serviço em segundo plano. |
+| `react-native-audio-api` (Software Mansion) | Web Audio nativo (Oboe no Android): `AudioRecorder` com buffers PCM do microfone, `AnalyserNode` (volume em tempo real para o gráfico rolando), `decodeAudioData` para os sons de referência, `DelayNode`/`WaveShaperNode` para as sabotagens (eco, distorção) e pedido de permissão do microfone. O *config plugin* (em `app.json`) adiciona só `android.permission.RECORD_AUDIO` — sem serviço em segundo plano. |
 | `expo-asset` | Resolve os arquivos de referência empacotados no app para decodificação. |
 | `expo-dev-client` | *Development build*: bibliotecas com código nativo não rodam no Expo Go. |
 | — (TypeScript próprio) | FFT radix-2, *pitch tracking* (YIN/autocorrelação), envelope RMS/ataques e alinhamento por DTW para a nota. Sem dependências externas nem APIs pagas. |
@@ -249,7 +255,7 @@ botões que encolhem com mola ao toque (e crescem no *hover* do mouse, na web). 
 
 ```bash
 npm install
-npm test            # partida, rodadas e pódio, packs, catálogo, espectro → barras, DSP, nota e recorte de sons
+npm test            # partida, rodadas e pódio, packs, catálogo, volume → gráfico rolando, DSP, nota e recorte de sons
 npm run typecheck
 npm run lint
 ```

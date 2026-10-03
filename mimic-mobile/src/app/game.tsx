@@ -5,8 +5,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAudioTurn } from '../audio/useAudioTurn';
-import { useReferenceProfile } from '../audio/useReferenceProfile';
-import { useVisualizerLevels } from '../audio/useVisualizerLevels';
+import { useReferenceEnvelope } from '../audio/useReferenceEnvelope';
+import { useVisualizer } from '../audio/useVisualizerLevels';
 import { BAR_COUNT, VisualizerCard, visualizerMode } from '../components/AudioVisualizer';
 import { Avatar } from '../components/Avatar';
 import { Backdrop } from '../components/Backdrop';
@@ -60,8 +60,8 @@ function Game({ match }: { match: Match }) {
   const effect = soundEffectOf(modifier);
   const activeModifier = modifier && modifier !== 'nothing' ? getModifier(modifier) : null;
 
-  const levels = useVisualizerLevels(visualizerMode(phase), BAR_COUNT);
-  const profile = useReferenceProfile(sound.id, BAR_COUNT);
+  const envelope = useReferenceEnvelope(sound.id);
+  const viz = useVisualizer(visualizerMode(phase), BAR_COUNT, phase === 'recording' ? envelope : null);
   useAudioTurn(phase, sound.id, sound.durationMs, recordingMs, effect, dispatch);
 
   // A gravação termina sozinha no tempo do som original: não há como parar antes.
@@ -145,7 +145,7 @@ function Game({ match }: { match: Match }) {
             onReplay={() => dispatch({ type: 'replay' })}
           />
 
-          <VisualizerCard phase={phase} levels={levels} recordingMs={recordingMs} profile={profile} />
+          <VisualizerCard phase={phase} viz={viz} recordingMs={recordingMs} guide={envelope !== null} />
         </View>
 
         <View className="px-5 pt-5">
@@ -159,7 +159,7 @@ function Game({ match }: { match: Match }) {
               )}
             </Animated.View>
           ) : (
-            <RecordButton state={RECORD_STATE[phase]} onPress={onRecordPress} levels={levels} durationMs={recordingMs} />
+            <RecordButton state={RECORD_STATE[phase]} onPress={onRecordPress} levels={viz.levels} durationMs={recordingMs} />
           )}
         </View>
       </View>

@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { deleteAudio, saveAudio } from '../../audio/customAudio';
 import { engine } from '../../audio/engine';
 import { prepareMic, startRecording, stopRecording } from '../../audio/mic';
-import { useVisualizerLevels } from '../../audio/useVisualizerLevels';
+import { useVisualizer } from '../../audio/useVisualizerLevels';
 import { BAR_COUNT, Bars } from '../../components/AudioVisualizer';
 import { Backdrop } from '../../components/Backdrop';
 import { GradientButton } from '../../components/Buttons';
@@ -64,7 +64,7 @@ export default function PackEditorScreen() {
   /** Sons gravados/importados nesta edição (o áudio é apagado se o jogador descartar). */
   const created = useRef<string[]>([]);
   const stopTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const levels = useVisualizerLevels(mode === 'recording' ? 'recording' : 'idle', BAR_COUNT);
+  const viz = useVisualizer(mode === 'recording' ? 'recording' : 'idle', BAR_COUNT);
 
   const saved = existing?.sounds ?? [];
   const dirty =
@@ -361,7 +361,7 @@ export default function PackEditorScreen() {
                   <Text className="font-body text-xs text-mist-400">máx. {MAX_CLIP_SECONDS} s</Text>
                 </View>
                 <View className="h-20">
-                  <Bars mode={mode === 'recording' ? 'recording' : 'analyzing'} levels={levels} />
+                  <Bars mode={mode === 'recording' ? 'recording' : 'analyzing'} viz={viz} />
                 </View>
                 {mode === 'recording' && (
                   <PressableScale

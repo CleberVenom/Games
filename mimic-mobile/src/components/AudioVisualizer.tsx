@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import type { VisualizerMode } from '../audio/useVisualizerLevels';
+import type { Visualizer, VisualizerMode } from '../audio/useVisualizerLevels';
 import type { Phase } from '../game/types';
 import { glow, gradients, palette, sampleGradient, withAlpha } from '../theme/tokens';
 import { Gradient } from './Gradient';
@@ -40,17 +40,17 @@ export function visualizerMode(phase: Phase): VisualizerMode {
 
 interface Props {
   phase: Phase;
-  levels: SharedValue<number[]>;
+  viz: Visualizer;
   /** Janela de gravação, para a barra de progresso. */
   recordingMs: number;
-  /** Silhueta do som original (0–1 por barra): fica fixa atrás das barras na hora de imitar. */
-  profile: number[] | null;
+  /** A silhueta do som original está pronta (ela rola junto com a voz na gravação). */
+  guide: boolean;
 }
 
-/** Cartão central: status da fase + barras de áudio animadas (+ silhueta e progresso ao imitar). */
-export function VisualizerCard({ phase, levels, recordingMs, profile }: Props) {
+/** Cartão central: status da fase + gráfico de som rolando (+ silhueta do original e progresso ao imitar). */
+export function VisualizerCard({ phase, viz, recordingMs, guide }: Props) {
   const ui = PHASE_UI[phase];
-  const ghost = phase === 'ready' || phase === 'recording' ? profile : null;
+  const legend = guide && (phase === 'ready' || phase === 'recording');
 
   return (
     <View
@@ -69,66 +69,76 @@ export function VisualizerCard({ phase, levels, recordingMs, profile }: Props) {
       </View>
 
       <View className="flex-1 py-3">
-        <Bars mode={ui.mode} levels={levels} ghost={ghost} />
+        <Bars mode={ui.mode} viz={viz} />
       </View>
 
-      {ghost && <Legend />}
+      {legend && <Legend />}
       {phase === 'recording' && <RecordingProgress durationMs={recordingMs} />}
     </View>
   );
 }
 
-/** Altura (0–1) que uma barra ao vivo teria com o nível `v` do espectro — a mesma regra do visualizador. */
-const barHeight = (v: number) => 0.06 + 0.94 * Math.min(Math.max(v, 0), 1);
-
 /**
- * Fileira de barras coloridas pelo gradiente do modo; a altura vem de `levels` (0–1).
- * Com `ghost`, a silhueta do som original fica fixa e translúcida atrás de cada barra.
+ * Gráfico de som: barras de volume que entram pela direita e saem pela esquerda (a fileira tem uma barra a
+ * mais, escondida, e desliza `shift` de uma barra para a esquerda entre uma barra nova e outra). Atrás de cada
+ * barra, a silhueta do som original no mesmo instante, quando houver.
  */
-export function Bars({
-  mode,
-  levels,
-  ghost = null,
-}: {
-  mode: VisualizerMode;
-  levels: SharedValue<number[]>;
-  ghost?: number[] | null;
-}) {
+export function Bars({ mode, viz }: { mode: VisualizerMode; viz: Visualizer }) {
+  const [width, setWidth] = useState(0);
+  const slots = BAR_COUNT + 1;
+  const slot = width / BAR_COUNT;
   const colors = useMemo(
-    () => Array.from({ length: BAR_COUNT }, (_, i) => sampleGradient(MODE_STOPS[mode], i / (BAR_COUNT - 1))),
-    [mode],
+    () => Array.from({ length: slots }, (_, i) => sampleGradient(MODE_STOPS[mode], i / (slots - 1))),
+    [mode, slots],
   );
+  const { shift } = viz;
+  const row = useAnimatedStyle(() => ({ transform: [{ translateX: (shift.value - 1) * slot }] }), [slot]);
   return (
-    <View className="flex-1 flex-row items-center justify-between">
-      {colors.map((color, i) => (
-        <View key={i} className="h-full items-center justify-center" style={{ width: 7 }}>
-          {ghost && (
-            <View
-              pointerEvents="none"
-              style={{
-                position: 'absolute',
-                width: 7,
-                height: `${6 + barHeight(ghost[i] ?? 0) * 94}%`,
-                borderRadius: 4,
-                borderWidth: 1,
-                borderColor: withAlpha(palette.cyan[300], 0.55),
-                backgroundColor: withAlpha(palette.cyan[400], 0.16),
-              }}
-            />
-          )}
-          <Bar index={i} color={color} levels={levels} />
-        </View>
-      ))}
+    <View className="flex-1 overflow-hidden" onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
+      {width > 0 && (
+        <Animated.View style={[{ flexDirection: 'row', height: '100%', width: slots * slot }, row]}>
+          {colors.map((color, i) => (
+            <View key={i} style={{ width: slot, height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+              <GhostBar index={i} ghost={viz.ghost} />
+              <Bar index={i} color={color} levels={viz.levels} />
+            </View>
+          ))}
+        </Animated.View>
+      )}
     </View>
   );
 }
 
 function Bar({ index, color, levels }: { index: number; color: string; levels: SharedValue<number[]> }) {
   const animated = useAnimatedStyle(() => {
-    const v = levels.value[index] ?? 0;
+    const v = Math.min(Math.max(levels.value[index] ?? 0, 0), 1);
     return { height: `${6 + v * 94}%`, opacity: 0.35 + 0.65 * v };
   });
   return <Animated.View style={[{ width: 5, borderRadius: 3, backgroundColor: color }, animated]} />;
+}
+
+/** Silhueta translúcida do som original naquele instante (some quando não há). */
+function GhostBar({ index, ghost }: { index: number; ghost: SharedValue<number[]> }) {
+  const animated = useAnimatedStyle(() => {
+    const v = Math.min(Math.max(ghost.value[index] ?? 0, 0), 1);
+    return { height: `${6 + v * 94}%`, opacity: v > 0.01 ? 1 : 0 };
+  });
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        {
+          position: 'absolute',
+          width: 7,
+          borderRadius: 4,
+          borderWidth: 1,
+          borderColor: withAlpha(palette.cyan[300], 0.55),
+          backgroundColor: withAlpha(palette.cyan[400], 0.16),
+        },
+        animated,
+      ]}
+    />
+  );
 }
 
 /** Legenda da comparação: silhueta = som original; barras = voz ao vivo. */

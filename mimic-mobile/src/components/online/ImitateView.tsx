@@ -4,8 +4,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import type { Recording } from '../../audio/recording';
 import { useAudioTurn } from '../../audio/useAudioTurn';
-import { useReferenceProfile } from '../../audio/useReferenceProfile';
-import { useVisualizerLevels } from '../../audio/useVisualizerLevels';
+import { useReferenceEnvelope } from '../../audio/useReferenceEnvelope';
+import { useVisualizer } from '../../audio/useVisualizerLevels';
 import { recordingWindowMs } from '../../game/match';
 import { getModifier, pointsFor, soundEffectOf } from '../../game/modifiers';
 import type { Phase, TurnScore } from '../../game/types';
@@ -56,8 +56,8 @@ export function ImitateView({ session, round, players, ids, scores }: Props) {
   const durationMs = sound?.durationMs ?? 3000;
   const recordingMs = recordingWindowMs(durationMs, round.modifier);
   const effect = soundEffectOf(round.modifier);
-  const levels = useVisualizerLevels(visualizerMode(turn.phase), BAR_COUNT);
-  const profile = useReferenceProfile(round.soundId, BAR_COUNT);
+  const envelope = useReferenceEnvelope(round.soundId);
+  const viz = useVisualizer(visualizerMode(turn.phase), BAR_COUNT, turn.phase === 'recording' ? envelope : null);
 
   const send = useCallback(
     async (score: TurnScore) => {
@@ -122,7 +122,7 @@ export function ImitateView({ session, round, players, ids, scores }: Props) {
         onReplay={() => dispatch({ type: 'replay' })}
       />
 
-      <VisualizerCard phase={turn.phase} levels={levels} recordingMs={recordingMs} profile={profile} />
+      <VisualizerCard phase={turn.phase} viz={viz} recordingMs={recordingMs} guide={envelope !== null} />
 
       <View className="pt-1">
         {turn.phase === 'handoff' ? (
@@ -186,7 +186,7 @@ export function ImitateView({ session, round, players, ids, scores }: Props) {
               hapticImpact();
               dispatch({ type: 'record' });
             }}
-            levels={levels}
+            levels={viz.levels}
             durationMs={recordingMs}
           />
         )}

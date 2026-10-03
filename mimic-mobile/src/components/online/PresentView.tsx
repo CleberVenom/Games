@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 
 import { engine } from '../../audio/engine';
-import { useVisualizerLevels } from '../../audio/useVisualizerLevels';
+import { useVisualizer } from '../../audio/useVisualizerLevels';
 import { fetchClip, react, ReactionEntry, Session } from '../../online/api';
 import { CLIP_NET_RATE, decodeClip } from '../../online/clipCodec';
 import { countReactions, PRESENT_INTRO_MS, RoomPlayer, RoomRound, RoomScore } from '../../online/room';
@@ -34,7 +34,7 @@ export function PresentView({ session, round, players, scores, reactions }: Prop
   const player = players[uid];
   const score = scores[uid];
   const [stage, setStage] = useState<Stage>('intro');
-  const levels = useVisualizerLevels(stage === 'playing' ? 'reference' : 'idle', BAR_COUNT);
+  const viz = useVisualizer(stage === 'playing' ? 'reference' : 'idle', BAR_COUNT);
 
   useEffect(() => {
     let active = true;
@@ -87,7 +87,7 @@ export function PresentView({ session, round, players, scores, reactions }: Prop
           {stage !== 'reveal' && (
             <>
               <View className="h-24 w-full">
-                <Bars mode={stage === 'playing' ? 'recording' : 'idle'} levels={levels} />
+                <Bars mode={stage === 'playing' ? 'recording' : 'idle'} viz={viz} />
               </View>
               <Text className="font-ui text-sm text-mist-400">
                 {stage === 'intro' ? 'Prepare os ouvidos…' : 'Tocando a imitação…'}

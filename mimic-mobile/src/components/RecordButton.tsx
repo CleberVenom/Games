@@ -64,10 +64,10 @@ export function RecordButton({ state, onPress, levels, durationMs }: Props) {
 
   const halo = useAnimatedStyle(() => {
     if (state === 'recording') {
+      // O halo pulsa com o volume de agora: a barra mais nova do gráfico rolando.
       const lv = levels.value;
-      let sum = 0;
-      for (let i = 0; i < lv.length; i++) sum += lv[i];
-      return { opacity: 0.5, transform: [{ scale: 1.08 + Math.min(sum / lv.length, 1) * 0.45 }] };
+      const now = lv.length > 0 ? lv[lv.length - 1] : 0;
+      return { opacity: 0.5, transform: [{ scale: 1.08 + Math.min(Math.max(now, 0), 1) * 0.45 }] };
     }
     if (state === 'ready') {
       return { opacity: 0.4 - pulse.value * 0.25, transform: [{ scale: 1.08 + pulse.value * 0.22 }] };
