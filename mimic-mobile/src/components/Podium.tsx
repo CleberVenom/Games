@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Standing, standings } from '../game/match';
+import { roundsText, Standing, standings } from '../game/match';
 import type { Player } from '../game/types';
 import { findSound } from '../store/library';
 import { glow, palette, withAlpha } from '../theme/tokens';
@@ -66,7 +66,7 @@ export function Podium({
         contentContainerStyle={{ paddingTop: insets.top + 28, paddingBottom: insets.bottom + 24 }}>
         <Animated.View entering={FadeInDown.duration(400)} style={{ alignItems: 'center', gap: 6 }}>
           <Text className="font-label text-xs uppercase tracking-[3px] text-mist-400">
-            Fim de jogo · {rounds} rodadas
+            Fim de jogo · {roundsText(rounds)}
           </Text>
           <Text className="text-center font-display text-4xl text-mist-50">
             {winners.length > 1 ? 'Empate no topo!' : `${winners[0].player.name} venceu!`}

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Platform, Share, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { ROUNDS } from '../../game/match';
+import { MAX_ROUNDS, roundsText } from '../../game/match';
 import { poolFrom } from '../../game/packs';
 import { MAX_ROOM_PLAYERS, MIN_PLAYERS } from '../../game/types';
 import type { RoomPlayer } from '../../online/room';
@@ -17,6 +17,7 @@ import { GradientButton } from '../Buttons';
 import { Icon } from '../Icon';
 import { PackPicker } from '../PackPicker';
 import { PressableScale } from '../PressableScale';
+import { RoundsPicker } from '../RoundsPicker';
 import { LiveDot } from './LiveDot';
 import { VoiceAvatar } from './VoiceAvatar';
 
@@ -26,7 +27,7 @@ interface Props {
   host: string;
   ids: string[];
   players: Record<string, RoomPlayer>;
-  onStart: (pool: string[]) => void;
+  onStart: (pool: string[], rounds: number) => void;
   starting: boolean;
 }
 
@@ -42,6 +43,7 @@ async function invite(code: string) {
 /** Sala antes de começar: código para convidar, quem já entrou e, para o anfitrião, os packs e o botão de começar. */
 export function RoomLobby({ code, me, host, ids, players, onStart, starting }: Props) {
   const isHost = me === host;
+  const [rounds, setRounds] = useState(MAX_ROUNDS);
   const selected = new Set(useLibrary((s) => s.selected));
   const toggle = useLibrary((s) => s.toggle);
   const custom = useLibrary((s) => s.custom);
@@ -164,18 +166,21 @@ export function RoomLobby({ code, me, host, ids, players, onStart, starting }: P
             <Text className="font-label text-sm text-mist-400">{pool.length} sons</Text>
           </View>
           <PackPicker packs={packs} selected={selected} onToggle={toggle} editable={false} />
+          <View className="pt-3">
+            <RoundsPicker value={rounds} onChange={setRounds} />
+          </View>
           <Text className="px-1 text-center font-ui text-xs text-mist-400">
             {online < MIN_PLAYERS
               ? 'Chame pelo menos mais 1 amigo para começar'
               : pool.length === 0
                 ? 'Escolha pelo menos um pack de sons'
-                : `${online} jogadores · ${ROUNDS} rodadas · ${pool.length} sons`}
+                : `${online} jogadores · ${roundsText(rounds)} · ${pool.length} sons`}
             {mine > 0 && online >= MIN_PLAYERS && pool.length > 0 && '\nSeus packs vão para os celulares de todos ao começar'}
           </Text>
           <GradientButton
             label={sending ? `Enviando seus packs… ${sent}` : starting ? 'Começando…' : 'Começar partida'}
             icon="play"
-            onPress={() => onStart(pool)}
+            onPress={() => onStart(pool, rounds)}
             disabled={starting || online < MIN_PLAYERS || pool.length === 0}
           />
         </View>

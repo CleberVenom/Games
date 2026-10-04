@@ -215,8 +215,8 @@ Depois do teste, se quiser, apague o token na mesma página da Expo — ele deix
 
 ## Parte 4 — Roteiro de teste (marque o que funcionou)
 
-Uma partida com **2 jogadores** tem **5 rodadas** (cada jogador joga uma vez por rodada = 10 vezes no total).
-Com 6 ou com 10 jogadores, continuam sendo 5 rodadas (e 30 ou 50 vezes no total).
+Os jogadores escolhem de **1 a 5 rodadas** (o padrão é 5) e cada jogador joga uma vez por rodada. Com 2 jogadores e 5
+rodadas são 10 vezes no total; com 10 jogadores e 5 rodadas, 50.
 
 ### Tela inicial (jogadores e packs)
 
@@ -227,7 +227,11 @@ Com 6 ou com 10 jogadores, continuam sendo 5 rodadas (e 30 ou 50 vezes no total)
 - [ ] Os mascotes dos **outros jogadores aparecem apagados, com cadeado e o nome de quem pegou**, e não dá para escolhê-los.
 - [ ] Trocar o mascote libera o antigo para os outros.
 - [ ] Remover um jogador (ícone de lixeira — só aparece com 3 ou mais jogadores).
-- [ ] Conferir a linha acima do botão: diz **"5 rodadas"** com qualquer número de jogadores (2, 6 ou 10).
+- [ ] Na seção **Rodadas**, tocar nos botões **1** a **5**: só um fica marcado (com brilho) e o texto ao lado muda
+      (**"1 rodada"**, **"3 rodadas"**…). O padrão é **5**.
+- [ ] Conferir a linha acima do botão: acompanha a escolha (ex.: **"2 jogadores · 3 rodadas · 75 sons"**).
+- [ ] Escolher **1** rodada e jogar: o topo mostra **"Rodada 1 de 1"**; depois do último jogador não há roleta, o botão vira
+      **Ver o pódio**, que diz **"Fim de jogo · 1 rodada"**. **Jogar de novo** mantém a escolha.
 - [ ] Na seção **Packs de sons** há **3 packs oficiais** (Animais & natureza, Vozes & zoeira, Efeitos & games),
       com **75 sons** no total. Desmarcar e marcar packs e ver o total de sons mudar.
 - [ ] Desmarcar **todos** os packs: o botão fica apagado com o texto **"Escolha pelo menos um pack de sons"**.
@@ -319,7 +323,8 @@ Precisa de **2 ou mais celulares** com o **mesmo APK**, cada um com internet (Wi
 - [ ] Código errado mostra **"Sala não encontrada"**.
 - [ ] Cada pessoa entra na sala com um **mascote diferente**. Tocar no seu mascote (com o ícone de trocar) abre o carrossel; os mascotes dos outros aparecem bloqueados com o nome deles.
 - [ ] Em **dois celulares ao mesmo tempo**, tocar no mesmo mascote livre: só um fica com ele e o outro vê **"Alguém acabou de escolher esse"**.
-- [ ] O anfitrião escolhe os packs e toca em **Começar partida** (só libera com 2 ou mais pessoas).
+- [ ] O anfitrião escolhe os packs e as **Rodadas** (1 a 5; o convidado não vê esse seletor) e toca em **Começar partida**
+      (só libera com 2 ou mais pessoas). Todos veem **"Rodada 1 de N"** com o N escolhido.
 - [ ] **Packs do anfitrião**: o anfitrião marca um pack criado por ele e começa. O botão mostra "Enviando seus
       packs…" (só na primeira vez ou se o pack mudou) e os convidados veem **"Baixando os sons da partida"** antes da
       primeira imitação com som desse pack. Depois, o pack fica nos packs de cada convidado.

@@ -78,14 +78,14 @@ export function useHostDriver() {
 
 /** Ações do anfitrião (botões): começar, girar a roleta, próxima rodada, pódio e voltar ao lobby. */
 export const hostActions = {
-  async start(pool: string[]) {
+  async start(pool: string[], rounds: number) {
     const { session, meta, players } = useOnline.getState();
     if (!session || !meta) return;
     // Packs do anfitrião na partida: sobem para o Firebase (se mudaram) e os convidados baixam pelo código.
     const inPool = new Set(pool);
     const mine = useLibrary.getState().custom.filter((p) => p.sounds.some((s) => inPool.has(s.id)));
     const shared = await shareRoomPacks(mine);
-    const next = startGame(meta, players, pool, Date.now(), Math.random, shared);
+    const next = startGame(meta, players, pool, Date.now(), Math.random, shared, rounds);
     const changes: Record<string, unknown> = { meta: next.meta, round: next.round };
     for (const id of Object.keys(players)) {
       changes[`players/${id}/score`] = 0;

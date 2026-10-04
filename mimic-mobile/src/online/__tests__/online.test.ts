@@ -74,9 +74,11 @@ describe('sala online', () => {
     expect(players.b.avatar).toBe('coruja');
   });
 
-  it('começar com a sala cheia continua com 5 rodadas', () => {
+  it('começar usa as rodadas escolhidas pelo anfitrião (padrão 5), com a sala cheia ou não', () => {
     const full = Object.fromEntries(Array.from({ length: 10 }, (_, i) => [`p${i}`, player(`J${i}`, i)]));
     expect(startGame(lobby, full, ['s1'], 0, seq(0)).meta.totalRounds).toBe(5);
+    expect(startGame(lobby, full, ['s1'], 0, seq(0), {}, 2).meta.totalRounds).toBe(2);
+    expect(startGame(lobby, PLAYERS, ['s1'], 0, seq(0), {}, 1).meta.totalRounds).toBe(1);
   });
 
   it('começar: 5 rodadas, placar zerado, primeiro som do baralho', () => {

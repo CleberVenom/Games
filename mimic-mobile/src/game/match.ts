@@ -4,14 +4,20 @@ import { Phase, Player, PlayerSetup, TurnScore } from './types';
 /** Repetições da referência permitidas por turno, além da execução automática. */
 export const REPLAYS_PER_TURN = 1;
 
-/** Rodadas por partida, com qualquer número de jogadores (cada um joga uma vez por rodada). */
-export const ROUNDS = 5;
+/** Rodadas que os jogadores podem escolher; cada um joga uma vez por rodada, com qualquer número de jogadores. */
+export const MIN_ROUNDS = 1;
+export const MAX_ROUNDS = 5;
+
+/** "1 rodada", "3 rodadas". */
+export function roundsText(rounds: number): string {
+  return `${rounds} ${rounds === 1 ? 'rodada' : 'rodadas'}`;
+}
 
 export interface Match {
   players: Player[];
   /** Começa em 1 e avança quando todos os jogadores jogaram. */
   round: number;
-  /** Rodadas da partida: `ROUNDS`. */
+  /** Rodadas da partida, de `MIN_ROUNDS` a `MAX_ROUNDS` (a escolha dos jogadores). */
   totalRounds: number;
   /** Sons sorteáveis (dos packs escolhidos). */
   pool: string[];
@@ -69,7 +75,12 @@ export function isLastTurn(match: Match): boolean {
   return match.round === match.totalRounds && match.current === match.players.length - 1;
 }
 
-export function createMatch(setup: readonly PlayerSetup[], pool: readonly string[], rng: Rng = Math.random): Match {
+export function createMatch(
+  setup: readonly PlayerSetup[],
+  pool: readonly string[],
+  rng: Rng = Math.random,
+  rounds: number = MAX_ROUNDS,
+): Match {
   if (pool.length === 0) throw new Error('Escolha pelo menos um pack com sons.');
   const [soundId, ...deck] = shuffle(pool, rng);
   return {
@@ -81,7 +92,7 @@ export function createMatch(setup: readonly PlayerSetup[], pool: readonly string
       best: null,
     })),
     round: 1,
-    totalRounds: ROUNDS,
+    totalRounds: rounds,
     pool: [...pool],
     current: 0,
     phase: 'handoff',

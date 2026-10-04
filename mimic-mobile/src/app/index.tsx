@@ -15,8 +15,9 @@ import { Icon, IconName } from '../components/Icon';
 import { LogoMark } from '../components/LogoMark';
 import { PackPicker } from '../components/PackPicker';
 import { PressableScale } from '../components/PressableScale';
+import { RoundsPicker } from '../components/RoundsPicker';
 import { UpdateBanner } from '../components/UpdateBanner';
-import { REPLAYS_PER_TURN, ROUNDS } from '../game/match';
+import { MAX_ROUNDS, REPLAYS_PER_TURN, roundsText } from '../game/match';
 import { poolFrom } from '../game/packs';
 import { AvatarId, MAX_PLAYERS, MIN_PLAYERS } from '../game/types';
 import { allPacks, useLibrary } from '../store/library';
@@ -35,6 +36,7 @@ export default function LobbyScreen() {
   const start = useMatch((s) => s.start);
   const update = useAppUpdate();
   const nextKey = useRef(MIN_PLAYERS);
+  const [rounds, setRounds] = useState(MAX_ROUNDS);
   const [players, setPlayers] = useState<Draft[]>(() => {
     const taken: AvatarId[] = [];
     return Array.from({ length: MIN_PLAYERS }, (_, key) => {
@@ -89,6 +91,7 @@ export default function LobbyScreen() {
     start(
       players.map(({ name, avatar }) => ({ name, avatar })),
       pool,
+      rounds,
     );
     router.push('/game');
   };
@@ -208,6 +211,8 @@ export default function LobbyScreen() {
             <Text className="px-1 font-body text-xs text-mist-500">Toque no mascote para escolher outro. Cada um tem o seu.</Text>
           </View>
 
+          <RoundsPicker value={rounds} onChange={setRounds} />
+
           <View className="gap-3">
             <View className="flex-row items-center justify-between px-1">
               <View className="flex-row items-center gap-2">
@@ -237,7 +242,7 @@ export default function LobbyScreen() {
           <Text className="text-center font-ui text-xs text-mist-400">
             {pool.length === 0
               ? 'Escolha pelo menos um pack de sons'
-              : `${players.length} jogadores · ${ROUNDS} rodadas · ${pool.length} sons`}
+              : `${players.length} jogadores · ${roundsText(rounds)} · ${pool.length} sons`}
           </Text>
           <GradientButton
             label={checkingMic ? 'Verificando o microfone…' : 'Começar partida'}

@@ -90,9 +90,9 @@ function Room() {
     }
   };
 
-  const start = (pool: string[]) =>
+  const start = (pool: string[], rounds: number) =>
     run(() =>
-      hostActions.start(pool).catch(() => {
+      hostActions.start(pool, rounds).catch(() => {
         const message = 'Não deu para enviar seus packs para os convidados. Confira a internet e tente de novo.';
         if (Platform.OS === 'web') window.alert(message);
         else Alert.alert('Sem conexão', message);

@@ -1,4 +1,5 @@
-import { createMatch, isLastTurn, Match, MatchEvent, recordingWindowMs, reduce, REPLAYS_PER_TURN, ROUNDS, standings } from '../match';
+import { createMatch, isLastTurn, Match, MatchEvent, MAX_ROUNDS, MIN_ROUNDS, recordingWindowMs, reduce, REPLAYS_PER_TURN, roundsText, standings } from '../match';
+import { useMatch } from '../../store/match';
 import { AVATAR_IDS } from '../types';
 import { MODIFIERS, ModifierId, pointsFor } from '../modifiers';
 import { SOUNDS } from '../sounds';
@@ -182,11 +183,32 @@ describe('roleta', () => {
 });
 
 describe('rodadas e fim de partida', () => {
-  it('são 5 rodadas para qualquer número de jogadores', () => {
-    expect(ROUNDS).toBe(5);
+  it('os jogadores escolhem de 1 a 5 rodadas (padrão 5), com qualquer número de jogadores', () => {
+    expect([MIN_ROUNDS, MAX_ROUNDS]).toEqual([1, 5]);
     expect(createMatch(setup, POOL, seeded()).totalRounds).toBe(5);
+    expect([1, 2, 3, 4, 5].map((r) => createMatch(setup, POOL, seeded(), r).totalRounds)).toEqual([1, 2, 3, 4, 5]);
     const ten = Array.from({ length: 10 }, (_, i) => ({ name: `J${i + 1}`, avatar: AVATAR_IDS[i] }));
-    expect(createMatch(ten, POOL, seeded()).totalRounds).toBe(5);
+    expect(createMatch(ten, POOL, seeded(), 3).totalRounds).toBe(3);
+  });
+
+  it('com uma rodada só, a última vez dela já termina no pódio', () => {
+    let m = createMatch(setup.slice(0, 2), POOL, seeded(), 1);
+    m = run(m, ...fullTurn(10));
+    expect(m).toMatchObject({ round: 1, current: 1, phase: 'handoff' });
+    m = run(m, ...fullTurn(55).slice(0, 5));
+    expect(isLastTurn(m)).toBe(true);
+    expect(reduce(m, { type: 'finish' }).phase).toBe('finished');
+  });
+
+  it('a revanche mantém a quantidade de rodadas escolhida', () => {
+    useMatch.getState().start(setup, POOL, 2);
+    expect(useMatch.getState().match?.totalRounds).toBe(2);
+    useMatch.getState().rematch();
+    expect(useMatch.getState().match?.totalRounds).toBe(2);
+  });
+
+  it('escreve "1 rodada" no singular', () => {
+    expect([1, 2, 5].map(roundsText)).toEqual(['1 rodada', '2 rodadas', '5 rodadas']);
   });
 
   it('a última vez da última rodada não gira a roleta: termina no pódio', () => {

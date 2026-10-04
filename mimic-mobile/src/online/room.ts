@@ -1,4 +1,4 @@
-import { ROUNDS, shuffle } from '../game/match';
+import { MAX_ROUNDS, shuffle } from '../game/match';
 import { ModifierId, MODIFIERS } from '../game/modifiers';
 import { avatarOf } from '../avatars/avatars';
 import { AvatarId, MAX_ROOM_PLAYERS, PlayerColor, TurnScore } from '../game/types';
@@ -127,7 +127,7 @@ export function firstRound(soundId: string, now: number): RoomRound {
   };
 }
 
-/** Começa a partida: `ROUNDS` rodadas, placar zerado e baralho com os sons dos packs. */
+/** Começa a partida: `rounds` rodadas (a escolha do anfitrião), placar zerado e baralho com os sons dos packs. */
 export function startGame(
   meta: RoomMeta,
   players: Record<string, RoomPlayer>,
@@ -135,6 +135,7 @@ export function startGame(
   now: number,
   rng: () => number = Math.random,
   shared: Record<string, string> = {},
+  rounds: number = MAX_ROUNDS,
 ): { meta: RoomMeta; round: RoomRound; players: Record<string, RoomPlayer> } {
   if (pool.length === 0) throw new Error('Escolha pelo menos um pack com sons.');
   const [soundId, ...deck] = shuffle(pool, rng);
@@ -143,7 +144,7 @@ export function startGame(
   const { shared: _previous, ...base } = meta;
   const packs = Object.keys(shared).length > 0 ? { shared: { ...shared } } : {};
   return {
-    meta: { ...base, ...packs, status: 'playing', totalRounds: ROUNDS, pool: [...pool], deck },
+    meta: { ...base, ...packs, status: 'playing', totalRounds: rounds, pool: [...pool], deck },
     round: firstRound(soundId, now),
     players: reset,
   };
